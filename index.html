@@ -374,8 +374,34 @@ code{font-family:'DM Mono',monospace;}
 
           <!-- VALIDATE TAB -->
           <div id="bulk-tab-validate" style="display:none">
-            <div class="info-alert mb-3"><i class="bi bi-info-circle-fill"></i>
-              <span>Export existing requests, fill in <strong>LR Status</strong>, <strong>Payable Amount</strong>, and <strong>Remarks</strong>, then re-upload here to update in bulk. Only those 3 fields will be updated — all other data is preserved.</span>
+            <!-- General info (all roles) -->
+            <div class="info-alert mb-2"><i class="bi bi-info-circle-fill"></i>
+              <span>Export existing requests, fill in the editable columns, then re-upload here to update in bulk. Only allowed fields are updated — all other data is preserved.</span>
+            </div>
+            <!-- Finance-only banner -->
+            <div id="bulk-val-finance-banner" style="display:none" class="mb-3">
+              <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:var(--r);padding:11px 15px;font-size:12.5px;color:#92400e;display:flex;align-items:flex-start;gap:10px">
+                <i class="bi bi-bank" style="font-size:15px;flex-shrink:0;margin-top:1px"></i>
+                <span>
+                  <strong>Finance fields enabled:</strong> You can also update
+                  <strong>Ref No</strong>, <strong>Paid Amount</strong>, and <strong>Status</strong>
+                  via this upload. These columns are highlighted
+                  <span style="background:#fef9c3;border:1px solid #fde068;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;color:#854d0e">yellow</span>
+                  in the preview table. Leave blank to keep existing values.
+                </span>
+              </div>
+            </div>
+            <!-- Editable fields summary chips -->
+            <div class="d-flex flex-wrap gap-2 mb-3" id="bulk-val-fields-chips">
+              <span style="font-size:12px;font-weight:600;color:var(--muted)">Updatable fields:</span>
+              <span class="badge-lr" style="background:#d1fae5;color:#065f46;border-color:#a7f3d0">LR Status</span>
+              <span class="badge-lr" style="background:#dbeafe;color:#1e40af;border-color:#93c5fd">Payable Amount</span>
+              <span class="badge-lr" style="background:#f0f4fc;color:var(--muted)">Remarks</span>
+              <span id="chip-finance-fields" style="display:none;gap:6px" class="d-flex">
+                <span class="badge-lr" style="background:#fef9c3;color:#854d0e;border-color:#fde047">Ref No <small>(Finance)</small></span>
+                <span class="badge-lr" style="background:#fef9c3;color:#854d0e;border-color:#fde047">Paid Amount <small>(Finance)</small></span>
+                <span class="badge-lr" style="background:#fef9c3;color:#854d0e;border-color:#fde047">Status <small>(Finance)</small></span>
+              </span>
             </div>
             <div class="row g-3 mb-3">
               <div class="col-md-4">
@@ -395,17 +421,25 @@ code{font-family:'DM Mono',monospace;}
             </div>
             <div class="d-flex gap-2 mb-4">
               <button class="btn btn-outline-success" onclick="exportBulkRequests()"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel</button>
-              <span class="text-muted small align-self-center">Export → edit LR Status / Payable / Remarks → re-upload below</span>
+              <span class="text-muted small align-self-center" id="bulk-val-export-hint">Export → edit allowed fields → re-upload below</span>
             </div>
             <div class="bulk-drop" id="bulk-val-drop" onclick="document.getElementById('bulk-val-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleBulkValDrop(event)">
-              <i class="bi bi-file-earmark-check"></i><div style="font-size:14px;font-weight:700;color:#374151">Drop validated Excel file here to update</div><div style="font-size:12px;color:var(--muted);margin-top:5px">Updates: LR Status · Payable Amount · Remarks</div>
+              <i class="bi bi-file-earmark-check"></i><div style="font-size:14px;font-weight:700;color:#374151">Drop validated Excel file here to update</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:5px" id="bulk-val-drop-sub">Updates: LR Status · Payable Amount · Remarks</div>
               <input type="file" id="bulk-val-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleBulkValSelect(event)"/>
             </div>
             <div id="bulk-val-result" style="display:none;margin-top:20px">
               <div id="bulk-val-summary" class="d-flex align-items-center gap-3 mb-3 p-3" style="background:var(--light);border-radius:var(--r);border:1px solid var(--border)"></div>
               <div class="panel mb-3"><div class="panel-head"><h3>Update Preview</h3><span id="bulk-val-rowct" class="text-muted small"></span></div>
-                <div class="tbl-wrap" style="max-height:320px;overflow-y:auto"><table class="dt" style="font-size:11px">
-                  <thead><tr><th>Ref ID</th><th>Requester</th><th>LR Numbers</th><th>LR Status</th><th>Payable ₹</th><th>Remarks</th><th>Match</th></tr></thead>
+                <div class="tbl-wrap" style="max-height:340px;overflow-y:auto"><table class="dt" style="font-size:11px">
+                  <thead id="bulk-val-thead"><tr>
+                    <th>Ref ID</th><th>Requester</th><th>LR Numbers</th>
+                    <th>LR Status</th><th>Payable ₹</th><th>Remarks</th>
+                    <th id="bvh-refno" style="display:none;background:#fefce8;color:#854d0e">Ref No <span class="finance-only">Finance</span></th>
+                    <th id="bvh-paid"  style="display:none;background:#fefce8;color:#854d0e">Paid ₹ <span class="finance-only">Finance</span></th>
+                    <th id="bvh-status" style="display:none;background:#fefce8;color:#854d0e">Status <span class="finance-only">Finance</span></th>
+                    <th>Match</th>
+                  </tr></thead>
                   <tbody id="bulk-val-tbody"></tbody>
                 </table></div>
               </div>
@@ -672,6 +706,32 @@ function switchBulkTab(tab, link) {
   el('bulk-tab-upload').style.display = tab==='upload' ? 'block' : 'none';
   el('bulk-tab-validate').style.display = tab==='validate' ? 'block' : 'none';
   el('bulk-export-btn').style.display = tab==='validate' ? 'inline-flex' : 'none';
+  if(tab==='validate') _setupValidateTabForRole();
+}
+
+function _setupValidateTabForRole() {
+  const isFinanceOrApprover = CU.role==='Finance' || CU.role==='Approver';
+  // Finance banner
+  el('bulk-val-finance-banner').style.display = isFinanceOrApprover ? 'block' : 'none';
+  // Finance chips
+  el('chip-finance-fields').style.display = isFinanceOrApprover ? 'flex' : 'none';
+  // Finance column headers in preview table
+  ['bvh-refno','bvh-paid','bvh-status'].forEach(id => {
+    const e=el(id); if(e) e.style.display = isFinanceOrApprover ? 'table-cell' : 'none';
+  });
+  // Update drop zone hint
+  const dropSub = el('bulk-val-drop-sub');
+  if(dropSub) {
+    dropSub.textContent = isFinanceOrApprover
+      ? 'Updates: LR Status · Payable Amount · Remarks · Ref No · Paid Amount · Status'
+      : 'Updates: LR Status · Payable Amount · Remarks';
+  }
+  const hint = el('bulk-val-export-hint');
+  if(hint) {
+    hint.textContent = isFinanceOrApprover
+      ? 'Export → fill LR Status, Payable, Remarks, Ref No, Paid Amount, Status → re-upload'
+      : 'Export → edit LR Status, Payable Amount, Remarks → re-upload below';
+  }
 }
 
 /* ==============================================
@@ -1240,70 +1300,161 @@ function processBulkValFile(file){
   const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});if(!raw.length)return toast('File is empty','error');parseBulkValRows(raw);}catch(err){toast('Parse error: '+err.message,'error');}};r.readAsBinaryString(file);
 }
 async function parseBulkValRows(raw){
-  // Map headers to fields — key fields: Ref ID, LR Status, Payable Amount, Remarks
+  const isFinanceOrApprover = CU.role==='Finance' || CU.role==='Approver';
+
+  // Map headers to fields
   const mapped=raw.map((row,idx)=>{
     const out={_rowNum:idx+2,_errors:[],_matched:false};
     Object.entries(row).forEach(([k,v])=>{
       const kl=k.toLowerCase().trim();
-      if(kl==='ref id'||kl==='id'||kl==='ref_id')out.id=String(v||'').trim();
-      if(kl==='lr status'||kl==='lr_status'||kl==='lrstatus')out.lr_status=String(v||'').trim();
-      if(kl==='payable amount'||kl==='payable_amount'||kl==='payable')out.payable_amount=String(v||'').trim();
-      if(kl==='remarks'||kl==='notes')out.remarks=String(v||'').trim();
-      // Read-only reference fields
-      if(kl==='requester name')out.requester_name=String(v||'').trim();
-      if(kl==='lr numbers')out.lr_numbers=String(v||'').trim();
+      if(kl==='ref id'||kl==='id'||kl==='ref_id')                              out.id=String(v||'').trim();
+      if(kl==='lr status'||kl==='lr_status'||kl==='lrstatus')                   out.lr_status=String(v||'').trim();
+      if(kl==='payable amount'||kl==='payable_amount'||kl==='payable')           out.payable_amount=String(v||'').trim();
+      if(kl==='remarks'||kl==='notes')                                           out.remarks=String(v||'').trim();
+      // Read-only reference fields (display only)
+      if(kl==='requester name')                                                  out.requester_name=String(v||'').trim();
+      if(kl==='lr numbers')                                                      out.lr_numbers=String(v||'').trim();
+      // Finance-only fields
+      if(kl==='ref no'||kl==='reference_id'||kl==='ref no.'||kl==='ref_id'||kl==='reference id') out.reference_id=String(v||'').trim();
+      if(kl==='paid amount'||kl==='paid_amount'||kl==='paid')                   out.paid_amount=String(v||'').trim();
+      if(kl==='status')                                                          out.status=String(v||'').trim();
     });
-    if(!out.id)out._errors.push('Ref ID required');
-    if(out.lr_status&&!['Available','Not Available'].includes(out.lr_status))out._errors.push('LR Status must be Available or Not Available');
+
+    // Validations
+    if(!out.id) out._errors.push('Ref ID required');
+    if(out.lr_status && !['Available','Not Available'].includes(out.lr_status))
+      out._errors.push('LR Status must be Available or Not Available');
+    if(out.status && !['Pending','Approved','Paid','Rejected'].includes(out.status))
+      out._errors.push('Status must be Pending/Approved/Paid/Rejected');
+    if(out.paid_amount && isNaN(parseFloat(out.paid_amount)))
+      out._errors.push('Paid Amount must be a number');
+    if(out.payable_amount && isNaN(parseFloat(out.payable_amount)))
+      out._errors.push('Payable Amount must be a number');
+
+    // If Finance fields are present but user is not Finance/Approver — warn
+    const hasFinanceFields = out.reference_id || out.paid_amount || out.status;
+    if(hasFinanceFields && !isFinanceOrApprover)
+      out._errors.push('Ref No / Paid Amount / Status update requires Finance role');
+
     return out;
   }).filter(r=>r.id); // skip blank rows
 
   // Match against existing REQ_DATA
-  if(!IS_DEMO&&REQ_DATA.length===0){
-    // Load if needed
-    try{const{data}=await sb.from('hire_requests').select('id,requester_name,lr_numbers,lr_status,payable_amount,remarks');REQ_DATA=data||[];}catch(e){}
+  if(!IS_DEMO && REQ_DATA.length===0){
+    try{const{data}=await sb.from('hire_requests').select('id,requester_name,lr_numbers,lr_status,payable_amount,paid_amount,balance_amount,reference_id,status,remarks');REQ_DATA=data||[];}catch(e){}
   }
   mapped.forEach(r=>{
     const existing=REQ_DATA.find(x=>x.id===r.id)||(IS_DEMO?getDemoRequests().find(x=>x.id===r.id):null);
     r._matched=!!existing;
+    r._existing=existing||null;
     if(!existing)r._errors.push('Ref ID not found in database');
   });
 
   BULK_VAL_ROWS=mapped;
   const valid=mapped.filter(r=>r._errors.length===0&&r._matched);
-  el('bulk-val-summary').innerHTML=`<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${mapped.length}</span><div style="font-size:11px;color:var(--muted)">Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${valid.length}</span><div style="font-size:11px;color:var(--muted)">Matched</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${mapped.filter(r=>r._errors.length>0).length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div>`;
+
+  el('bulk-val-summary').innerHTML=`
+    <div><span style="font-size:22px;font-weight:800;color:var(--blue)">${mapped.length}</span><div style="font-size:11px;color:var(--muted)">Rows</div></div>
+    <div style="width:1px;background:var(--border)"></div>
+    <div><span style="font-size:22px;font-weight:800;color:var(--green)">${valid.length}</span><div style="font-size:11px;color:var(--muted)">Matched</div></div>
+    <div style="width:1px;background:var(--border)"></div>
+    <div><span style="font-size:22px;font-weight:800;color:var(--red)">${mapped.filter(r=>r._errors.length>0).length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div>
+    ${isFinanceOrApprover?`<div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${mapped.filter(r=>r.reference_id||r.paid_amount||r.status).length}</span><div style="font-size:11px;color:var(--muted)">Finance Updates</div></div>`:''}`;
+
   el('bulk-val-rowct').textContent=`${mapped.length} rows`;
-  el('bulk-val-tbody').innerHTML=mapped.map(r=>`<tr style="${r._errors.length?'background:#fff5f5':''}">
-    <td><code style="color:var(--blue)">${esc(r.id)}</code></td>
-    <td>${esc(r.requester_name||'')}</td>
-    <td>${fmtLR(r.lr_numbers||'')}</td>
-    <td>${lrStatusB(r.lr_status)}</td>
-    <td>${r.payable_amount?'₹'+fmtN(r.payable_amount):'-'}</td>
-    <td>${esc(r.remarks||'—')}</td>
-    <td>${r._errors.length?`<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`:'<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i> Matched</span>'}</td>
-  </tr>`).join('');
+
+  // Ensure Finance column visibility matches role
+  _setupValidateTabForRole();
+
+  el('bulk-val-tbody').innerHTML=mapped.map(r=>{
+    const hasErr=r._errors.length>0;
+    const ex=r._existing;
+    // Show old→new for changed fields
+    const chg=(newVal,oldVal,fmt=v=>v)=>{
+      if(!newVal)return`<span style="color:var(--muted);font-size:10.5px">${fmt(oldVal||'—')}</span>`;
+      if(String(newVal)===String(oldVal))return`<span style="color:var(--muted)">${fmt(newVal)}</span>`;
+      return`<span style="color:var(--muted);text-decoration:line-through;font-size:10px">${fmt(oldVal||'—')}</span> <i class="bi bi-arrow-right" style="font-size:9px;color:var(--muted)"></i> <strong style="color:var(--green)">${fmt(newVal)}</strong>`;
+    };
+    const finCols = isFinanceOrApprover ? `
+      <td style="background:#fffde7">${chg(r.reference_id, ex?.reference_id)}</td>
+      <td style="background:#fffde7">${r.paid_amount?chg(r.paid_amount,ex?.paid_amount,v=>'₹'+fmtN(v)):`<span style="color:var(--muted);font-size:10.5px">₹${fmtN(ex?.paid_amount||0)}</span>`}</td>
+      <td style="background:#fffde7">${r.status?chg(r.status,ex?.status):statusB(ex?.status)}</td>` : '';
+    return`<tr style="${hasErr?'background:#fff5f5':''}">
+      <td><code style="color:var(--blue)">${esc(r.id)}</code></td>
+      <td>${esc(r.requester_name||ex?.requester_name||'')}</td>
+      <td>${fmtLR(r.lr_numbers||ex?.lr_numbers||'')}</td>
+      <td>${r.lr_status?chg(r.lr_status,ex?.lr_status):lrStatusB(ex?.lr_status)}</td>
+      <td>${r.payable_amount?chg(r.payable_amount,ex?.payable_amount,v=>'₹'+fmtN(v)):`<span style="color:var(--muted);font-size:10.5px">₹${fmtN(ex?.payable_amount||0)}</span>`}</td>
+      <td>${r.remarks!==undefined&&r.remarks!==''?chg(r.remarks,ex?.remarks):esc(ex?.remarks||'—')}</td>
+      ${finCols}
+      <td>${hasErr?`<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`:'<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i> Matched</span>'}</td>
+    </tr>`;
+  }).join('');
+
   el('bulk-val-result').style.display='block';
   el('bulk-val-submit-btn').disabled=valid.length===0;
   el('bulk-val-msg').textContent=valid.length?`${valid.length} row(s) will be updated`:'No valid rows to update';
 }
 
 async function submitBulkValidation(){
-  const valid=BULK_VAL_ROWS.filter(r=>r._errors.length===0&&r._matched);if(!valid.length)return toast('No valid rows','error');
+  const isFinanceOrApprover = CU.role==='Finance' || CU.role==='Approver';
+  const valid=BULK_VAL_ROWS.filter(r=>r._errors.length===0&&r._matched);
+  if(!valid.length)return toast('No valid rows','error');
   setBtnLoad('bulk-val-submit-btn',true,'Applying…');
+
   if(IS_DEMO){
-    valid.forEach(r=>{const idx=REQ_DATA.findIndex(x=>x.id===r.id);if(idx>=0){if(r.lr_status)REQ_DATA[idx].lr_status=r.lr_status;if(r.payable_amount)REQ_DATA[idx].payable_amount=parseFloat(r.payable_amount);if(r.remarks!==undefined)REQ_DATA[idx].remarks=r.remarks;}});
-    toast(`${valid.length} request(s) updated (demo)!`,'success');clearBulkVal();loadDashboard();setBtnLoad('bulk-val-submit-btn',false,'<i class="bi bi-check2-all me-2"></i>Apply Updates');return;
+    valid.forEach(r=>{
+      const idx=REQ_DATA.findIndex(x=>x.id===r.id);
+      if(idx<0)return;
+      const rec=REQ_DATA[idx];
+      // All roles: LR Status, Payable, Remarks
+      if(r.lr_status)         rec.lr_status=r.lr_status;
+      if(r.payable_amount)    rec.payable_amount=parseFloat(r.payable_amount);
+      if(r.remarks!==undefined&&r.remarks!=='') rec.remarks=r.remarks;
+      // Finance/Approver only: Ref No, Paid Amount, Status
+      if(isFinanceOrApprover){
+        if(r.reference_id!==undefined&&r.reference_id!=='') rec.reference_id=r.reference_id;
+        if(r.paid_amount&&r.paid_amount!=='')  rec.paid_amount=parseFloat(r.paid_amount);
+        if(r.status&&r.status!=='')            rec.status=r.status;
+      }
+      // Recalculate balance
+      rec.balance_amount=parseFloat(rec.payable_amount||0)-parseFloat(rec.paid_amount||0);
+    });
+    toast(`${valid.length} request(s) updated (demo)!`,'success');
+    clearBulkVal();loadDashboard();loadRequests();
+    setBtnLoad('bulk-val-submit-btn',false,'<i class="bi bi-check2-all me-2"></i>Apply Updates');
+    return;
   }
-  let successCount=0,failCount=0;
+
+  let successCount=0, failCount=0;
   for(const row of valid){
     const patch={};
-    if(row.lr_status)patch.lr_status=row.lr_status;
-    if(row.payable_amount)patch.payable_amount=parseFloat(row.payable_amount);
-    if(row.remarks!==undefined)patch.remarks=row.remarks;
+    // All roles
+    if(row.lr_status)          patch.lr_status=row.lr_status;
+    if(row.payable_amount)     patch.payable_amount=parseFloat(row.payable_amount);
+    if(row.remarks!==undefined&&row.remarks!=='') patch.remarks=row.remarks;
+    // Finance / Approver only
+    if(isFinanceOrApprover){
+      if(row.reference_id!==undefined&&row.reference_id!=='') patch.reference_id=row.reference_id;
+      if(row.paid_amount&&row.paid_amount!=='')  patch.paid_amount=parseFloat(row.paid_amount);
+      if(row.status&&row.status!=='')            patch.status=row.status;
+    }
+    // Auto-recalculate balance if payable or paid changed
+    const ex=row._existing||{};
+    const payable=parseFloat(patch.payable_amount??ex.payable_amount??0);
+    const paid=parseFloat(patch.paid_amount??ex.paid_amount??0);
+    patch.balance_amount=payable-paid;
+
     if(!Object.keys(patch).length)continue;
-    try{const{error}=await sb.from('hire_requests').update(patch).eq('id',row.id);if(error)throw error;successCount++;}catch(e){failCount++;}
+    try{
+      const{error}=await sb.from('hire_requests').update(patch).eq('id',row.id);
+      if(error)throw error;
+      successCount++;
+    }catch(e){failCount++;console.error('Bulk val update error',row.id,e.message);}
   }
-  toast(`Updated ${successCount} request(s)${failCount?` (${failCount} failed)`:''}!`,'success');
+
+  const msg=`Updated ${successCount} request(s)${failCount?` · ${failCount} failed`:''}`;
+  toast(msg, failCount?'warn':'success');
   clearBulkVal();loadDashboard();loadRequests();
   setBtnLoad('bulk-val-submit-btn',false,'<i class="bi bi-check2-all me-2"></i>Apply Updates');
 }
