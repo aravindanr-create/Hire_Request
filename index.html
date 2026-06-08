@@ -280,15 +280,6 @@ code{font-family:'DM Mono',monospace;}
               <div class="col-md-5 col-12"><label class="lbl">LR Numbers <span class="req-star">*</span> <small class="text-muted fw-normal">(comma-separated)</small></label><input type="text" class="form-control" id="f-lr" placeholder="D-B23453, D-B12345" oninput="debounceLRCheck()"/><div id="lr-tags" class="mt-2 d-flex flex-wrap gap-1"></div><div id="lr-chk" class="mt-1" style="font-size:11.5px"></div></div>
               <div class="col-md-3 col-6"><label class="lbl">Request Type <span class="req-star">*</span></label><select class="form-select" id="f-requestType" onchange="debounceLRCheck();showTypeHint()"><option value="Full">Full</option><option value="Advance">Advance</option><option value="POD">POD</option></select><div id="req-type-hint" class="mt-1 small text-muted"></div></div>
               <div class="col-md-2 col-6"><label class="lbl">Load Type <span class="req-star">*</span></label><select class="form-select" id="f-loadType" required><option value="">Select…</option><option>Full Load</option><option>Part Load</option><option>Special Load</option></select></div>
-              <!-- LR STATUS — new field -->
-              <div class="col-md-2 col-6">
-                <label class="lbl">LR Status <span class="req-star">*</span></label>
-                <select class="form-select" id="f-lrStatus" required>
-                  <option value="">Select…</option>
-                  <option value="Available">Available</option>
-                  <option value="Not Available">Not Available</option>
-                </select>
-              </div>
             </div>
             <!-- VEHICLE -->
             <div class="fsec"><i class="bi bi-truck"></i>Vehicle Details</div>
@@ -352,7 +343,7 @@ code{font-family:'DM Mono',monospace;}
           <div id="bulk-tab-upload">
             <div class="row mb-4">
               <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get the Excel template with correct columns</span></div></div></div>
-              <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill &amp; Upload</strong><br><span class="text-muted" style="font-size:12px">Fill data including LR Status column</span></div></div></div>
+              <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill &amp; Upload</strong><br><span class="text-muted" style="font-size:12px">Fill Vendor ID — transport &amp; bank details auto-resolved</span></div></div></div>
               <div class="col-md-4"><div class="bs-step"><div class="bs-num">3</div><div><strong style="font-size:13px">Verify &amp; Submit</strong><br><span class="text-muted" style="font-size:12px">Duplicate LRs detected automatically</span></div></div></div>
             </div>
             <div class="bulk-drop" id="bulk-drop" onclick="document.getElementById('bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleBulkDrop(event)">
@@ -912,7 +903,6 @@ async function submitReq(evt){
   else{requesterId=CU.id;requesterName=CU.name;}
   const vendorId=tsVendor?tsVendor.getValue():'';if(!vendorId)return toast('Please select a vendor','error');
   const loadType=gv('f-loadType');if(!loadType)return toast('Please select a Load Type','error');
-  const lrStatus=gv('f-lrStatus');if(!lrStatus)return toast('Please select LR Status','error');
   const lrStr=gv('f-lr').trim();if(!lrStr)return toast('Please enter LR numbers','error');
   const lrList=parseLR(lrStr);const seen=new Set(),intraDups=[];
   lrList.forEach(lr=>{const k=lr.toUpperCase();if(seen.has(k))intraDups.push(lr);else seen.add(k);});
@@ -922,7 +912,7 @@ async function submitReq(evt){
   const[docFile,wwlFile,wwoFile]=await Promise.all([readBase64('f-document'),readBase64('f-weighmentWithLoad'),readBase64('f-weighmentWithoutLoad')]);
   const hire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,payable=hire+halt;
   _refreshSubmittedAt();const submittedAt=new Date().toISOString();
-  const row={trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),lr_numbers:lrStr,lr_status:lrStatus,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),from_loc:gv('f-from'),to_loc:gv('f-to'),hire_amount:hire,weight:gv('f-weight')||null,vehicle_document_file:docFile?.data||null,vehicle_document_name:docFile?.name||null,weighment_with_load_file:wwlFile?.data||null,weighment_with_load_name:wwlFile?.name||null,weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,remarks:gv('f-remarks'),halting_charges:halt,payable_amount:payable,balance_amount:payable,paid_amount:0,request_type:reqType,status:'Pending',submitted_by:CU.email};
+  const row={trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),lr_numbers:lrStr,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),from_loc:gv('f-from'),to_loc:gv('f-to'),hire_amount:hire,weight:gv('f-weight')||null,vehicle_document_file:docFile?.data||null,vehicle_document_name:docFile?.name||null,weighment_with_load_file:wwlFile?.data||null,weighment_with_load_name:wwlFile?.name||null,weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,remarks:gv('f-remarks'),halting_charges:halt,payable_amount:payable,balance_amount:payable,paid_amount:0,request_type:reqType,status:'Pending',submitted_by:CU.email};
   setBtnLoad('req-submit-btn',true,'Submitting…');
   if(IS_DEMO){row.id='HR-'+String(Date.now()).slice(-5);REQ_DATA.unshift(row);toast(`Request submitted! ID: ${row.id}`,'success');setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');resetForm();loadDashboard();return;}
   try{const{data,error}=await sb.from('hire_requests').insert(row).select().single();if(error)throw error;toast(`Request submitted! ID: ${data.id}`,'success');resetForm();loadDashboard();}catch(e){toast('Submit error: '+e.message,'error');}
@@ -1585,16 +1575,16 @@ async function saveRole(){const id=gv('rm-id'),role=gv('rm-role');if(IS_DEMO){co
 /* ==============================================
    BULK UPLOAD (New Requests)
    ============================================== */
-const BULK_HEADERS=['Trip Date','Requester Name','Vendor ID','LR Numbers','LR Status','Request Type','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Halting Charges','Weight','Remarks'];
+const BULK_HEADERS=['Trip Date','Requester Name','Vendor ID','LR Numbers','Request Type','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Halting Charges','Weight','Remarks'];
 const HEADER_MAP={
   'trip date':'trip_date','date':'trip_date','requester name':'requester_name','requester':'requester_name',
-  // Vendor ID — new: user fills this instead of transport/bank details
+  // Vendor ID — user fills this; transport/bank auto-resolved from vendor record
   'vendor id':'vendor_id','vendor_id':'vendor_id','vendorid':'vendor_id','vnd id':'vendor_id',
   // Legacy: still accept manual transport/bank if no vendor id
   'transport name':'transport','transport':'transport','account no':'account_no','account number':'account_no',
   'ifsc code':'ifsc_code','ifsc':'ifsc_code',
   'lr numbers':'lr_numbers','lr number':'lr_numbers','lr':'lr_numbers','lr no':'lr_numbers',
-  'lr status':'lr_status','lrstatus':'lr_status','lr_status':'lr_status',
+  // lr_status intentionally excluded — Approver updates via edit modal only
   'request type':'request_type','type':'request_type','load type':'load_type',
   'vehicle type':'vehicle_type','vehicle no':'vehicle_no','vehicle number':'vehicle_no','vehicle':'vehicle_no',
   'from':'from_loc','origin':'from_loc','from loc':'from_loc','to':'to_loc','destination':'to_loc','to loc':'to_loc',
@@ -1614,8 +1604,8 @@ function downloadTemplate(){
 
   const ws=XLSX.utils.aoa_to_sheet([
     BULK_HEADERS,
-    ['2026-05-15','Ravi Kumar','VND-001','D-B23453','Available','Full','Full Load','20 Feet','TN09AB1234','Chennai','Mumbai',45000,0,25.5,'Sample'],
-    ['2026-05-15','Priya Shah','VND-002','D-B23454,D-B23455','Not Available','Advance','Part Load','14 Feet','MH12CD5678','Delhi','Pune',32000,500,18,''],
+    ['2026-05-15','Ravi Kumar','VND-001','D-B23453','Full','Full Load','20 Feet','TN09AB1234','Chennai','Mumbai',45000,0,25.5,'Sample'],
+    ['2026-05-15','Priya Shah','VND-002','D-B23454,D-B23455','Advance','Part Load','14 Feet','MH12CD5678','Delhi','Pune',32000,500,18,''],
   ]);
   ws['!cols']=BULK_HEADERS.map(()=>({wch:18}));
   const wb=XLSX.utils.book_new();
@@ -1657,7 +1647,8 @@ async function parseBulkRows(raw){
     // Required field check (transport now auto-filled from vendor_id)
     BULK_REQUIRED.forEach(h=>{const c=HEADER_MAP[h.toLowerCase()];if(!out[c])out._errors.push(`${h} required`);});
     if(out.request_type&&!['Full','Advance','POD'].includes(out.request_type))out._errors.push('Request Type must be Full/Advance/POD');
-    if(out.lr_status&&!['Available','Not Available'].includes(out.lr_status))out._errors.push('LR Status must be Available or Not Available');
+    // lr_status is NOT set via bulk upload — Approver updates it via edit modal only
+    delete out.lr_status;
 
     const hire=parseFloat(out.hire_amount)||0,halt=parseFloat(out.halting_charges)||0;
     out.payable_amount=hire+halt;out.balance_amount=hire+halt;out.paid_amount=0;
@@ -1686,7 +1677,7 @@ async function runBulkLRVerify(validRows,intraDups=[]){
   el('bulk-summary').innerHTML=`<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${BULK_ROWS.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${okRows.length}</span><div style="font-size:11px;color:var(--muted)">LR OK</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${BULK_ROWS.filter(r=>r._errors.length>0).length+validRows.filter(r=>!r._lrOk).length}</span><div style="font-size:11px;color:var(--muted)">Issues</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${intraDups.length}</span><div style="font-size:11px;color:var(--muted)">Dup LRs</div></div><div style="margin-left:auto;font-size:12px;color:${allOk?'var(--green)':'var(--red)'}"><i class="bi ${allOk?'bi-check-circle-fill':'bi-exclamation-triangle-fill'} me-1"></i>${allOk?'Ready to submit':'Fix issues'}</div>`;
 }
 function renderBulkPreview(rows){
-  el('bulk-thead').innerHTML='<tr><th>Row</th><th>Vendor ID</th><th>Transport (Resolved)</th><th>LR Numbers</th><th>LR Status</th><th>Requester</th><th>Vehicle</th><th>Route</th><th>Load</th><th>Hire ₹</th><th>Type</th><th>Issues</th></tr>';
+  el('bulk-thead').innerHTML='<tr><th>Row</th><th>Vendor ID</th><th>Transport (Resolved)</th><th>LR Numbers</th><th>Requester</th><th>Vehicle</th><th>Route</th><th>Load</th><th>Hire ₹</th><th>Type</th><th>Issues</th></tr>';
   el('bulk-rowct').textContent=`${rows.length} rows`;
   el('bulk-tbody').innerHTML=rows.map(r=>{
     const hasErr=r._errors.length>0, hasDup=!!r._intraDups;
@@ -1698,7 +1689,6 @@ function renderBulkPreview(rows){
       <td>${vendCell}</td>
       <td style="font-size:11px;color:var(--muted)">${esc(r.transport||'')}</td>
       <td>${hasDup?`<span class="badge-dup">${esc(r.lr_numbers||'')}</span>`:fmtLR(r.lr_numbers||'')}</td>
-      <td>${lrStatusB(r.lr_status)}</td>
       <td>${esc(r.requester_name||'')}</td>
       <td>${esc(r.vehicle_no||'')}</td>
       <td>${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td>
@@ -1712,7 +1702,13 @@ function renderBulkPreview(rows){
 async function submitBulk(){
   const toSubmit=BULK_ROWS.filter(r=>r._errors.length===0&&r._lrOk!==false);if(!toSubmit.length)return toast('No valid rows','error');
   setBtnLoad('bulk-submit-btn',true,'Uploading…');
-  const clean=toSubmit.map(({_rowNum,_errors,_lrOk,_intraDups,...row})=>row);
+  // Strip ALL internal processing keys (underscore-prefixed) AND vendor_id (not a DB column)
+  const DB_COLS=new Set(['trip_date','submitted_at','requester_id','requester_name','transport','account_no','ifsc_code','lr_numbers','load_type','vehicle_type','vehicle_no','from_loc','to_loc','hire_amount','weight','vehicle_document_file','vehicle_document_name','weighment_with_load_file','weighment_with_load_name','weighment_without_load_file','weighment_without_load_name','remarks','halting_charges','payable_amount','balance_amount','paid_amount','request_type','status','submitted_by','lr_status','reference_id']);
+  const clean=toSubmit.map(r=>{
+    const out={};
+    Object.entries(r).forEach(([k,v])=>{if(DB_COLS.has(k))out[k]=v;});
+    return out;
+  });
   if(IS_DEMO){clean.forEach(r=>{r.id='HR-'+String(Date.now()+Math.random()).replace('.','').slice(-6);REQ_DATA.unshift(r);});toast(`${clean.length} request(s) submitted (demo)!`,'success');setBtnLoad('bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Submit Valid Rows');clearBulk();loadDashboard();goto('requests',document.querySelector('[data-page="requests"]'));return;}
   try{const{error}=await sb.from('hire_requests').insert(clean);if(error)throw error;toast(`${clean.length} request(s) submitted!`,'success');clearBulk();loadDashboard();goto('requests',document.querySelector('[data-page="requests"]'));}catch(e){toast('Upload error: '+e.message,'error');}
   setBtnLoad('bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Submit Valid Rows');
