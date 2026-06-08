@@ -13,13 +13,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root {
+:root{
   --navy:#07111f;--navy2:#0d1f36;--navy3:#122846;--blue:#1a56f0;--blue2:#3b72ff;--blue-xs:#eef3ff;
-  --teal:#0892b0;--green:#059669;--yellow:#d97706;--red:#dc2626;--orange:#ea580c;
+  --teal:#0892b0;--green:#059669;--yellow:#d97706;--red:#dc2626;--orange:#ea580c;--purple:#7c3aed;
   --bg:#f0f4fb;--card:#ffffff;--border:#e1e8f5;--border2:#ccd6ee;--text:#0b1728;--muted:#5a6a85;--light:#f7f9fe;
   --sh-sm:0 1px 3px rgba(7,17,31,.06);--sh:0 4px 18px rgba(7,17,31,.09);--sh-lg:0 16px 52px rgba(7,17,31,.14);
-  --r:10px;--r2:14px;--r3:18px;
-  font-family:'DM Sans',sans-serif;
+  --r:10px;--r2:14px;--r3:18px;font-family:'DM Sans',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;}
@@ -44,6 +43,7 @@ body{background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:h
 #topbar h2{font-size:16.5px;font-weight:700;color:var(--text);}
 #content{flex:1;overflow-y:auto;padding:24px;background:var(--bg);}
 .page{display:none;}.page.active{display:block;}
+/* STAT CARDS */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px;}
 .stat-card{background:var(--card);border-radius:var(--r2);padding:18px 20px;border:1px solid var(--border);box-shadow:var(--sh-sm);position:relative;overflow:hidden;transition:.2s;}
 .stat-card:hover{box-shadow:var(--sh);transform:translateY(-2px);}
@@ -56,22 +56,27 @@ body{background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:h
 .stat-card .s-lbl{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;}
 .stat-card .s-val{font-size:28px;font-weight:800;letter-spacing:-1.5px;line-height:1;margin-bottom:3px;}
 .stat-card .s-sub{font-size:11px;color:var(--muted);}
+/* PANELS */
 .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:20px;box-shadow:var(--sh-sm);}
 .panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--light);}
 .panel-head h3{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:7px;}
 .panel-body{padding:20px;}
+/* TABLE */
 .tbl-wrap{overflow-x:auto;}
 table.dt{width:100%;border-collapse:collapse;font-size:12.5px;}
 table.dt th{background:#f1f5fd;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.6px;padding:10px 13px;border-bottom:1px solid var(--border);white-space:nowrap;}
 table.dt td{padding:10px 13px;border-bottom:1px solid #eef2fc;vertical-align:middle;}
 table.dt tr:last-child td{border-bottom:none;}
 table.dt tr:hover td{background:#f6f9ff;}
+/* BADGES */
 .bs{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;}
 .bs-pending{background:#fef3c7;color:#92400e;}.bs-approved{background:#d1fae5;color:#065f46;}
 .bs-paid{background:#dbeafe;color:#1e40af;}.bs-rejected{background:#fee2e2;color:#991b1b;}
+.bs-available{background:#d1fae5;color:#065f46;}.bs-unavailable{background:#fee2e2;color:#991b1b;}
 .bt{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.3px;}
 .bt-full{background:#e0e7ff;color:#3730a3;}.bt-advance{background:#fef3c7;color:#92400e;}.bt-pod{background:#d1fae5;color:#065f46;}
 .badge-lr{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:#f0f4fc;color:var(--muted);border:1px solid var(--border);margin:1px;font-family:'DM Mono',monospace;}
+/* FORM */
 .fsec{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:14px;margin-top:4px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:2px solid var(--border);}
 .fsec i{font-size:14px;color:var(--blue);}
 label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;}
@@ -79,10 +84,12 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .form-control,.form-select{font-size:13px;border-color:var(--border);border-radius:var(--r);padding:8px 12px;transition:.15s;font-family:'DM Sans',sans-serif;}
 .form-control:focus,.form-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,240,.1);outline:none;}
 .form-control[readonly]{background:var(--light);color:var(--muted);}
+.form-control:disabled,.form-select:disabled{background:var(--light);color:var(--muted);opacity:.7;}
 .ts-wrapper{font-size:13px;}.ts-control{border-color:var(--border)!important;border-radius:var(--r)!important;min-height:40px;font-family:'DM Sans',sans-serif!important;}
 .ts-wrapper.focus .ts-control{border-color:var(--blue)!important;box-shadow:0 0 0 3px rgba(26,86,240,.1)!important;}
 .ts-dropdown{border-radius:var(--r)!important;box-shadow:var(--sh-lg)!important;font-family:'DM Sans',sans-serif!important;}
 .ts-dropdown .option{padding:8px 12px!important;}.ts-dropdown .option.active{background:var(--blue-xs)!important;color:var(--blue)!important;}
+/* FILE UPLOAD */
 .fz{border:2px dashed var(--border2);border-radius:var(--r);padding:16px;cursor:pointer;transition:.2s;background:var(--light);text-align:center;position:relative;}
 .fz:hover,.fz.drag{border-color:var(--blue);background:var(--blue-xs);}
 .fz.has-file{border-color:var(--green);background:#f0fdf4;border-style:solid;}
@@ -100,6 +107,7 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .ri-card.show{display:flex;gap:16px;flex-wrap:wrap;}
 .ri-item{display:flex;align-items:center;gap:5px;color:#1d4ed8;font-weight:500;}
 .ri-item i{font-size:13px;}
+/* BUTTONS */
 .btn{font-size:13px;font-weight:600;border-radius:var(--r);font-family:'DM Sans',sans-serif;}
 .btn-primary{background:var(--blue);border-color:var(--blue);}
 .btn-primary:hover{background:var(--blue2);border-color:var(--blue2);}
@@ -108,8 +116,11 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .bsi{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--muted);transition:.15s;flex-shrink:0;}
 .bsi:hover{background:var(--blue-xs);color:var(--blue);border-color:#c7d2fe;}
 .bsi.del:hover{background:#fee2e2;color:var(--red);border-color:#fca5a5;}
+.bsi:disabled,.bsi[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none;}
+/* FILTERS */
 .fbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
 .fbar .form-control,.fbar .form-select{font-size:12.5px;height:36px;padding:0 11px;}
+/* BULK */
 .bulk-drop{border:2px dashed var(--border2);border-radius:var(--r2);padding:36px;text-align:center;cursor:pointer;transition:.2s;background:var(--light);}
 .bulk-drop:hover,.bulk-drop.drag{border-color:var(--blue);background:var(--blue-xs);}
 .bulk-drop i{font-size:40px;color:#94a3b8;margin-bottom:12px;display:block;}
@@ -122,20 +133,32 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .lt-err{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}.lt-dup{background:#fef9c3;color:#854d0e;border:1px solid #fde047;}
 .dup-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:12px;color:#92400e;display:flex;align-items:flex-start;gap:8px;}
 .badge-dup{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:#fef9c3;color:#854d0e;border:1px solid #fde047;}
+/* MODAL */
 .modal-content{border-radius:var(--r3);border:none;box-shadow:var(--sh-lg);}
 .modal-header{border-bottom:1px solid var(--border);padding:18px 22px;background:var(--light);}
 .modal-header .modal-title{font-size:15px;font-weight:700;}
 .modal-body{padding:22px;max-height:76vh;overflow-y:auto;}
 .modal-footer{border-top:1px solid var(--border);padding:14px 22px;background:var(--light);}
+/* ROLE PILLS */
 .role-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.3px;}
 .rp-user{background:#e0e7ff;color:#3730a3;}.rp-finance{background:#fef9c3;color:#854d0e;}.rp-approver{background:#dcfce7;color:#166534;}
 .info-alert{display:flex;align-items:flex-start;gap:10px;background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:var(--r);padding:10px 14px;font-size:12px;color:#1e40af;margin-bottom:14px;}
 .info-alert i{font-size:15px;flex-shrink:0;margin-top:1px;}
+.warn-alert{display:flex;align-items:flex-start;gap:10px;background:#fef9c3;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:14px;}
+.warn-alert i{font-size:15px;flex-shrink:0;margin-top:1px;}
+/* TIMER BADGE */
+.edit-timer{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:#fef9c3;color:#92400e;border:1px solid #fde68a;}
+.edit-timer.expired{background:#fee2e2;color:#991b1b;border-color:#fca5a5;}
+/* LOCKED FIELD */
+.field-locked{position:relative;}
+.field-locked::after{content:'🔒';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none;}
+/* LOGIN */
 #login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#07111f 0%,#0d1f36 60%,#122846 100%);display:flex;align-items:center;justify-content:center;z-index:9998;}
 .login-card{background:rgba(255,255,255,.97);border-radius:var(--r3);padding:42px 40px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.5);}
 .login-brand{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
 .login-card h2{font-size:24px;font-weight:800;margin-bottom:4px;}
 .login-card p.sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+/* LOADER / TOAST */
 #loader{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;}
 .spin{width:40px;height:40px;border:3px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
 .spin-sm{width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-left:6px;}
@@ -149,24 +172,27 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .empty-st i{font-size:40px;margin-bottom:14px;color:#cbd5e1;display:block;}
 .empty-st p{font-size:13px;}
 #conn-badge{font-size:11.5px;font-weight:600;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:5px;}
+/* MOBILE */
 @media(max-width:768px){
   #sidebar{position:fixed;left:-248px;height:100%;z-index:200;}
-  #sidebar.open{left:0;}
-  #main{width:100%;}
+  #sidebar.open{left:0;}#main{width:100%;}
   .stat-grid{grid-template-columns:repeat(2,1fr);}
   #topbar,#content{padding-left:14px;padding-right:14px;}
-  .panel-body{padding:14px;}
-  #mob-btn{display:flex!important;}
+  .panel-body{padding:14px;}#mob-btn{display:flex!important;}
 }
 #mob-btn{display:none;width:36px;height:36px;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:#fff;margin-right:10px;}
-.mob-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;}
-.mob-ov.show{display:block;}
+.mob-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;}.mob-ov.show{display:block;}
 ::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#c4d0e8;border-radius:3px;}
 code{font-family:'DM Mono',monospace;}
+/* FINANCE LOCKED indicator */
+.finance-only{font-size:10px;font-weight:700;color:var(--yellow);background:#fef9c3;padding:1px 6px;border-radius:4px;margin-left:4px;border:1px solid #fde68a;}
+.approver-only{font-size:10px;font-weight:700;color:var(--blue);background:var(--blue-xs);padding:1px 6px;border-radius:4px;margin-left:4px;border:1px solid #c7d2fe;}
 </style>
 </head>
 <body>
+
 <div id="loader"><div class="spin"></div><p style="margin-top:16px;font-size:13px;color:var(--muted);font-weight:500">Initialising…</p></div>
+
 <div id="login-screen" style="display:none">
   <div class="login-card">
     <div class="login-brand"><i class="bi bi-truck" style="color:#fff;font-size:22px"></i></div>
@@ -180,8 +206,10 @@ code{font-family:'DM Mono',monospace;}
     <button class="btn btn-primary w-100" onclick="doLogin()" id="login-btn"><i class="bi bi-box-arrow-in-right me-2"></i>Sign In</button>
   </div>
 </div>
+
 <div id="toast-wrap"></div>
 <div class="mob-ov" id="mob-ov" onclick="closeSidebar()"></div>
+
 <div id="app" style="display:none;width:100%;height:100vh;overflow:hidden">
 <div id="sidebar">
   <div class="sb-logo"><h1><em>Hire</em> Request<br>Management</h1><span class="sb-badge" id="role-badge">USER</span></div>
@@ -206,6 +234,7 @@ code{font-family:'DM Mono',monospace;}
     </div>
   </div>
 </div>
+
 <div id="main">
   <div id="topbar">
     <div style="display:flex;align-items:center">
@@ -214,15 +243,18 @@ code{font-family:'DM Mono',monospace;}
     </div>
     <div style="display:flex;align-items:center;gap:10px"><span id="conn-badge"></span></div>
   </div>
+
   <div id="content">
+
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
       <div class="stat-grid" id="stat-grid"><div class="stat-card sc-blue"><div class="s-lbl">Loading…</div><div class="s-val" style="color:var(--blue)">…</div></div></div>
       <div class="panel">
         <div class="panel-head"><h3><i class="bi bi-clock-history text-primary"></i>Recent Requests</h3><button class="btn btn-outline-primary btn-sm" onclick="loadDashboard()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button></div>
-        <div class="tbl-wrap"><table class="dt"><thead><tr><th>Ref ID</th><th>Trip Date</th><th>Requester</th><th>LR Numbers</th><th>Route</th><th>Hire ₹</th><th>Type</th><th>Status</th></tr></thead><tbody id="dash-tbody"><tr><td colspan="8"><div class="empty-st"><i class="bi bi-hourglass-split"></i><p>Loading…</p></div></td></tr></tbody></table></div>
+        <div class="tbl-wrap"><table class="dt"><thead><tr><th>Ref ID</th><th>Trip Date</th><th>Requester</th><th>LR Numbers</th><th>LR Status</th><th>Route</th><th>Hire ₹</th><th>Type</th><th>Status</th></tr></thead><tbody id="dash-tbody"></tbody></table></div>
       </div>
     </div>
+
     <!-- NEW REQUEST -->
     <div id="page-newreq" class="page">
       <div class="panel">
@@ -230,6 +262,7 @@ code{font-family:'DM Mono',monospace;}
         <div class="panel-body">
           <div class="info-alert" id="req-auto-notice" style="display:none"><i class="bi bi-person-check-fill"></i><span>Requester name is automatically set from your login profile: <strong id="req-auto-name">—</strong></span></div>
           <form id="req-form" onsubmit="submitReq(event)" novalidate>
+            <!-- TRIP INFO -->
             <div class="fsec"><i class="bi bi-calendar-check"></i>Trip Information</div>
             <div class="row g-3 mb-4">
               <div class="col-md-3 col-6"><label class="lbl">Trip Date <span class="req-star">*</span></label><input type="date" class="form-control" id="f-tripDate" required/></div>
@@ -241,12 +274,23 @@ code{font-family:'DM Mono',monospace;}
               <div class="col-md-3 col-6"><label class="lbl">Account No</label><input type="text" class="form-control" id="f-accountNo" placeholder="Auto-filled"/></div>
               <div class="col-md-3 col-6"><label class="lbl">IFSC Code</label><input type="text" class="form-control" id="f-ifscCode" oninput="this.value=this.value.toUpperCase()" placeholder="Auto-filled"/></div>
             </div>
+            <!-- LR & TYPE -->
             <div class="fsec"><i class="bi bi-upc-scan"></i>LR Numbers &amp; Request Type</div>
             <div class="row g-3 mb-4">
               <div class="col-md-5 col-12"><label class="lbl">LR Numbers <span class="req-star">*</span> <small class="text-muted fw-normal">(comma-separated)</small></label><input type="text" class="form-control" id="f-lr" placeholder="D-B23453, D-B12345" oninput="debounceLRCheck()"/><div id="lr-tags" class="mt-2 d-flex flex-wrap gap-1"></div><div id="lr-chk" class="mt-1" style="font-size:11.5px"></div></div>
               <div class="col-md-3 col-6"><label class="lbl">Request Type <span class="req-star">*</span></label><select class="form-select" id="f-requestType" onchange="debounceLRCheck();showTypeHint()"><option value="Full">Full</option><option value="Advance">Advance</option><option value="POD">POD</option></select><div id="req-type-hint" class="mt-1 small text-muted"></div></div>
               <div class="col-md-2 col-6"><label class="lbl">Load Type <span class="req-star">*</span></label><select class="form-select" id="f-loadType" required><option value="">Select…</option><option>Full Load</option><option>Part Load</option><option>Special Load</option></select></div>
+              <!-- LR STATUS — new field -->
+              <div class="col-md-2 col-6">
+                <label class="lbl">LR Status <span class="req-star">*</span></label>
+                <select class="form-select" id="f-lrStatus" required>
+                  <option value="">Select…</option>
+                  <option value="Available">Available</option>
+                  <option value="Not Available">Not Available</option>
+                </select>
+              </div>
             </div>
+            <!-- VEHICLE -->
             <div class="fsec"><i class="bi bi-truck"></i>Vehicle Details</div>
             <div class="row g-3 mb-4">
               <div class="col-md-3 col-6"><label class="lbl">Vehicle Type</label><select id="f-vehicleType"><option value="">Select…</option><option>20 Feet</option><option>14 Feet</option><option>Bata Dost</option><option>Bada Dost</option><option>AL</option><option>Others</option></select></div>
@@ -259,12 +303,14 @@ code{font-family:'DM Mono',monospace;}
                 <div class="f-err" id="fe-document"></div><div class="fp" id="fp-document"></div>
               </div>
             </div>
+            <!-- AMOUNTS -->
             <div class="fsec"><i class="bi bi-currency-rupee"></i>Amounts</div>
             <div class="row g-3 mb-4">
               <div class="col-md-3 col-6"><label class="lbl">Hire Amount (₹) <span class="req-star">*</span></label><input type="number" step="0.01" class="form-control" id="f-hireAmount" required oninput="calcPay()" placeholder="0.00"/></div>
               <div class="col-md-3 col-6"><label class="lbl">Halting Charges (₹)</label><input type="number" step="0.01" class="form-control" id="f-haltingCharges" value="0" oninput="calcPay()"/></div>
-              <div class="col-md-3 col-6" id="payable-wrap" style="display:none"><label class="lbl">Payable Amount (₹) <span style="font-size:10px;color:var(--blue);font-weight:700;margin-left:5px"><i class="bi bi-shield-lock me-1"></i>Admin</span></label><input type="number" class="form-control" id="f-payable" readonly placeholder="Auto-calculated"/></div>
+              <div class="col-md-3 col-6" id="payable-wrap" style="display:none"><label class="lbl">Payable Amount (₹)<span class="approver-only ms-1">Admin</span></label><input type="number" class="form-control" id="f-payable" readonly placeholder="Auto-calculated"/></div>
             </div>
+            <!-- WEIGHMENT -->
             <div class="fsec"><i class="bi bi-clipboard-data"></i>Weighment &amp; Remarks</div>
             <div class="row g-3 mb-4">
               <div class="col-md-4 col-12"><label class="lbl">Weighment With Load <small class="text-muted fw-normal">(max 5MB)</small></label>
@@ -285,60 +331,126 @@ code{font-family:'DM Mono',monospace;}
         </div>
       </div>
     </div>
+
     <!-- BULK UPLOAD -->
     <div id="page-bulk" class="page">
       <div class="panel">
-        <div class="panel-head"><h3><i class="bi bi-file-earmark-excel text-success"></i>Bulk Excel Upload</h3><button class="btn btn-outline-secondary btn-sm" onclick="downloadTemplate()"><i class="bi bi-download me-1"></i>Template</button></div>
+        <div class="panel-head"><h3><i class="bi bi-file-earmark-excel text-success"></i>Bulk Upload &amp; Validate</h3>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" onclick="downloadTemplate()"><i class="bi bi-download me-1"></i>Template</button>
+            <button class="btn btn-outline-success btn-sm" id="bulk-export-btn" onclick="exportBulkRequests()" style="display:none"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export Requests</button>
+          </div>
+        </div>
         <div class="panel-body">
-          <div class="row mb-4">
-            <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get the Excel template with correct columns</span></div></div></div>
-            <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill &amp; Upload</strong><br><span class="text-muted" style="font-size:12px">Fill data and drag-drop the file below</span></div></div></div>
-            <div class="col-md-4"><div class="bs-step"><div class="bs-num">3</div><div><strong style="font-size:13px">Verify &amp; Submit</strong><br><span class="text-muted" style="font-size:12px">Duplicate LRs detected automatically</span></div></div></div>
+          <!-- TABS -->
+          <ul class="nav nav-tabs mb-4" id="bulk-tabs">
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="switchBulkTab('upload',this)"><i class="bi bi-upload me-1"></i>Upload New</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="switchBulkTab('validate',this)"><i class="bi bi-check2-circle me-1"></i>Validate &amp; Update</a></li>
+          </ul>
+
+          <!-- UPLOAD TAB -->
+          <div id="bulk-tab-upload">
+            <div class="row mb-4">
+              <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get the Excel template with correct columns</span></div></div></div>
+              <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill &amp; Upload</strong><br><span class="text-muted" style="font-size:12px">Fill data including LR Status column</span></div></div></div>
+              <div class="col-md-4"><div class="bs-step"><div class="bs-num">3</div><div><strong style="font-size:13px">Verify &amp; Submit</strong><br><span class="text-muted" style="font-size:12px">Duplicate LRs detected automatically</span></div></div></div>
+            </div>
+            <div class="bulk-drop" id="bulk-drop" onclick="document.getElementById('bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleBulkDrop(event)">
+              <i class="bi bi-cloud-upload"></i><div style="font-size:14px;font-weight:700;color:#374151">Drop Excel / CSV file here</div><div style="font-size:12px;color:var(--muted);margin-top:5px">.xlsx · .xls · .csv supported</div>
+              <input type="file" id="bulk-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleBulkSelect(event)"/>
+            </div>
+            <div id="bulk-result" style="display:none;margin-top:22px">
+              <div id="bulk-dup-banner" class="dup-banner" style="display:none"><i class="bi bi-exclamation-triangle-fill"></i><div><strong>Duplicate LR Numbers Detected.</strong><br><span id="bulk-dup-detail"></span></div></div>
+              <div id="bulk-summary" class="d-flex align-items-center gap-3 mb-3 p-3" style="background:var(--light);border-radius:var(--r);border:1px solid var(--border)"></div>
+              <div class="panel mb-3"><div class="panel-head"><h3><i class="bi bi-shield-check"></i>LR Verification</h3><span id="bulk-vbadge" class="bs bs-pending">Checking…</span></div><div id="bulk-vbody" class="panel-body" style="max-height:260px;overflow-y:auto"><div class="text-muted small">Verifying…</div></div></div>
+              <div class="panel mb-3"><div class="panel-head"><h3>Data Preview</h3><span id="bulk-rowct" class="text-muted small"></span></div><div class="tbl-wrap" style="max-height:320px;overflow-y:auto"><table class="dt" style="font-size:11px"><thead id="bulk-thead"></thead><tbody id="bulk-tbody"></tbody></table></div></div>
+              <div class="d-flex gap-2 align-items-center flex-wrap">
+                <button class="btn btn-primary" id="bulk-submit-btn" onclick="submitBulk()" disabled><i class="bi bi-upload me-2"></i>Submit Valid Rows</button>
+                <button class="btn btn-outline-secondary" onclick="clearBulk()"><i class="bi bi-x-circle me-1"></i>Clear</button>
+                <span id="bulk-msg" class="ms-2 small text-muted"></span>
+              </div>
+            </div>
           </div>
-          <div class="bulk-drop" id="bulk-drop" onclick="document.getElementById('bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleBulkDrop(event)">
-            <i class="bi bi-cloud-upload"></i><div style="font-size:14px;font-weight:700;color:#374151">Drop Excel / CSV file here</div><div style="font-size:12px;color:var(--muted);margin-top:5px">.xlsx · .xls · .csv supported</div>
-            <input type="file" id="bulk-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleBulkSelect(event)"/>
-          </div>
-          <div id="bulk-result" style="display:none;margin-top:22px">
-            <div id="bulk-dup-banner" class="dup-banner" style="display:none"><i class="bi bi-exclamation-triangle-fill"></i><div><strong>Duplicate LR Numbers Detected.</strong><br><span id="bulk-dup-detail"></span></div></div>
-            <div id="bulk-summary" class="d-flex align-items-center gap-3 mb-3 p-3" style="background:var(--light);border-radius:var(--r);border:1px solid var(--border)"></div>
-            <div class="panel mb-3"><div class="panel-head"><h3><i class="bi bi-shield-check"></i>LR Verification</h3><span id="bulk-vbadge" class="bs bs-pending">Checking…</span></div><div id="bulk-vbody" class="panel-body" style="max-height:260px;overflow-y:auto"><div class="text-muted small">Verifying…</div></div></div>
-            <div class="panel mb-3"><div class="panel-head"><h3>Data Preview</h3><span id="bulk-rowct" class="text-muted small"></span></div><div class="tbl-wrap" style="max-height:320px;overflow-y:auto"><table class="dt" style="font-size:11px"><thead id="bulk-thead"></thead><tbody id="bulk-tbody"></tbody></table></div></div>
-            <div class="d-flex gap-2 align-items-center flex-wrap">
-              <button class="btn btn-primary" id="bulk-submit-btn" onclick="submitBulk()" disabled><i class="bi bi-upload me-2"></i>Submit Valid Rows</button>
-              <button class="btn btn-outline-secondary" onclick="clearBulk()"><i class="bi bi-x-circle me-1"></i>Clear</button>
-              <span id="bulk-msg" class="ms-2 small text-muted"></span>
+
+          <!-- VALIDATE TAB -->
+          <div id="bulk-tab-validate" style="display:none">
+            <div class="info-alert mb-3"><i class="bi bi-info-circle-fill"></i>
+              <span>Export existing requests, fill in <strong>LR Status</strong>, <strong>Payable Amount</strong>, and <strong>Remarks</strong>, then re-upload here to update in bulk. Only those 3 fields will be updated — all other data is preserved.</span>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <label class="lbl">Filter by Status</label>
+                <select class="form-select" id="bulk-exp-status">
+                  <option value="All">All Status</option><option>Pending</option><option>Approved</option><option>Paid</option><option>Rejected</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="lbl">Filter by Date (From)</label>
+                <input type="date" class="form-control" id="bulk-exp-from"/>
+              </div>
+              <div class="col-md-4">
+                <label class="lbl">Filter by Date (To)</label>
+                <input type="date" class="form-control" id="bulk-exp-to"/>
+              </div>
+            </div>
+            <div class="d-flex gap-2 mb-4">
+              <button class="btn btn-outline-success" onclick="exportBulkRequests()"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel</button>
+              <span class="text-muted small align-self-center">Export → edit LR Status / Payable / Remarks → re-upload below</span>
+            </div>
+            <div class="bulk-drop" id="bulk-val-drop" onclick="document.getElementById('bulk-val-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleBulkValDrop(event)">
+              <i class="bi bi-file-earmark-check"></i><div style="font-size:14px;font-weight:700;color:#374151">Drop validated Excel file here to update</div><div style="font-size:12px;color:var(--muted);margin-top:5px">Updates: LR Status · Payable Amount · Remarks</div>
+              <input type="file" id="bulk-val-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleBulkValSelect(event)"/>
+            </div>
+            <div id="bulk-val-result" style="display:none;margin-top:20px">
+              <div id="bulk-val-summary" class="d-flex align-items-center gap-3 mb-3 p-3" style="background:var(--light);border-radius:var(--r);border:1px solid var(--border)"></div>
+              <div class="panel mb-3"><div class="panel-head"><h3>Update Preview</h3><span id="bulk-val-rowct" class="text-muted small"></span></div>
+                <div class="tbl-wrap" style="max-height:320px;overflow-y:auto"><table class="dt" style="font-size:11px">
+                  <thead><tr><th>Ref ID</th><th>Requester</th><th>LR Numbers</th><th>LR Status</th><th>Payable ₹</th><th>Remarks</th><th>Match</th></tr></thead>
+                  <tbody id="bulk-val-tbody"></tbody>
+                </table></div>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary" id="bulk-val-submit-btn" onclick="submitBulkValidation()" disabled><i class="bi bi-check2-all me-2"></i>Apply Updates</button>
+                <button class="btn btn-outline-secondary" onclick="clearBulkVal()"><i class="bi bi-x-circle me-1"></i>Clear</button>
+                <span id="bulk-val-msg" class="ms-2 small text-muted align-self-center"></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
     <!-- ALL REQUESTS -->
     <div id="page-requests" class="page">
       <div class="fbar">
-        <input type="text" class="form-control" id="srch" placeholder="🔍  Search ID, LR, name, route…" style="width:230px" oninput="loadRequests()"/>
+        <input type="text" class="form-control" id="srch" placeholder="🔍  Search ID, LR, name, route, LR status…" style="width:260px" oninput="loadRequests()"/>
         <select class="form-select" id="flt-status" style="width:135px" onchange="loadRequests()"><option value="All">All Status</option><option>Pending</option><option>Approved</option><option>Paid</option><option>Rejected</option></select>
         <select class="form-select" id="flt-type" style="width:135px" onchange="loadRequests()"><option value="All">All Types</option><option>Full</option><option>Advance</option><option>POD</option></select>
+        <select class="form-select" id="flt-lrstatus" style="width:145px" onchange="loadRequests()"><option value="All">All LR Status</option><option>Available</option><option>Not Available</option></select>
         <button class="btn btn-outline-primary btn-sm" onclick="loadRequests()"><i class="bi bi-arrow-clockwise"></i></button>
         <button class="btn btn-outline-secondary btn-sm ms-auto" onclick="exportCSV()"><i class="bi bi-download me-1"></i>Export CSV</button>
       </div>
-      <div class="panel"><div class="tbl-wrap"><table class="dt" id="req-table"><thead id="req-thead"></thead><tbody id="req-tbody"><tr><td colspan="16"><div class="empty-st"><i class="bi bi-hourglass-split"></i><p>Loading…</p></div></td></tr></tbody></table></div></div>
+      <div class="panel"><div class="tbl-wrap"><table class="dt" id="req-table"><thead id="req-thead"></thead><tbody id="req-tbody"></tbody></table></div></div>
     </div>
+
     <!-- VENDORS -->
     <div id="page-vendors" class="page">
       <div class="fbar"><span class="text-muted small fw-semibold">Transport vendor bank details</span><button class="btn btn-primary btn-sm ms-auto" onclick="openVendorModal(null)"><i class="bi bi-plus me-1"></i>Add Vendor</button></div>
       <div class="panel"><div class="tbl-wrap"><table class="dt"><thead><tr><th>Account Holder</th><th>Bank</th><th>Account No</th><th>IFSC</th><th>Mobile</th><th>Actions</th></tr></thead><tbody id="vend-tbody"></tbody></table></div></div>
     </div>
+
     <!-- USERS -->
     <div id="page-users" class="page">
-      <div class="fbar"><span class="text-muted small fw-semibold">Manage login users — these appear as requesters in New Request</span><button class="btn btn-primary btn-sm ms-auto" onclick="openUserModal(null)"><i class="bi bi-plus me-1"></i>Add User</button></div>
+      <div class="fbar"><span class="text-muted small fw-semibold">Manage login users</span><button class="btn btn-primary btn-sm ms-auto" onclick="openUserModal(null)"><i class="bi bi-plus me-1"></i>Add User</button></div>
       <div class="panel"><div class="tbl-wrap"><table class="dt"><thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Mobile</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody id="user-tbody"></tbody></table></div></div>
     </div>
+
     <!-- USER ROLES -->
     <div id="page-userroles" class="page">
       <div class="fbar"><span class="text-muted small fw-semibold">Assign roles to existing users</span></div>
       <div class="panel"><div class="tbl-wrap"><table class="dt"><thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead><tbody id="role-tbody"></tbody></table></div></div>
     </div>
+
     <!-- EMAIL DIGEST -->
     <div id="page-digest" class="page">
       <div class="info-alert" id="digest-demo-warn" style="display:none;margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>You are in <strong>Demo Mode</strong>. Email will not actually be sent.</span></div>
@@ -348,7 +460,7 @@ code{font-family:'DM Mono',monospace;}
             <div class="panel-head"><h3><i class="bi bi-clock-history text-primary"></i>Daily Schedule</h3><span class="bs bs-approved" style="font-size:11px"><i class="bi bi-check-circle-fill me-1"></i>Active</span></div>
             <div class="panel-body">
               <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--blue-xs);border-radius:var(--r);border:1px solid #c7d2fe;margin-bottom:14px"><i class="bi bi-send-fill" style="font-size:28px;color:var(--blue)"></i><div><div style="font-size:16px;font-weight:800;color:var(--blue)">Every day at 7:30 PM IST</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Triggered by Supabase pg_cron → Edge Function</div></div></div>
-              <div style="font-size:12.5px;color:var(--muted);line-height:1.8"><div><i class="bi bi-check2 text-success me-2"></i>Queries all requests submitted <strong>today</strong></div><div><i class="bi bi-check2 text-success me-2"></i>Sends to <strong>all Approver role</strong> email addresses</div><div><i class="bi bi-check2 text-success me-2"></i>Includes summary stats + full request table</div><div><i class="bi bi-check2 text-success me-2"></i>Skips send if <strong>zero</strong> requests that day</div></div>
+              <div style="font-size:12.5px;color:var(--muted);line-height:1.8"><div><i class="bi bi-check2 text-success me-2"></i>Queries all requests submitted <strong>today</strong></div><div><i class="bi bi-check2 text-success me-2"></i>Sends to <strong>all Approver role</strong> email addresses</div><div><i class="bi bi-check2 text-success me-2"></i>Skips send if <strong>zero</strong> requests that day</div></div>
             </div>
           </div>
           <div class="panel mb-4">
@@ -369,43 +481,138 @@ code{font-family:'DM Mono',monospace;}
           </div>
         </div>
         <div class="col-lg-7">
-          <div class="panel mb-4">
+          <div class="panel">
             <div class="panel-head"><h3><i class="bi bi-calendar-day text-primary"></i>Today's Requests <span id="digest-today-count" class="ms-2 text-muted" style="font-size:12px;font-weight:400"></span></h3><button class="btn btn-outline-primary btn-sm" onclick="loadDigestPage()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button></div>
-            <div class="tbl-wrap"><table class="dt"><thead><tr><th>Ref ID</th><th>Requester</th><th>Transport</th><th>Route</th><th>Hire ₹</th><th>Type</th><th>Status</th></tr></thead><tbody id="digest-today-tbody"><tr><td colspan="7"><div class="empty-st" style="padding:24px"><i class="bi bi-hourglass-split"></i><p>Loading today's requests…</p></div></td></tr></tbody></table></div>
+            <div class="tbl-wrap"><table class="dt"><thead><tr><th>Ref ID</th><th>Requester</th><th>Transport</th><th>Route</th><th>Hire ₹</th><th>LR Status</th><th>Type</th><th>Status</th></tr></thead><tbody id="digest-today-tbody"></tbody></table></div>
           </div>
         </div>
       </div>
     </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODALS -->
+<!-- Request View/Edit Modal -->
+<div class="modal fade" id="reqModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title" id="reqModal-title">Request Details</h5>
+          <div id="reqModal-timer-wrap" style="margin-top:5px"></div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="reqModal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="reqModal-delete" style="display:none" onclick="deleteReq()"><i class="bi bi-trash me-1"></i>Delete</button>
+        <button type="button" class="btn btn-primary" id="reqModal-save" style="display:none" onclick="saveReqEdit()"><i class="bi bi-floppy me-1"></i>Save Changes</button>
+      </div>
+    </div>
   </div>
 </div>
-</div>
-<!-- MODALS -->
-<div class="modal fade" id="reqModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="reqModal-title">Request Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="reqModal-body"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-primary" id="reqModal-save" style="display:none" onclick="saveReqEdit()"><i class="bi bi-floppy me-1"></i>Save Changes</button></div></div></div></div>
+
+<!-- Vendor Modal -->
 <div class="modal fade" id="vendModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="vendModal-title">Add Vendor</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-12"><label class="lbl">Account Holder Name <span class="req-star">*</span></label><input type="text" class="form-control" id="v-name"/></div><div class="col-md-6"><label class="lbl">Bank Name <span class="req-star">*</span></label><input type="text" class="form-control" id="v-bank"/></div><div class="col-md-6"><label class="lbl">Account Number <span class="req-star">*</span></label><input type="text" class="form-control" id="v-acct"/></div><div class="col-md-6"><label class="lbl">IFSC Code <span class="req-star">*</span></label><input type="text" class="form-control" id="v-ifsc" oninput="this.value=this.value.toUpperCase()"/></div><div class="col-md-6"><label class="lbl">Mobile <span class="req-star">*</span></label><input type="tel" class="form-control" id="v-mobile"/></div><input type="hidden" id="v-id"/></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveVendor()"><i class="bi bi-floppy me-1"></i>Save</button></div></div></div></div>
+
+<!-- User Modal -->
 <div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="userModal-title">Add User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="lbl">Full Name <span class="req-star">*</span></label><input type="text" class="form-control" id="u-name"/></div><div class="col-md-6"><label class="lbl">Email <span class="req-star">*</span></label><input type="email" class="form-control" id="u-email"/></div><div class="col-md-6"><label class="lbl">Department</label><input type="text" class="form-control" id="u-dept" placeholder="e.g. Logistics"/></div><div class="col-md-6"><label class="lbl">Mobile</label><input type="tel" class="form-control" id="u-mobile"/></div><div class="col-md-6"><label class="lbl">Role <span class="req-star">*</span></label><select class="form-select" id="u-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Approver">Approver</option></select></div><div class="col-md-6"><label class="lbl">Status <span class="req-star">*</span></label><select class="form-select" id="u-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div><div class="col-12"><label class="lbl">Password <span class="req-star">*</span></label><input type="password" class="form-control" id="u-pass" placeholder="Set login password"/></div><input type="hidden" id="u-id"/></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveUser()"><i class="bi bi-floppy me-1"></i>Save</button></div></div></div></div>
+
+<!-- Role Modal -->
 <div class="modal fade" id="roleModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Change Role</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;margin-bottom:12px">User: <strong id="rm-email-show">—</strong></p><label class="lbl">Role</label><select class="form-select" id="rm-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Approver">Approver</option></select><input type="hidden" id="rm-id"/></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveRole()">Save</button></div></div></div></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-/* ============================================================
-   CONFIGURATION — Supabase Live Connection
-   ============================================================ */
+/* ==============================================
+   CONFIGURATION
+   ============================================== */
 const SUPA_URL = 'https://yjyegrxaoyomtjfgudwd.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqeWVncnhhb3lvbXRqZmd1ZHdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTkxNjEsImV4cCI6MjA5NTg3NTE2MX0.plHH_FiVgc3OH8JK27mzHi0hD4Kq5j5HfOeDR7ha6So';
 
-const MAX_FILE=5*1024*1024,OK_EXTS=['pdf','jpg','jpeg','png','webp'];
+const MAX_FILE=5*1024*1024, OK_EXTS=['pdf','jpg','jpeg','png','webp'];
 const IS_DEMO=SUPA_URL.includes('YOUR_PROJECT');
-let CU=null,REQ_DATA=[],VEND_DATA=[],USER_DATA=[],EDIT_ID=null,BULK_ROWS=[],LR_TIMER=null,tsVendor=null,tsRequester=null,tsVehicle=null;
-const{createClient}=supabase;
+const EDIT_WINDOW_MS = 2 * 60 * 60 * 1000; // 2 hours in ms
+
+/* ==============================================
+   STATE
+   ============================================== */
+let CU=null, REQ_DATA=[], VEND_DATA=[], USER_DATA=[], EDIT_ID=null;
+let BULK_ROWS=[], BULK_VAL_ROWS=[], LR_TIMER=null;
+let tsVendor=null, tsRequester=null, tsVehicle=null;
+
+const {createClient}=supabase;
 const sb=IS_DEMO?null:createClient(SUPA_URL,SUPA_KEY);
 
+/* ==============================================
+   PERMISSIONS HELPER
+   ============================================== */
+// Can a user edit/delete a request?
+// Rules:
+//   Approver: full CRUD on all
+//   Finance: can edit paid_amount, reference_id, status only
+//   User: CRUD on OWN requests only within 2 hours of submitted_at
+function canEditRequest(r) {
+  if (!r) return false;
+  if (CU.role === 'Approver') return true;
+  if (CU.role === 'Finance') return true; // finance edits specific fields
+  if (CU.role === 'User') {
+    const isOwn = String(r.requester_id) === String(CU.id) || r.submitted_by === CU.email;
+    if (!isOwn) return false;
+    return withinEditWindow(r);
+  }
+  return false;
+}
+
+function canDeleteRequest(r) {
+  if (!r) return false;
+  if (CU.role === 'Approver') return true;
+  if (CU.role === 'User') {
+    const isOwn = String(r.requester_id) === String(CU.id) || r.submitted_by === CU.email;
+    return isOwn && withinEditWindow(r);
+  }
+  return false;
+}
+
+function withinEditWindow(r) {
+  const ts = r.submitted_at || r.created_at;
+  if (!ts) return false;
+  return (Date.now() - new Date(ts).getTime()) <= EDIT_WINDOW_MS;
+}
+
+function editWindowRemaining(r) {
+  const ts = r.submitted_at || r.created_at;
+  if (!ts) return 0;
+  const remaining = EDIT_WINDOW_MS - (Date.now() - new Date(ts).getTime());
+  return Math.max(0, remaining);
+}
+
+function fmtTimeRemaining(ms) {
+  if (ms <= 0) return 'Expired';
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  const s = Math.floor((ms % 60000) / 1000);
+  if (h > 0) return `${h}h ${m}m remaining`;
+  if (m > 0) return `${m}m ${s}s remaining`;
+  return `${s}s remaining`;
+}
+
+/* ==============================================
+   INIT
+   ============================================== */
 window.onload=async()=>{
   const stored=localStorage.getItem('hire_cu');
   if(stored){try{CU=JSON.parse(stored);await bootApp();return;}catch(e){localStorage.removeItem('hire_cu');}}
   hide('loader');show('login-screen');
 };
 
+/* ==============================================
+   LOGIN / LOGOUT
+   ============================================== */
 async function doLogin(){
-  const email=gv('login-email').trim().toLowerCase(),pass=gv('login-pass').trim();
+  const email=gv('login-email').trim().toLowerCase(), pass=gv('login-pass').trim();
   const errEl=document.getElementById('login-err');errEl.style.display='none';
   if(!email||!pass)return showErr(errEl,'Email and password required');
   setBtnLoad('login-btn',true,'Signing in…');
@@ -428,6 +635,9 @@ function _afterLogin(){localStorage.setItem('hire_cu',JSON.stringify(CU));setBtn
 function showErr(el,msg){el.textContent=msg;el.style.display='block';}
 function doLogout(){localStorage.removeItem('hire_cu');CU=null;REQ_DATA=[];VEND_DATA=[];USER_DATA=[];document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';gset('login-email','');gset('login-pass','');}
 
+/* ==============================================
+   BOOT
+   ============================================== */
 async function bootApp(){
   hide('loader');document.getElementById('app').style.display='flex';
   el('user-name').textContent=CU.name;el('user-role').textContent=CU.role;el('role-badge').textContent=CU.role.toUpperCase();el('user-av').textContent=CU.name.charAt(0).toUpperCase();
@@ -439,6 +649,9 @@ async function bootApp(){
   initFormDropdowns();setupNewReqForm();buildRequestsTableHeader();loadDashboard();
 }
 
+/* ==============================================
+   NAVIGATION
+   ============================================== */
 function goto(page,nav){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(nav)nav.classList.add('active');
@@ -448,10 +661,22 @@ function goto(page,nav){
   el('page-title').textContent=titles[page]||page;closeSidebar();
   if(page==='requests')loadRequests();if(page==='vendors')loadVendors();if(page==='users')loadUsersPage();
   if(page==='userroles')loadRolesPage();if(page==='dashboard')loadDashboard();if(page==='newreq')_refreshSubmittedAt();if(page==='digest')loadDigestPage();
+  if(page==='bulk'){el('bulk-export-btn').style.display='none';}
 }
 function openSidebar(){el('sidebar').classList.add('open');el('mob-ov').classList.add('show');}
 function closeSidebar(){el('sidebar').classList.remove('open');el('mob-ov').classList.remove('show');}
 
+function switchBulkTab(tab, link) {
+  document.querySelectorAll('#bulk-tabs .nav-link').forEach(l=>l.classList.remove('active'));
+  link.classList.add('active');
+  el('bulk-tab-upload').style.display = tab==='upload' ? 'block' : 'none';
+  el('bulk-tab-validate').style.display = tab==='validate' ? 'block' : 'none';
+  el('bulk-export-btn').style.display = tab==='validate' ? 'inline-flex' : 'none';
+}
+
+/* ==============================================
+   FORM DROPDOWNS
+   ============================================== */
 function initFormDropdowns(){
   if(!tsVehicle){tsVehicle=new TomSelect('#f-vehicleType',{allowEmptyOption:true,create:false,searchField:['text'],plugins:['dropdown_input']});}
   rebuildVendorTS();
@@ -464,7 +689,7 @@ function rebuildRequesterTS(){
   if(CU.role!=='Approver')return;
   if(tsRequester){tsRequester.destroy();tsRequester=null;}
   const activeUsers=USER_DATA.filter(u=>u.status!=='Inactive');
-  tsRequester=new TomSelect('#f-requesterSelect',{placeholder:'Search requester…',allowEmptyOption:true,create:false,searchField:['text','data_dept','data_mobile','data_email'],render:{option(d){return`<div style="padding:6px 10px"><div style="font-weight:600;font-size:12.5px">${d.text}</div><div style="font-size:11px;color:var(--muted)">${d.data_dept||''} · ${d.data_mobile||''}</div></div>`;  }},onChange(val){fillRequesterInfo(val);},options:[{value:'',text:'— Select requester —',data_dept:'',data_mobile:'',data_email:''},...activeUsers.map(u=>({value:String(u.id),text:u.name,data_dept:u.department||'',data_mobile:u.mobile||'',data_email:u.email||''}))],items:['']});
+  tsRequester=new TomSelect('#f-requesterSelect',{placeholder:'Search requester…',allowEmptyOption:true,create:false,searchField:['text','data_dept','data_mobile','data_email'],render:{option(d){return`<div style="padding:6px 10px"><div style="font-weight:600;font-size:12.5px">${d.text}</div><div style="font-size:11px;color:var(--muted)">${d.data_dept||''} · ${d.data_mobile||''}</div></div>`;}},onChange(val){fillRequesterInfo(val);},options:[{value:'',text:'— Select requester —',data_dept:'',data_mobile:'',data_email:''},...activeUsers.map(u=>({value:String(u.id),text:u.name,data_dept:u.department||'',data_mobile:u.mobile||'',data_email:u.email||''}))],items:['']});
 }
 function fillRequesterInfo(id){const infoEl=el('requester-info');if(!id){infoEl.className='ri-card';return;}const u=USER_DATA.find(x=>String(x.id)===String(id));if(!u)return;el('rinfo-dept').textContent=u.department||'—';el('rinfo-mobile').textContent=u.mobile||'—';el('rinfo-email').textContent=u.email||'—';infoEl.className='ri-card show';}
 function fillVendor(id){if(!id)return;const v=VEND_DATA.find(x=>String(x.id)===String(id));if(!v)return;gset('f-transport',v.name||'');gset('f-accountNo',v.acct||'');gset('f-ifscCode',v.ifsc_code||'');}
@@ -480,25 +705,23 @@ function _refreshSubmittedAt(){const now=new Date();gset('f-submittedAt',now.toL
 function calcPay(){gset('f-payable',(parseFloat(gv('f-hireAmount'))||0)+(parseFloat(gv('f-haltingCharges'))||0));}
 function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance: 50% upfront — LR reusable for POD.',POD:'POD: Requires a prior Advance on same LR.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';}
 
+/* ==============================================
+   LR CHECK
+   ============================================== */
 function debounceLRCheck(){clearTimeout(LR_TIMER);LR_TIMER=setTimeout(runLRCheck,600);const list=parseLR(gv('f-lr'));el('lr-tags').innerHTML=list.map(lr=>`<span class="lr-tag lt-def">${esc(lr)}</span>`).join('');}
 function parseLR(str){return str.split(',').map(s=>s.trim()).filter(Boolean);}
-
 async function runLRCheck(){
-  const lrStr=gv('f-lr').trim(),reqType=gv('f-requestType');
-  const resEl=el('lr-chk'),tagsEl=el('lr-tags');
-  if(!lrStr){tagsEl.innerHTML='';resEl.innerHTML='';return;}
-  const list=parseLR(lrStr);
-  const dupMap={};list.forEach(lr=>{const k=lr.toUpperCase();dupMap[k]=(dupMap[k]||0)+1;});
-  const intraDups=Object.entries(dupMap).filter(([,c])=>c>1).map(([k])=>k);
+  const lrStr=gv('f-lr').trim(),reqType=gv('f-requestType');const resEl=el('lr-chk'),tagsEl=el('lr-tags');
+  if(!lrStr){tagsEl.innerHTML='';resEl.innerHTML='';return;}const list=parseLR(lrStr);
+  const dupMap={};list.forEach(lr=>{const k=lr.toUpperCase();dupMap[k]=(dupMap[k]||0)+1;});const intraDups=Object.entries(dupMap).filter(([,c])=>c>1).map(([k])=>k);
   resEl.innerHTML=`<span class="text-muted"><span class="spin spin-sm"></span> Checking ${list.length} LR(s)…</span>`;
   const results=await verifyLRList(list,reqType);
   results.forEach(r=>{if(intraDups.includes(r.lr.toUpperCase())){r.isDup=true;r.ok=false;r.msg='Duplicate within this entry';}});
   tagsEl.innerHTML=results.map(r=>`<span class="lr-tag ${r.isDup?'lt-dup':r.ok?'lt-ok':'lt-err'}" title="${r.msg}">${r.lr}</span>`).join('');
   const allOk=results.every(r=>r.ok),hasErr=results.some(r=>!r.ok);
   if(allOk){resEl.innerHTML=`<span style="color:var(--green)"><i class="bi bi-check-circle-fill me-1"></i>${list.length} LR(s) verified OK for ${reqType}.</span>`;}
-  else{const msgs=results.filter(r=>!r.ok).map(r=>`${r.lr}: ${r.msg}`).join(' | ');resEl.innerHTML=`<span style="color:${hasErr?'var(--red)':'var(--yellow)'}"><i class="bi bi-exclamation-triangle-fill me-1"></i>${msgs}</span>`;}
+  else{resEl.innerHTML=`<span style="color:${hasErr?'var(--red)':'var(--yellow)'}"><i class="bi bi-exclamation-triangle-fill me-1"></i>${results.filter(r=>!r.ok).map(r=>`${r.lr}: ${r.msg}`).join(' | ')}</span>`;}
 }
-
 async function verifyLRList(lrList,reqType){
   if(IS_DEMO)return lrList.map(lr=>({lr,ok:true,warn:false,msg:'Available (demo)'}));
   try{
@@ -506,7 +729,7 @@ async function verifyLRList(lrList,reqType){
     if(error)throw error;
     return lrList.map(lr=>{
       const lrU=lr.toUpperCase().trim();
-      const matches=(data||[]).filter(r=>r.lr_numbers.toUpperCase().split(',').map(s=>s.trim()).includes(lrU));
+      const matches=(data||[]).filter(r=>r.lr_numbers&&r.lr_numbers.toUpperCase().split(',').map(s=>s.trim()).includes(lrU));
       if(reqType==='Full'){return matches.length?{lr,ok:false,msg:'LR already used'}:{lr,ok:true,msg:'Available'};}
       if(reqType==='Advance'){if(matches.some(r=>r.request_type==='Full'))return{lr,ok:false,msg:'Already has Full request'};if(matches.some(r=>r.request_type==='Advance'))return{lr,ok:false,msg:'Advance already exists'};return{lr,ok:true,msg:'Available'};}
       if(reqType==='POD'){if(!matches.some(r=>r.request_type==='Advance'))return{lr,ok:false,msg:'No prior Advance found'};if(matches.some(r=>r.request_type==='POD'))return{lr,ok:false,msg:'POD already exists'};return{lr,ok:true,msg:'Advance found — POD allowed'};}
@@ -515,6 +738,9 @@ async function verifyLRList(lrList,reqType){
   }catch(e){return lrList.map(lr=>({lr,ok:false,warn:true,msg:'Check failed: '+e.message}));}
 }
 
+/* ==============================================
+   SUBMIT NEW REQUEST
+   ============================================== */
 async function submitReq(evt){
   evt.preventDefault();
   let requesterId,requesterName;
@@ -522,20 +748,20 @@ async function submitReq(evt){
   else{requesterId=CU.id;requesterName=CU.name;}
   const vendorId=tsVendor?tsVendor.getValue():'';if(!vendorId)return toast('Please select a vendor','error');
   const loadType=gv('f-loadType');if(!loadType)return toast('Please select a Load Type','error');
+  const lrStatus=gv('f-lrStatus');if(!lrStatus)return toast('Please select LR Status','error');
   const lrStr=gv('f-lr').trim();if(!lrStr)return toast('Please enter LR numbers','error');
   const lrList=parseLR(lrStr);const seen=new Set(),intraDups=[];
   lrList.forEach(lr=>{const k=lr.toUpperCase();if(seen.has(k))intraDups.push(lr);else seen.add(k);});
-  if(intraDups.length)return toast(`Duplicate LR(s) in this entry: ${intraDups.join(', ')}`,'error');
+  if(intraDups.length)return toast(`Duplicate LR(s): ${intraDups.join(', ')}`,'error');
   const reqType=gv('f-requestType');const checks=await verifyLRList(lrList,reqType);const blocked=checks.filter(r=>!r.ok);
   if(blocked.length){toast('LR Check Failed: '+blocked.map(r=>r.lr).join(', '),'error');el('lr-chk').innerHTML=`<span style="color:var(--red)"><i class="bi bi-x-circle-fill me-1"></i>${blocked.map(r=>`${r.lr}: ${r.msg}`).join(' | ')}</span>`;return;}
   const[docFile,wwlFile,wwoFile]=await Promise.all([readBase64('f-document'),readBase64('f-weighmentWithLoad'),readBase64('f-weighmentWithoutLoad')]);
   const hire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,payable=hire+halt;
   _refreshSubmittedAt();const submittedAt=new Date().toISOString();
-  const row={trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),lr_numbers:lrStr,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),from_loc:gv('f-from'),to_loc:gv('f-to'),hire_amount:hire,weight:gv('f-weight')||null,vehicle_document_file:docFile?.data||null,vehicle_document_name:docFile?.name||null,weighment_with_load_file:wwlFile?.data||null,weighment_with_load_name:wwlFile?.name||null,weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,remarks:gv('f-remarks'),halting_charges:halt,payable_amount:payable,balance_amount:payable,paid_amount:0,request_type:reqType,status:'Pending',submitted_by:CU.email};
+  const row={trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),lr_numbers:lrStr,lr_status:lrStatus,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),from_loc:gv('f-from'),to_loc:gv('f-to'),hire_amount:hire,weight:gv('f-weight')||null,vehicle_document_file:docFile?.data||null,vehicle_document_name:docFile?.name||null,weighment_with_load_file:wwlFile?.data||null,weighment_with_load_name:wwlFile?.name||null,weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,remarks:gv('f-remarks'),halting_charges:halt,payable_amount:payable,balance_amount:payable,paid_amount:0,request_type:reqType,status:'Pending',submitted_by:CU.email};
   setBtnLoad('req-submit-btn',true,'Submitting…');
   if(IS_DEMO){row.id='HR-'+String(Date.now()).slice(-5);REQ_DATA.unshift(row);toast(`Request submitted! ID: ${row.id}`,'success');setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');resetForm();loadDashboard();return;}
-  try{const{data,error}=await sb.from('hire_requests').insert(row).select().single();if(error)throw error;toast(`Request submitted! ID: ${data.id}`,'success');resetForm();loadDashboard();}
-  catch(e){toast('Submit error: '+e.message,'error');}
+  try{const{data,error}=await sb.from('hire_requests').insert(row).select().single();if(error)throw error;toast(`Request submitted! ID: ${data.id}`,'success');resetForm();loadDashboard();}catch(e){toast('Submit error: '+e.message,'error');}
   setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');
 }
 
@@ -548,87 +774,296 @@ function resetForm(){
   _refreshSubmittedAt();
 }
 
+/* ==============================================
+   DASHBOARD
+   ============================================== */
 async function loadDashboard(){
   if(IS_DEMO){renderDashboard(getDemoRequests());return;}
-  try{const{data,error}=await sb.from('hire_requests').select('*').order('created_at',{ascending:false});if(error)throw error;renderDashboard(data||[]);}
-  catch(e){toast('Dashboard error: '+e.message,'error');}
+  try{
+    let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
+    // User sees only own requests
+    if(CU.role==='User')q=q.eq('submitted_by',CU.email);
+    const{data,error}=await q;if(error)throw error;renderDashboard(data||[]);
+  }catch(e){toast('Dashboard error: '+e.message,'error');}
 }
 function renderDashboard(data){
   const total=data.length,pending=data.filter(r=>r.status==='Pending').length,approved=data.filter(r=>r.status==='Approved').length,paid=data.filter(r=>r.status==='Paid').length;
   const totalH=data.reduce((s,r)=>s+parseFloat(r.hire_amount||0),0),totalPd=data.reduce((s,r)=>s+parseFloat(r.paid_amount||0),0);
   const fmt=n=>'₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
-  el('stat-grid').innerHTML=`<div class="stat-card sc-blue"><div class="s-lbl">Total Requests</div><div class="s-val" style="color:var(--blue)">${total}</div><div class="s-sub">All time</div></div><div class="stat-card sc-yellow"><div class="s-lbl">Pending</div><div class="s-val" style="color:var(--yellow)">${pending}</div><div class="s-sub">Awaiting action</div></div><div class="stat-card sc-green"><div class="s-lbl">Approved</div><div class="s-val" style="color:var(--green)">${approved}</div><div class="s-sub">Cleared</div></div><div class="stat-card sc-red"><div class="s-lbl">Paid</div><div class="s-val" style="color:var(--red)">${paid}</div><div class="s-sub">Disbursed</div></div><div class="stat-card sc-teal"><div class="s-lbl">Total Hire</div><div class="s-val" style="color:var(--navy);font-size:20px">${fmt(totalH)}</div><div class="s-sub">All requests</div></div><div class="stat-card sc-blue"><div class="s-lbl">Balance Due</div><div class="s-val" style="color:var(--teal);font-size:20px">${fmt(totalH-totalPd)}</div><div class="s-sub">Outstanding</div></div>`;
+  el('stat-grid').innerHTML=`<div class="stat-card sc-blue"><div class="s-lbl">Total Requests</div><div class="s-val" style="color:var(--blue)">${total}</div><div class="s-sub">${CU.role==='User'?'Your requests':'All time'}</div></div><div class="stat-card sc-yellow"><div class="s-lbl">Pending</div><div class="s-val" style="color:var(--yellow)">${pending}</div><div class="s-sub">Awaiting action</div></div><div class="stat-card sc-green"><div class="s-lbl">Approved</div><div class="s-val" style="color:var(--green)">${approved}</div><div class="s-sub">Cleared</div></div><div class="stat-card sc-red"><div class="s-lbl">Paid</div><div class="s-val" style="color:var(--red)">${paid}</div><div class="s-sub">Disbursed</div></div><div class="stat-card sc-teal"><div class="s-lbl">Total Hire</div><div class="s-val" style="color:var(--navy);font-size:20px">${fmt(totalH)}</div><div class="s-sub">All requests</div></div><div class="stat-card sc-blue"><div class="s-lbl">Balance Due</div><div class="s-val" style="color:var(--teal);font-size:20px">${fmt(totalH-totalPd)}</div><div class="s-sub">Outstanding</div></div>`;
   const tbody=el('dash-tbody'),recent=data.slice(0,8);
-  if(!recent.length){tbody.innerHTML=`<tr><td colspan="8"><div class="empty-st"><i class="bi bi-inbox"></i><p>No requests yet</p></div></td></tr>`;return;}
-  tbody.innerHTML=recent.map(r=>`<tr><td><code style="font-size:10.5px;color:var(--blue)">${r.id||'—'}</code></td><td>${r.trip_date||'—'}</td><td style="font-weight:600">${r.requester_name||'—'}</td><td>${fmtLR(r.lr_numbers||'')}</td><td>${r.from_loc||''}→${r.to_loc||''}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');
+  if(!recent.length){tbody.innerHTML=`<tr><td colspan="9"><div class="empty-st"><i class="bi bi-inbox"></i><p>No requests yet</p></div></td></tr>`;return;}
+  tbody.innerHTML=recent.map(r=>`<tr><td><code style="font-size:10.5px;color:var(--blue)">${r.id||'—'}</code></td><td>${r.trip_date||'—'}</td><td style="font-weight:600">${r.requester_name||'—'}</td><td>${fmtLR(r.lr_numbers||'')}</td><td>${lrStatusB(r.lr_status)}</td><td>${r.from_loc||''}→${r.to_loc||''}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');
 }
 
+/* ==============================================
+   ALL REQUESTS TABLE HEADER
+   ============================================== */
 function buildRequestsTableHeader(){
   const isApprover=CU.role==='Approver',isFinance=CU.role==='Finance';
-  const cols=[{k:'id',h:'Ref ID'},{k:'trip_date',h:'Trip Date'},{k:'requester',h:'Requester'},{k:'transport',h:'Transport'},{k:'lr',h:'LR'},{k:'vehicle',h:'Vehicle'},{k:'route',h:'Route'},{k:'load',h:'Load Type'},{k:'hire',h:'Hire ₹'},...(isApprover||isFinance?[{k:'payable',h:'Payable ₹'}]:[]),...(isFinance||isApprover?[{k:'paid',h:'Paid ₹'}]:[]),{k:'balance',h:'Balance ₹'},{k:'refno',h:'Ref No'},{k:'type',h:'Type'},{k:'status',h:'Status'},{k:'actions',h:'Actions'}];
+  const cols=[
+    {h:'Ref ID'},{h:'Trip Date'},{h:'Requester'},{h:'Transport'},{h:'LR'},{h:'LR Status'},
+    {h:'Vehicle'},{h:'Route'},{h:'Load'},{h:'Hire ₹'},
+    ...(isApprover?[{h:'Payable ₹'}]:[]),
+    ...(isFinance||isApprover?[{h:'Paid ₹'}]:[]),
+    {h:'Balance ₹'},{h:'Ref No'},{h:'Type'},{h:'Status'},{h:'Actions'}
+  ];
   el('req-thead').innerHTML='<tr>'+cols.map(c=>`<th>${c.h}</th>`).join('')+'</tr>';
 }
 
-function smartFilter(data,srch,status,type){
+/* ==============================================
+   SMART FILTER
+   ============================================== */
+function smartFilter(data,srch,status,type,lrSt){
   let out=data;
-  if(status!=='All')out=out.filter(r=>r.status===status);if(type!=='All')out=out.filter(r=>r.request_type===type);if(!srch)return out;
+  if(status!=='All')out=out.filter(r=>r.status===status);
+  if(type!=='All')out=out.filter(r=>r.request_type===type);
+  if(lrSt!=='All')out=out.filter(r=>r.lr_status===lrSt);
+  if(!srch)return out;
   const tokens=srch.toLowerCase().trim().split(/\s+/).filter(Boolean);
   return out.filter(r=>{
-    const parts=[r.id,r.trip_date,r.requester_name,r.transport,r.vehicle_no,r.from_loc,r.to_loc,r.load_type,r.vehicle_type,r.status,r.request_type,r.reference_id,r.submitted_by,r.remarks,r.account_no,r.ifsc_code,String(r.hire_amount||''),String(r.paid_amount||''),String(r.balance_amount||'')].map(v=>String(v||'').toLowerCase()).join(' ');
+    const parts=[r.id,r.trip_date,r.requester_name,r.transport,r.vehicle_no,r.from_loc,r.to_loc,r.load_type,r.vehicle_type,r.status,r.request_type,r.reference_id,r.submitted_by,r.remarks,r.account_no,r.ifsc_code,r.lr_status,String(r.hire_amount||''),String(r.paid_amount||''),String(r.balance_amount||'')].map(v=>String(v||'').toLowerCase()).join(' ');
     const lrFlat=String(r.lr_numbers||'').toLowerCase(),lrParts=lrFlat.split(',').map(s=>s.trim());
     return tokens.every(token=>parts.split(' ').some(w=>w.includes(token))||lrFlat.includes(token)||lrParts.some(lr=>lr.includes(token)));
   });
 }
 
+/* ==============================================
+   LOAD REQUESTS
+   ============================================== */
 async function loadRequests(){
-  const srch=gv('srch').toLowerCase().trim(),status=gv('flt-status'),type=gv('flt-type');
-  if(IS_DEMO){REQ_DATA=getDemoRequests();renderRequests(smartFilter(REQ_DATA,srch,status,type));return;}
-  try{const{data,error}=await sb.from('hire_requests').select('*').order('created_at',{ascending:false});if(error)throw error;REQ_DATA=data||[];renderRequests(smartFilter(REQ_DATA,srch,status,type));}
-  catch(e){toast('Error: '+e.message,'error');}
+  const srch=gv('srch').toLowerCase().trim(),status=gv('flt-status'),type=gv('flt-type'),lrSt=gv('flt-lrstatus');
+  if(IS_DEMO){
+    let all=getDemoRequests();
+    if(CU.role==='User')all=all.filter(r=>r.submitted_by===CU.email);
+    REQ_DATA=all;renderRequests(smartFilter(REQ_DATA,srch,status,type,lrSt));return;
+  }
+  try{
+    let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
+    if(CU.role==='User')q=q.eq('submitted_by',CU.email);
+    const{data,error}=await q;if(error)throw error;REQ_DATA=data||[];renderRequests(smartFilter(REQ_DATA,srch,status,type,lrSt));
+  }catch(e){toast('Error: '+e.message,'error');}
 }
 
+/* ==============================================
+   RENDER REQUESTS
+   ============================================== */
 function renderRequests(data){
   const tbody=el('req-tbody'),isApprover=CU.role==='Approver',isFinance=CU.role==='Finance';
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="18"><div class="empty-st"><i class="bi bi-inbox"></i><p>No matching requests</p></div></td></tr>`;return;}
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="20"><div class="empty-st"><i class="bi bi-inbox"></i><p>No matching requests</p></div></td></tr>`;return;}
   tbody.innerHTML=data.map(r=>{
     const bal=parseFloat(r.balance_amount||0),safeId=esc(r.id||'');
-    let cols=`<td><code style="font-size:10px;color:var(--blue)">${safeId}</code></td><td style="white-space:nowrap">${r.trip_date||'—'}</td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td>${fmtLR(r.lr_numbers||'')}</td><td style="font-weight:600">${esc(r.vehicle_no||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td>${esc(r.load_type||'—')}</td><td>₹${fmtN(r.hire_amount||0)}</td>`;
-    if(isApprover||isFinance)cols+=`<td>₹${fmtN(r.payable_amount||0)}</td>`;
+    const canEdit=canEditRequest(r), canDel=canDeleteRequest(r);
+    let cols=`<td><code style="font-size:10px;color:var(--blue)">${safeId}</code></td><td style="white-space:nowrap">${r.trip_date||'—'}</td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td>${fmtLR(r.lr_numbers||'')}</td><td>${lrStatusB(r.lr_status)}</td><td style="font-weight:600">${esc(r.vehicle_no||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td>${esc(r.load_type||'—')}</td><td>₹${fmtN(r.hire_amount||0)}</td>`;
+    if(isApprover)cols+=`<td>₹${fmtN(r.payable_amount||0)}</td>`;
     if(isFinance||isApprover)cols+=`<td>₹${fmtN(r.paid_amount||0)}</td>`;
-    cols+=`<td style="font-weight:700;color:${bal>0?'var(--red)':'var(--green)'}">₹${fmtN(bal)}</td><td><small>${esc(r.reference_id||'—')}</small></td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td><td><button class="bsi view-btn" data-id="${safeId}" title="View/Edit"><i class="bi bi-eye"></i></button></td>`;
+    cols+=`<td style="font-weight:700;color:${bal>0?'var(--red)':'var(--green)'}">₹${fmtN(bal)}</td><td><small>${esc(r.reference_id||'—')}</small></td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td>`;
+    cols+=`<td style="white-space:nowrap">
+      <button class="bsi view-btn me-1" data-id="${safeId}" title="View/Edit" ${canEdit?'':''}>
+        <i class="bi bi-eye"></i>
+      </button>
+      ${canDel?`<button class="bsi del del-btn" data-id="${safeId}" title="Delete"><i class="bi bi-trash"></i></button>`:''}
+    </td>`;
     return`<tr>${cols}</tr>`;
   }).join('');
   tbody.querySelectorAll('.view-btn').forEach(btn=>{btn.addEventListener('click',()=>viewReq(btn.dataset.id));});
+  tbody.querySelectorAll('.del-btn').forEach(btn=>{btn.addEventListener('click',()=>deleteReqById(btn.dataset.id));});
 }
 
+/* ==============================================
+   VIEW / EDIT REQUEST MODAL
+   ============================================== */
 function viewReq(id){
   let r=REQ_DATA.find(x=>x.id===id);if(!r&&IS_DEMO)r=getDemoRequests().find(x=>x.id===id);
-  if(!r){toast('Record not found. Please refresh the table.','warn');return;}
-  EDIT_ID=id;const isApprover=CU.role==='Approver',isFinance=CU.role==='Finance',canSave=isApprover||isFinance;
-  el('reqModal-title').textContent=`Request: ${id}`;el('reqModal-save').style.display=canSave?'inline-flex':'none';
+  if(!r){toast('Record not found. Refresh the table.','warn');return;}
+  EDIT_ID=id;
+
+  const isApprover=CU.role==='Approver';
+  const isFinance=CU.role==='Finance';
+  const isUser=CU.role==='User';
+  const canSave=canEditRequest(r);
+  const canDel=canDeleteRequest(r);
+
+  el('reqModal-title').textContent=`Request: ${id}`;
+  el('reqModal-save').style.display=canSave?'inline-flex':'none';
+  el('reqModal-delete').style.display=canDel?'inline-flex':'none';
+
+  // Timer display for User role
+  const timerWrap=el('reqModal-timer-wrap');
+  timerWrap.innerHTML='';
+  if(isUser){
+    const remaining=editWindowRemaining(r);
+    const expired=remaining<=0;
+    const timerEl=document.createElement('span');
+    timerEl.className=`edit-timer${expired?' expired':''}`;
+    timerEl.id='modal-edit-timer';
+    timerEl.innerHTML=`<i class="bi bi-clock me-1"></i>${expired?'Edit window expired':fmtTimeRemaining(remaining)}`;
+    timerWrap.appendChild(timerEl);
+    if(!expired&&remaining>0){
+      const iv=setInterval(()=>{
+        const rem=editWindowRemaining(r);
+        const tel=document.getElementById('modal-edit-timer');
+        if(!tel){clearInterval(iv);return;}
+        if(rem<=0){tel.textContent='Edit window expired';tel.className='edit-timer expired';el('reqModal-save').style.display='none';el('reqModal-delete').style.display='none';clearInterval(iv);}
+        else{tel.innerHTML=`<i class="bi bi-clock me-1"></i>${fmtTimeRemaining(rem)}`;}
+      },1000);
+    }
+  }
+
+  // Field helpers
+  // ro = read-only; ed = editable input; sel = select
   const ro=(v,t='text')=>`<input type="${t}" class="form-control form-control-sm" value="${esc(String(v??''))}" readonly/>`;
   const ed=(v,eid,t='text')=>`<input type="${t}" class="form-control form-control-sm" id="e-${eid}" value="${esc(String(v??''))}"/>`;
   const fld=(label,eid,val,editable=false,t='text')=>`<div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">${label}</label>${editable?ed(val,eid,t):ro(val,t)}</div>`;
+
+  // Status options
   const statusOpts=['Pending','Approved','Paid','Rejected'].map(o=>`<option ${r.status===o?'selected':''}>${o}</option>`).join('');
   const loadOpts=['Full Load','Part Load','Special Load'].map(o=>`<option ${(r.load_type||'')==o?'selected':''}>${o}</option>`).join('');
-  let body=`<div class="row">${fld('Trip Date','trip_date',r.trip_date,isApprover)}${fld('Submitted At','submitted_at',r.submitted_at||r.created_at||'')}${fld('Requester','requester_name',r.requester_name,isApprover)}${fld('Transport','transport',r.transport,isApprover)}${fld('LR Numbers','lr_numbers',r.lr_numbers)}<div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Request Type</label>${ro(r.request_type)}</div>${fld('Vehicle No','vehicle_no',r.vehicle_no,isApprover)}${fld('From','from_loc',r.from_loc,isApprover)}${fld('To','to_loc',r.to_loc,isApprover)}<div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Load Type</label>${isApprover?`<select class="form-select form-select-sm" id="e-load_type"><option value="">—</option>${loadOpts}</select>`:ro(r.load_type)}</div>${fld('Vehicle Type','vehicle_type',r.vehicle_type)}${fld('Account No','account_no',r.account_no)}${fld('IFSC','ifsc_code',r.ifsc_code)}${fld('Hire Amount','hire_amount',r.hire_amount,isApprover,'number')}${fld('Halting','halting_charges',r.halting_charges||0,isApprover,'number')}${fld('Weight','weight',r.weight)}`;
-  body+=isApprover?fld('Payable Amount','payable_amount',r.payable_amount,true,'number'):'';
-  body+=(isFinance||isApprover)?fld('Paid Amount','paid_amount',r.paid_amount,true,'number'):'';
-  body+=`${fld('Balance','balance_amount',r.balance_amount)}${fld('Ref ID','reference_id',r.reference_id||'',canSave)}<div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Status</label>${canSave?`<select class="form-select form-select-sm" id="e-status">${statusOpts}</select>`:`<span class="bs ${r.status==='Pending'?'bs-pending':r.status==='Approved'?'bs-approved':r.status==='Paid'?'bs-paid':'bs-rejected'}">${r.status}</span>`}</div></div><div class="row"><div class="col-12 mb-2"><label class="lbl" style="font-size:11px">Remarks</label><textarea class="form-control form-control-sm" id="e-remarks" rows="2" ${canSave?'':'readonly'}>${esc(r.remarks||'')}</textarea></div></div>${r.vehicle_document_name?`<div class="mb-2"><div style="display:flex;align-items:center;gap:6px;background:var(--light);padding:7px 12px;border-radius:7px;border:1px solid var(--border);font-size:12px"><i class="bi bi-file-earmark text-primary"></i>${esc(r.vehicle_document_name)}</div></div>`:''}<small class="text-muted">Submitted by: ${esc(r.submitted_by||'—')} · ${r.submitted_at||r.created_at?new Date(r.submitted_at||r.created_at).toLocaleString('en-IN'):'—'}</small>`;
-  el('reqModal-body').innerHTML=body;new bootstrap.Modal(el('reqModal')).show();
+  const lrStatusOpts=['Available','Not Available'].map(o=>`<option ${(r.lr_status||'')==o?'selected':''}>${o}</option>`).join('');
+
+  // Determine which fields each role can edit
+  // Approver: trip_date, requester_name, transport, vehicle_no, from/to, load_type, hire_amount, halting_charges, payable_amount, lr_status, remarks
+  // Finance:  paid_amount, reference_id, status ONLY
+  // User (own, within 2h): lr_status, payable_amount(no), remarks
+
+  const approverCanEdit = isApprover && canSave;
+  const financeCanEdit  = isFinance  && canSave;
+  const userCanEdit     = isUser     && canSave;
+
+  // lr_status: User, Approver can edit; Finance cannot
+  const lrStatusEdit = (approverCanEdit || userCanEdit);
+  // payable_amount: Approver only
+  const payableEdit  = approverCanEdit;
+  // paid_amount, reference_id, status: Finance + Approver
+  const finFieldEdit = financeCanEdit || approverCanEdit;
+  // general fields: Approver + User(own+2h)
+  const generalEdit  = approverCanEdit || userCanEdit;
+
+  let body=`<div class="row">
+    ${fld('Trip Date','trip_date',r.trip_date,approverCanEdit)}
+    ${fld('Submitted At','submitted_at',r.submitted_at||r.created_at||'')}
+    ${fld('Requester','requester_name',r.requester_name,approverCanEdit)}
+    ${fld('Transport','transport',r.transport,approverCanEdit)}
+    ${fld('LR Numbers','lr_numbers',r.lr_numbers)}
+    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Request Type</label>${ro(r.request_type)}</div>
+    ${fld('Vehicle No','vehicle_no',r.vehicle_no,approverCanEdit)}
+    ${fld('From','from_loc',r.from_loc,approverCanEdit)}
+    ${fld('To','to_loc',r.to_loc,approverCanEdit)}
+    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Load Type</label>
+      ${approverCanEdit?`<select class="form-select form-select-sm" id="e-load_type"><option value="">—</option>${loadOpts}</select>`:ro(r.load_type)}
+    </div>
+    <!-- LR STATUS -->
+    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">LR Status</label>
+      ${lrStatusEdit?`<select class="form-select form-select-sm" id="e-lr_status"><option value="">—</option>${lrStatusOpts}</select>`:ro(r.lr_status||'—')}
+    </div>
+    ${fld('Vehicle Type','vehicle_type',r.vehicle_type)}
+    ${fld('Account No','account_no',r.account_no)}
+    ${fld('IFSC','ifsc_code',r.ifsc_code)}
+    ${fld('Hire Amount','hire_amount',r.hire_amount,approverCanEdit,'number')}
+    ${fld('Halting','halting_charges',r.halting_charges||0,approverCanEdit,'number')}
+    ${fld('Weight','weight',r.weight)}`;
+
+  // Payable — Approver only
+  if(isApprover){body+=fld('Payable Amount','payable_amount',r.payable_amount,payableEdit,'number');}
+
+  // Paid Amount, Ref ID, Status — Finance + Approver
+  body+=`
+    <div class="col-md-3 mb-2">
+      <label class="lbl" style="font-size:11px">Paid Amount (₹)${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
+      ${finFieldEdit?`<input type="number" class="form-control form-control-sm" id="e-paid_amount" value="${esc(String(r.paid_amount??'0'))}"/>`:ro(r.paid_amount||0,'number')}
+    </div>
+    ${fld('Balance','balance_amount',r.balance_amount)}
+    <div class="col-md-3 mb-2">
+      <label class="lbl" style="font-size:11px">Ref ID${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
+      ${finFieldEdit?`<input type="text" class="form-control form-control-sm" id="e-reference_id" value="${esc(r.reference_id||'')}"/>`:ro(r.reference_id||'—')}
+    </div>
+    <div class="col-md-3 mb-2">
+      <label class="lbl" style="font-size:11px">Status${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
+      ${finFieldEdit?`<select class="form-select form-select-sm" id="e-status">${statusOpts}</select>`:`<span class="bs ${r.status==='Pending'?'bs-pending':r.status==='Approved'?'bs-approved':r.status==='Paid'?'bs-paid':'bs-rejected'}">${r.status||'Pending'}</span>`}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 mb-2"><label class="lbl" style="font-size:11px">Remarks</label>
+      ${(generalEdit)?`<textarea class="form-control form-control-sm" id="e-remarks" rows="2">${esc(r.remarks||'')}</textarea>`:ro(r.remarks||'')}
+    </div>
+  </div>
+  ${r.vehicle_document_name?`<div class="mb-2"><div style="display:flex;align-items:center;gap:6px;background:var(--light);padding:7px 12px;border-radius:7px;border:1px solid var(--border);font-size:12px"><i class="bi bi-file-earmark text-primary"></i>${esc(r.vehicle_document_name)}</div></div>`:''}
+  <small class="text-muted">Submitted by: ${esc(r.submitted_by||'—')} · ${r.submitted_at||r.created_at?new Date(r.submitted_at||r.created_at).toLocaleString('en-IN'):'—'}</small>`;
+
+  el('reqModal-body').innerHTML=body;
+  new bootstrap.Modal(el('reqModal')).show();
 }
 
 async function saveReqEdit(){
-  if(!EDIT_ID)return;const ge=id=>{const e=document.getElementById('e-'+id);return e?e.value:undefined;};const patch={};
-  ['trip_date','requester_name','transport','vehicle_no','from_loc','to_loc','load_type','hire_amount','halting_charges','weight','payable_amount','paid_amount','reference_id','status','remarks'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=v;});
-  patch.balance_amount=parseFloat(patch.payable_amount||0)-parseFloat(patch.paid_amount||0);
-  if(IS_DEMO){const idx=REQ_DATA.findIndex(x=>x.id===EDIT_ID);if(idx>=0)Object.assign(REQ_DATA[idx],patch);toast('Updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();return;}
+  if(!EDIT_ID)return;
+  let r=REQ_DATA.find(x=>x.id===EDIT_ID);
+  if(!r&&IS_DEMO)r=getDemoRequests().find(x=>x.id===EDIT_ID);
+  if(!canEditRequest(r))return toast('Edit permission denied','error');
+
+  const isApprover=CU.role==='Approver', isFinance=CU.role==='Finance', isUser=CU.role==='User';
+  const ge=id=>{const e=document.getElementById('e-'+id);return e?e.value:undefined;};
+  const patch={};
+
+  // Fields each role can patch
+  if(isApprover){
+    ['trip_date','requester_name','transport','vehicle_no','from_loc','to_loc','load_type','hire_amount','halting_charges','weight','payable_amount','lr_status'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=v;});
+    const pr=ge('remarks');if(pr!==undefined)patch.remarks=pr;
+  }
+  if(isFinance||isApprover){
+    ['paid_amount','reference_id','status'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=v;});
+  }
+  if(isUser){
+    // User can only edit lr_status and remarks within 2h
+    const ls=ge('lr_status');if(ls!==undefined)patch.lr_status=ls;
+    const rm=ge('remarks');if(rm!==undefined)patch.remarks=rm;
+  }
+
+  // Recalculate balance if payable or paid changed
+  if(patch.payable_amount!==undefined||patch.paid_amount!==undefined){
+    const pay=parseFloat(patch.payable_amount??r.payable_amount??0);
+    const paid=parseFloat(patch.paid_amount??r.paid_amount??0);
+    patch.balance_amount=pay-paid;
+  }
+
+  if(IS_DEMO){
+    const idx=REQ_DATA.findIndex(x=>x.id===EDIT_ID);if(idx>=0)Object.assign(REQ_DATA[idx],patch);
+    toast('Updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();return;
+  }
   setBtnLoad('reqModal-save',true,'Saving…');
-  try{const{error}=await sb.from('hire_requests').update(patch).eq('id',EDIT_ID);if(error)throw error;toast('Request updated','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();}
-  catch(e){toast('Update failed: '+e.message,'error');}
+  try{
+    const{error}=await sb.from('hire_requests').update(patch).eq('id',EDIT_ID);
+    if(error)throw error;
+    toast('Request updated','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();
+  }catch(e){toast('Update failed: '+e.message,'error');}
   setBtnLoad('reqModal-save',false,'<i class="bi bi-floppy me-1"></i>Save Changes');
 }
 
+async function deleteReq(){
+  if(!EDIT_ID)return;
+  if(!confirm(`Delete request ${EDIT_ID}? This cannot be undone.`))return;
+  await deleteReqById(EDIT_ID, true);
+}
+
+async function deleteReqById(id, fromModal=false){
+  const r=REQ_DATA.find(x=>x.id===id)||(IS_DEMO?getDemoRequests().find(x=>x.id===id):null);
+  if(!canDeleteRequest(r)){toast('Delete permission denied','error');return;}
+  if(!fromModal&&!confirm(`Delete request ${id}?`))return;
+  if(IS_DEMO){
+    REQ_DATA=REQ_DATA.filter(x=>x.id!==id);
+    if(fromModal)bootstrap.Modal.getInstance(el('reqModal'))?.hide();
+    toast('Deleted (demo)','info');loadRequests();loadDashboard();return;
+  }
+  try{
+    const{error}=await sb.from('hire_requests').delete().eq('id',id);
+    if(error)throw error;
+    if(fromModal)bootstrap.Modal.getInstance(el('reqModal'))?.hide();
+    toast('Request deleted','info');loadRequests();loadDashboard();
+  }catch(e){toast('Delete failed: '+e.message,'error');}
+}
+
+/* ==============================================
+   VENDORS
+   ============================================== */
 async function loadVendorData(){
   if(IS_DEMO){VEND_DATA=[{id:1,name:'Chennai Transports',bank:'SBI',acct:'123456789',ifsc_code:'SBIN0001234',mobile:'9876543210'},{id:2,name:'Fast Cargo',bank:'HDFC',acct:'987654321',ifsc_code:'HDFC0001234',mobile:'9123456780'}];return;}
   try{const{data,error}=await sb.from('hire_vendors').select('*').order('name');if(error)throw error;VEND_DATA=data||[];}catch(e){console.warn('Vendor load:',e.message);}
@@ -647,11 +1082,13 @@ async function saveVendor(){
   const d={name:gv('v-name'),bank:gv('v-bank'),acct:gv('v-acct'),ifsc_code:gv('v-ifsc'),mobile:gv('v-mobile')};
   if(!d.name||!d.bank||!d.acct||!d.ifsc_code||!d.mobile)return toast('All fields required','error');const id=gv('v-id');
   if(IS_DEMO){if(id){const i=VEND_DATA.findIndex(x=>x.id==id);if(i>=0)Object.assign(VEND_DATA[i],d);}else VEND_DATA.push({...d,id:Date.now()});toast('Vendor saved (demo)','success');bootstrap.Modal.getInstance(el('vendModal')).hide();loadVendors();rebuildVendorTS();return;}
-  try{const q=id?sb.from('hire_vendors').update(d).eq('id',id):sb.from('hire_vendors').insert(d);const{error}=await q;if(error)throw error;toast('Vendor saved','success');bootstrap.Modal.getInstance(el('vendModal')).hide();await loadVendorData();loadVendors();rebuildVendorTS();}
-  catch(e){toast('Error: '+e.message,'error');}
+  try{const q=id?sb.from('hire_vendors').update(d).eq('id',id):sb.from('hire_vendors').insert(d);const{error}=await q;if(error)throw error;toast('Vendor saved','success');bootstrap.Modal.getInstance(el('vendModal')).hide();await loadVendorData();loadVendors();rebuildVendorTS();}catch(e){toast('Error: '+e.message,'error');}
 }
 async function delVendor(id){if(!confirm('Delete this vendor?'))return;if(IS_DEMO){VEND_DATA=VEND_DATA.filter(x=>x.id!=id);renderVendors(VEND_DATA);rebuildVendorTS();toast('Deleted (demo)','info');return;}try{const{error}=await sb.from('hire_vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','info');await loadVendorData();loadVendors();rebuildVendorTS();}catch(e){toast('Error: '+e.message,'error');}}
 
+/* ==============================================
+   USERS
+   ============================================== */
 async function loadUserData(){
   if(IS_DEMO){USER_DATA=[{id:1,name:'Demo User',email:'user@hire.com',role:'User',department:'Logistics',mobile:'9876543210',status:'Active'},{id:2,name:'Finance User',email:'finance@hire.com',role:'Finance',department:'Accounts',mobile:'9123456780',status:'Active'},{id:3,name:'Admin User',email:'admin@hire.com',role:'Approver',department:'Management',mobile:'9000112233',status:'Active'}];return;}
   try{const{data,error}=await sb.from('app_users').select('id,email,name,role,department,mobile,status').order('name');if(error)throw error;USER_DATA=data||[];}catch(e){console.warn('User load:',e.message);}
@@ -678,16 +1115,51 @@ function renderRoles(data){const tbody=el('role-tbody');if(!data.length){tbody.i
 function openRoleModal(id,email,role){gset('rm-id',id);gset('rm-role',role);el('rm-email-show').textContent=email;new bootstrap.Modal(el('roleModal')).show();}
 async function saveRole(){const id=gv('rm-id'),role=gv('rm-role');if(IS_DEMO){const i=USER_DATA.findIndex(x=>x.id==id);if(i>=0)USER_DATA[i].role=role;toast('Role updated (demo)','success');bootstrap.Modal.getInstance(el('roleModal')).hide();renderRoles(USER_DATA);return;}try{const{error}=await sb.from('app_users').update({role}).eq('id',id);if(error)throw error;toast('Role updated','success');bootstrap.Modal.getInstance(el('roleModal')).hide();await loadUserData();loadRolesPage();}catch(e){toast('Error: '+e.message,'error');}}
 
-const BULK_HEADERS=['Trip Date','Requester Name','Transport Name','Account No','IFSC Code','LR Numbers','Request Type','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Halting Charges','Weight','Remarks'];
-const HEADER_MAP={'trip date':'trip_date','date':'trip_date','requester name':'requester_name','requester':'requester_name','transport name':'transport','transport':'transport','account no':'account_no','account number':'account_no','ifsc code':'ifsc_code','ifsc':'ifsc_code','lr numbers':'lr_numbers','lr number':'lr_numbers','lr':'lr_numbers','lr no':'lr_numbers','request type':'request_type','type':'request_type','load type':'load_type','vehicle type':'vehicle_type','vehicle no':'vehicle_no','vehicle number':'vehicle_no','vehicle':'vehicle_no','from':'from_loc','origin':'from_loc','from loc':'from_loc','to':'to_loc','destination':'to_loc','to loc':'to_loc','hire amount':'hire_amount','hire':'hire_amount','amount':'hire_amount','halting charges':'halting_charges','halting':'halting_charges','weight':'weight','remarks':'remarks','notes':'remarks'};
+/* ==============================================
+   BULK UPLOAD (New Requests)
+   ============================================== */
+const BULK_HEADERS=['Trip Date','Requester Name','Transport Name','Account No','IFSC Code','LR Numbers','LR Status','Request Type','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Halting Charges','Weight','Remarks'];
+const HEADER_MAP={
+  'trip date':'trip_date','date':'trip_date','requester name':'requester_name','requester':'requester_name',
+  'transport name':'transport','transport':'transport','account no':'account_no','account number':'account_no',
+  'ifsc code':'ifsc_code','ifsc':'ifsc_code','lr numbers':'lr_numbers','lr number':'lr_numbers','lr':'lr_numbers','lr no':'lr_numbers',
+  'lr status':'lr_status','lrstatus':'lr_status','lr_status':'lr_status',
+  'request type':'request_type','type':'request_type','load type':'load_type',
+  'vehicle type':'vehicle_type','vehicle no':'vehicle_no','vehicle number':'vehicle_no','vehicle':'vehicle_no',
+  'from':'from_loc','origin':'from_loc','from loc':'from_loc','to':'to_loc','destination':'to_loc','to loc':'to_loc',
+  'hire amount':'hire_amount','hire':'hire_amount','amount':'hire_amount',
+  'halting charges':'halting_charges','halting':'halting_charges','weight':'weight','remarks':'remarks','notes':'remarks'
+};
 const BULK_REQUIRED=['Trip Date','Requester Name','Transport Name','LR Numbers','Request Type','Vehicle No','From','To','Hire Amount'];
 
-function downloadTemplate(){const ws=XLSX.utils.aoa_to_sheet([BULK_HEADERS,['2026-05-15','Ravi Kumar','Chennai Transports','123456789','SBIN0001234','D-B23453','Full','Full Load','20 Feet','TN09AB1234','Chennai','Mumbai',45000,0,25.5,'Sample'],['2026-05-15','Priya Shah','Fast Cargo','987654321','HDFC0001234','D-B23454,D-B23455','Advance','Part Load','14 Feet','MH12CD5678','Delhi','Pune',32000,500,18,'']]);ws['!cols']=BULK_HEADERS.map(()=>({wch:18}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Hire Requests');XLSX.writeFile(wb,'hire-request-template.xlsx');toast('Template downloaded','success');}
+function downloadTemplate(){
+  const ws=XLSX.utils.aoa_to_sheet([
+    BULK_HEADERS,
+    ['2026-05-15','Ravi Kumar','Chennai Transports','123456789','SBIN0001234','D-B23453','Available','Full','Full Load','20 Feet','TN09AB1234','Chennai','Mumbai',45000,0,25.5,'Sample'],
+    ['2026-05-15','Priya Shah','Fast Cargo','987654321','HDFC0001234','D-B23454,D-B23455','Not Available','Advance','Part Load','14 Feet','MH12CD5678','Delhi','Pune',32000,500,18,''],
+  ]);
+  ws['!cols']=BULK_HEADERS.map(()=>({wch:18}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Hire Requests');
+  XLSX.writeFile(wb,'hire-request-template.xlsx');toast('Template downloaded','success');
+}
+
 function handleBulkDrop(e){e.preventDefault();el('bulk-drop').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processBulkFile(f);}
 function handleBulkSelect(e){const f=e.target.files[0];if(f)processBulkFile(f);}
-function processBulkFile(file){const ext=file.name.split('.').pop().toLowerCase();if(!['xlsx','xls','csv'].includes(ext))return toast('Upload .xlsx, .xls, or .csv','error');const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});if(!raw.length)return toast('File is empty','error');parseBulkRows(raw);}catch(err){toast('Parse error: '+err.message,'error');}};r.readAsBinaryString(file);}
+function processBulkFile(file){
+  const ext=file.name.split('.').pop().toLowerCase();if(!['xlsx','xls','csv'].includes(ext))return toast('Upload .xlsx, .xls, or .csv','error');
+  const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});if(!raw.length)return toast('File is empty','error');parseBulkRows(raw);}catch(err){toast('Parse error: '+err.message,'error');}};r.readAsBinaryString(file);
+}
 async function parseBulkRows(raw){
-  const mapped=raw.map((row,idx)=>{const out={_rowNum:idx+2,_errors:[]};Object.entries(row).forEach(([k,v])=>{const canon=HEADER_MAP[k.toLowerCase().trim()];if(canon)out[canon]=String(v||'').trim();});BULK_REQUIRED.forEach(h=>{const c=HEADER_MAP[h.toLowerCase()];if(!out[c])out._errors.push(`${h} required`);});if(out.request_type&&!['Full','Advance','POD'].includes(out.request_type))out._errors.push('Request Type must be Full/Advance/POD');const hire=parseFloat(out.hire_amount)||0,halt=parseFloat(out.halting_charges)||0;out.payable_amount=hire+halt;out.balance_amount=hire+halt;out.paid_amount=0;out.status='Pending';out.submitted_by=CU.email;return out;});
+  const mapped=raw.map((row,idx)=>{
+    const out={_rowNum:idx+2,_errors:[]};
+    Object.entries(row).forEach(([k,v])=>{const canon=HEADER_MAP[k.toLowerCase().trim()];if(canon)out[canon]=String(v||'').trim();});
+    BULK_REQUIRED.forEach(h=>{const c=HEADER_MAP[h.toLowerCase()];if(!out[c])out._errors.push(`${h} required`);});
+    if(out.request_type&&!['Full','Advance','POD'].includes(out.request_type))out._errors.push('Request Type must be Full/Advance/POD');
+    if(out.lr_status&&!['Available','Not Available'].includes(out.lr_status))out._errors.push('LR Status must be Available or Not Available');
+    const hire=parseFloat(out.hire_amount)||0,halt=parseFloat(out.halting_charges)||0;
+    out.payable_amount=hire+halt;out.balance_amount=hire+halt;out.paid_amount=0;out.status='Pending';out.submitted_by=CU.email;out.submitted_at=new Date().toISOString();
+    return out;
+  });
   const lrRowMap={};mapped.forEach(r=>{if(!r.lr_numbers)return;parseLR(r.lr_numbers).forEach(lr=>{const k=lr.toUpperCase().trim();if(!lrRowMap[k])lrRowMap[k]=[];lrRowMap[k].push(r._rowNum);});});
   const intraDups=Object.entries(lrRowMap).filter(([,rows])=>rows.length>1);
   mapped.forEach(r=>{if(!r.lr_numbers)return;const myLRs=parseLR(r.lr_numbers).map(l=>l.toUpperCase().trim());const dh=intraDups.filter(([k])=>myLRs.includes(k)).map(([k,rows])=>({lr:k,rows}));if(dh.length){r._intraDups=dh;r._errors.push(`Dup LR(s): ${dh.map(d=>d.lr).join(', ')}`);}});
@@ -707,30 +1179,179 @@ async function runBulkLRVerify(validRows,intraDups=[]){
   verEl.innerHTML=html||'<div class="text-muted small">No LR numbers to verify.</div>';badgeEl.className=`bs ${allOk?'bs-approved':'bs-rejected'}`;badgeEl.textContent=allOk?'✓ All Verified':'⚠ Issues Found';
   validRows.forEach(r=>{const lrs=parseLR(r.lr_numbers||'');r._lrOk=lrs.every(lr=>{const isDup=intraDups.some(([k])=>k===lr.toUpperCase().trim());if(isDup)return false;return lrResMap[`${lr}_${r.request_type}`]?.ok!==false;});});
   const okRows=validRows.filter(r=>r._lrOk);
-  el('bulk-summary').innerHTML=`<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${BULK_ROWS.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${okRows.length}</span><div style="font-size:11px;color:var(--muted)">LR OK</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${BULK_ROWS.filter(r=>r._errors.length>0).length+validRows.filter(r=>!r._lrOk).length}</span><div style="font-size:11px;color:var(--muted)">Issues</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${intraDups.length}</span><div style="font-size:11px;color:var(--muted)">Dup LRs</div></div><div style="margin-left:auto;font-size:12px;color:${allOk?'var(--green)':'var(--red)'}"><i class="bi ${allOk?'bi-check-circle-fill':'bi-exclamation-triangle-fill'} me-1"></i>${allOk?'Ready to submit':'Fix issues before submitting'}</div>`;
+  el('bulk-summary').innerHTML=`<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${BULK_ROWS.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${okRows.length}</span><div style="font-size:11px;color:var(--muted)">LR OK</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${BULK_ROWS.filter(r=>r._errors.length>0).length+validRows.filter(r=>!r._lrOk).length}</span><div style="font-size:11px;color:var(--muted)">Issues</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${intraDups.length}</span><div style="font-size:11px;color:var(--muted)">Dup LRs</div></div><div style="margin-left:auto;font-size:12px;color:${allOk?'var(--green)':'var(--red)'}"><i class="bi ${allOk?'bi-check-circle-fill':'bi-exclamation-triangle-fill'} me-1"></i>${allOk?'Ready to submit':'Fix issues'}</div>`;
 }
-function renderBulkPreview(rows){el('bulk-thead').innerHTML='<tr><th>Row</th><th>LR Numbers</th><th>Requester</th><th>Transport</th><th>Vehicle</th><th>Route</th><th>Load</th><th>Hire ₹</th><th>Type</th><th>Issues</th></tr>';el('bulk-rowct').textContent=`${rows.length} rows`;el('bulk-tbody').innerHTML=rows.map(r=>{const hasErr=r._errors.length>0,hasDup=!!r._intraDups;return`<tr style="${hasErr?'background:#fff5f5':''}"><td>${r._rowNum}</td><td>${hasDup?`<span class="badge-dup">${esc(r.lr_numbers||'')}</span>`:fmtLR(r.lr_numbers||'')}</td><td>${esc(r.requester_name||'')}</td><td>${esc(r.transport||'')}</td><td>${esc(r.vehicle_no||'')}</td><td>${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td>${esc(r.load_type||'')}</td><td>₹${fmtN(r.hire_amount||0)}</td><td>${typeB(r.request_type||'Full')}</td><td>${hasErr?`<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`:'<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i></span>'}</td></tr>`;}).join('');}
-async function submitBulk(){const toSubmit=BULK_ROWS.filter(r=>r._errors.length===0&&r._lrOk!==false);if(!toSubmit.length)return toast('No valid rows to submit','error');setBtnLoad('bulk-submit-btn',true,'Uploading…');const clean=toSubmit.map(({_rowNum,_errors,_lrOk,_intraDups,...row})=>row);if(IS_DEMO){clean.forEach(r=>{r.id='HR-'+String(Date.now()+Math.random()).replace('.','').slice(-6);REQ_DATA.unshift(r);});toast(`${clean.length} request(s) submitted (demo)!`,'success');setBtnLoad('bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Submit Valid Rows');clearBulk();loadDashboard();goto('requests',document.querySelector('[data-page="requests"]'));return;}try{const{error}=await sb.from('hire_requests').insert(clean);if(error)throw error;toast(`${clean.length} request(s) submitted!`,'success');clearBulk();loadDashboard();goto('requests',document.querySelector('[data-page="requests"]'));}catch(e){toast('Upload error: '+e.message,'error');}setBtnLoad('bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Submit Valid Rows');}
+function renderBulkPreview(rows){
+  el('bulk-thead').innerHTML='<tr><th>Row</th><th>LR Numbers</th><th>LR Status</th><th>Requester</th><th>Transport</th><th>Vehicle</th><th>Route</th><th>Load</th><th>Hire ₹</th><th>Type</th><th>Issues</th></tr>';
+  el('bulk-rowct').textContent=`${rows.length} rows`;
+  el('bulk-tbody').innerHTML=rows.map(r=>{const hasErr=r._errors.length>0,hasDup=!!r._intraDups;return`<tr style="${hasErr?'background:#fff5f5':''}"><td>${r._rowNum}</td><td>${hasDup?`<span class="badge-dup">${esc(r.lr_numbers||'')}</span>`:fmtLR(r.lr_numbers||'')}</td><td>${lrStatusB(r.lr_status)}</td><td>${esc(r.requester_name||'')}</td><td>${esc(r.transport||'')}</td><td>${esc(r.vehicle_no||'')}</td><td>${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td>${esc(r.load_type||'')}</td><td>₹${fmtN(r.hire_amount||0)}</td><td>${typeB(r.request_type||'Full')}</td><td>${hasErr?`<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`:'<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i></span>'}</td></tr>`;}).join('');
+}
+async function submitBulk(){
+  const toSubmit=BULK_ROWS.filter(r=>r._errors.length===0&&r._lrOk!==false);if(!toSubmit.length)return toast('No valid rows','error');
+  setBtnLoad('bulk-submit-btn',true,'Uploading…');
+  const clean=toSubmit.map(({_rowNum,_errors,_lrOk,_intraDups,...row})=>row);
+  if(IS_DEMO){clean.forEach(r=>{r.id='HR-'+String(Date.now()+Math.random()).replace('.','').slice(-6);REQ_DATA.unshift(r);});toast(`${clean.length} request(s) submitted (demo)!`,'success');setBtnLoad('bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Submit Valid Rows');clearBulk();loadDashboard();goto('requests',document.querySelector('[data-page="requests"]'));return;}
+  try{const{error}=await sb.from('hire_requests').insert(clean);if(error)throw error;toast(`${clean.length} request(s) submitted!`,'success');clearBulk();loadDashboard();goto('requests',document.querySelector('[data-page="requests"]'));}catch(e){toast('Upload error: '+e.message,'error');}
+  setBtnLoad('bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Submit Valid Rows');
+}
 function clearBulk(){BULK_ROWS=[];el('bulk-result').style.display='none';el('bulk-file').value='';el('bulk-dup-banner').style.display='none';}
 
-function todayIST(){const now=new Date();const ist=new Date(now.getTime()+(5.5*60*60*1000));return ist.toISOString().slice(0,10);}
-async function loadDigestPage(){el('digest-demo-warn').style.display=IS_DEMO?'flex':'none';_renderDigestRecipients();await _loadTodayRequests();}
-function _renderDigestRecipients(){const approvers=USER_DATA.filter(u=>u.role==='Approver'&&u.status!=='Inactive');const wrap=el('digest-recipients');if(!approvers.length){wrap.innerHTML=`<div class="empty-st" style="padding:20px"><i class="bi bi-person-x"></i><p>No Approver users found</p></div>`;return;}wrap.innerHTML=approvers.map(u=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${esc(u.name.charAt(0))}</div><div style="min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">${esc(u.name)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(u.email)}</div></div><span class="bs bs-approved ms-auto" style="font-size:10.5px">Will receive</span></div>`).join('');}
+/* ==============================================
+   BULK EXPORT (for validate tab)
+   ============================================== */
+async function exportBulkRequests(){
+  setBtnLoad('bulk-export-btn',true,'Exporting…');
+  let data=[];
+  const statusFlt=gv('bulk-exp-status'), fromFlt=gv('bulk-exp-from'), toFlt=gv('bulk-exp-to');
+  if(IS_DEMO){
+    data=getDemoRequests();
+  } else {
+    try{
+      let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
+      if(CU.role==='User')q=q.eq('submitted_by',CU.email);
+      if(statusFlt!=='All')q=q.eq('status',statusFlt);
+      if(fromFlt)q=q.gte('trip_date',fromFlt);
+      if(toFlt)q=q.lte('trip_date',toFlt);
+      const{data:d,error}=await q;if(error)throw error;data=d||[];
+    }catch(e){toast('Export error: '+e.message,'error');setBtnLoad('bulk-export-btn',false,'<i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel');return;}
+  }
+  if(!data.length){toast('No requests to export','info');setBtnLoad('bulk-export-btn',false,'<i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel');return;}
+
+  // Build export with columns needed for validation update
+  const headers=['Ref ID','Trip Date','Requester Name','Transport Name','LR Numbers','LR Status','Request Type','Load Type','Vehicle No','From','To','Hire Amount','Halting Charges','Payable Amount','Paid Amount','Balance Amount','Ref No','Status','Remarks','Submitted By','Submitted At'];
+  const rows=[headers,...data.map(r=>[r.id||'',r.trip_date||'',r.requester_name||'',r.transport||'',r.lr_numbers||'',r.lr_status||'',r.request_type||'',r.load_type||'',r.vehicle_no||'',r.from_loc||'',r.to_loc||'',r.hire_amount||0,r.halting_charges||0,r.payable_amount||0,r.paid_amount||0,r.balance_amount||0,r.reference_id||'',r.status||'',r.remarks||'',r.submitted_by||'',r.submitted_at||r.created_at||''])];
+
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=headers.map(()=>({wch:18}));
+  // Color header
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Hire Requests');
+  XLSX.writeFile(wb,`hire-requests-export-${new Date().toISOString().slice(0,10)}.xlsx`);
+  toast(`Exported ${data.length} request(s)`,'success');
+  setBtnLoad('bulk-export-btn',false,'<i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel');
+}
+
+/* ==============================================
+   BULK VALIDATE & RE-UPLOAD
+   ============================================== */
+function handleBulkValDrop(e){e.preventDefault();el('bulk-val-drop').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processBulkValFile(f);}
+function handleBulkValSelect(e){const f=e.target.files[0];if(f)processBulkValFile(f);}
+function processBulkValFile(file){
+  const ext=file.name.split('.').pop().toLowerCase();if(!['xlsx','xls','csv'].includes(ext))return toast('Upload .xlsx, .xls, or .csv','error');
+  const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});if(!raw.length)return toast('File is empty','error');parseBulkValRows(raw);}catch(err){toast('Parse error: '+err.message,'error');}};r.readAsBinaryString(file);
+}
+async function parseBulkValRows(raw){
+  // Map headers to fields — key fields: Ref ID, LR Status, Payable Amount, Remarks
+  const mapped=raw.map((row,idx)=>{
+    const out={_rowNum:idx+2,_errors:[],_matched:false};
+    Object.entries(row).forEach(([k,v])=>{
+      const kl=k.toLowerCase().trim();
+      if(kl==='ref id'||kl==='id'||kl==='ref_id')out.id=String(v||'').trim();
+      if(kl==='lr status'||kl==='lr_status'||kl==='lrstatus')out.lr_status=String(v||'').trim();
+      if(kl==='payable amount'||kl==='payable_amount'||kl==='payable')out.payable_amount=String(v||'').trim();
+      if(kl==='remarks'||kl==='notes')out.remarks=String(v||'').trim();
+      // Read-only reference fields
+      if(kl==='requester name')out.requester_name=String(v||'').trim();
+      if(kl==='lr numbers')out.lr_numbers=String(v||'').trim();
+    });
+    if(!out.id)out._errors.push('Ref ID required');
+    if(out.lr_status&&!['Available','Not Available'].includes(out.lr_status))out._errors.push('LR Status must be Available or Not Available');
+    return out;
+  }).filter(r=>r.id); // skip blank rows
+
+  // Match against existing REQ_DATA
+  if(!IS_DEMO&&REQ_DATA.length===0){
+    // Load if needed
+    try{const{data}=await sb.from('hire_requests').select('id,requester_name,lr_numbers,lr_status,payable_amount,remarks');REQ_DATA=data||[];}catch(e){}
+  }
+  mapped.forEach(r=>{
+    const existing=REQ_DATA.find(x=>x.id===r.id)||(IS_DEMO?getDemoRequests().find(x=>x.id===r.id):null);
+    r._matched=!!existing;
+    if(!existing)r._errors.push('Ref ID not found in database');
+  });
+
+  BULK_VAL_ROWS=mapped;
+  const valid=mapped.filter(r=>r._errors.length===0&&r._matched);
+  el('bulk-val-summary').innerHTML=`<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${mapped.length}</span><div style="font-size:11px;color:var(--muted)">Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${valid.length}</span><div style="font-size:11px;color:var(--muted)">Matched</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${mapped.filter(r=>r._errors.length>0).length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div>`;
+  el('bulk-val-rowct').textContent=`${mapped.length} rows`;
+  el('bulk-val-tbody').innerHTML=mapped.map(r=>`<tr style="${r._errors.length?'background:#fff5f5':''}">
+    <td><code style="color:var(--blue)">${esc(r.id)}</code></td>
+    <td>${esc(r.requester_name||'')}</td>
+    <td>${fmtLR(r.lr_numbers||'')}</td>
+    <td>${lrStatusB(r.lr_status)}</td>
+    <td>${r.payable_amount?'₹'+fmtN(r.payable_amount):'-'}</td>
+    <td>${esc(r.remarks||'—')}</td>
+    <td>${r._errors.length?`<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`:'<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i> Matched</span>'}</td>
+  </tr>`).join('');
+  el('bulk-val-result').style.display='block';
+  el('bulk-val-submit-btn').disabled=valid.length===0;
+  el('bulk-val-msg').textContent=valid.length?`${valid.length} row(s) will be updated`:'No valid rows to update';
+}
+
+async function submitBulkValidation(){
+  const valid=BULK_VAL_ROWS.filter(r=>r._errors.length===0&&r._matched);if(!valid.length)return toast('No valid rows','error');
+  setBtnLoad('bulk-val-submit-btn',true,'Applying…');
+  if(IS_DEMO){
+    valid.forEach(r=>{const idx=REQ_DATA.findIndex(x=>x.id===r.id);if(idx>=0){if(r.lr_status)REQ_DATA[idx].lr_status=r.lr_status;if(r.payable_amount)REQ_DATA[idx].payable_amount=parseFloat(r.payable_amount);if(r.remarks!==undefined)REQ_DATA[idx].remarks=r.remarks;}});
+    toast(`${valid.length} request(s) updated (demo)!`,'success');clearBulkVal();loadDashboard();setBtnLoad('bulk-val-submit-btn',false,'<i class="bi bi-check2-all me-2"></i>Apply Updates');return;
+  }
+  let successCount=0,failCount=0;
+  for(const row of valid){
+    const patch={};
+    if(row.lr_status)patch.lr_status=row.lr_status;
+    if(row.payable_amount)patch.payable_amount=parseFloat(row.payable_amount);
+    if(row.remarks!==undefined)patch.remarks=row.remarks;
+    if(!Object.keys(patch).length)continue;
+    try{const{error}=await sb.from('hire_requests').update(patch).eq('id',row.id);if(error)throw error;successCount++;}catch(e){failCount++;}
+  }
+  toast(`Updated ${successCount} request(s)${failCount?` (${failCount} failed)`:''}!`,'success');
+  clearBulkVal();loadDashboard();loadRequests();
+  setBtnLoad('bulk-val-submit-btn',false,'<i class="bi bi-check2-all me-2"></i>Apply Updates');
+}
+
+function clearBulkVal(){BULK_VAL_ROWS=[];el('bulk-val-result').style.display='none';el('bulk-val-file').value='';}
+
+/* ==============================================
+   CSV EXPORT
+   ============================================== */
+function exportCSV(){
+  if(!REQ_DATA.length)return toast('No data to export','info');
+  const h=['ID','Trip Date','Requester','Transport','Account No','IFSC','LR Numbers','LR Status','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Weight','Halting','Status','Payable','Paid','Balance','Ref ID','Remarks','Request Type','Submitted By'];
+  const k=['id','trip_date','requester_name','transport','account_no','ifsc_code','lr_numbers','lr_status','load_type','vehicle_type','vehicle_no','from_loc','to_loc','hire_amount','weight','halting_charges','status','payable_amount','paid_amount','balance_amount','reference_id','remarks','request_type','submitted_by'];
+  const rows=[h,...REQ_DATA.map(r=>k.map(key=>`"${String(r[key]||'').replace(/"/g,'""')}"`)  )];
+  const csv=rows.map(r=>r.join(',')).join('\n');const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`hire-requests-${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('CSV downloaded','success');
+}
+
+/* ==============================================
+   EMAIL DIGEST
+   ============================================== */
+function todayIST(){const now=new Date();return new Date(now.getTime()+(5.5*60*60*1000)).toISOString().slice(0,10);}
+async function loadDigestPage(){
+  el('digest-demo-warn').style.display=IS_DEMO?'flex':'none';
+  _renderDigestRecipients();await _loadTodayRequests();
+}
+function _renderDigestRecipients(){
+  const approvers=USER_DATA.filter(u=>u.role==='Approver'&&u.status!=='Inactive');const wrap=el('digest-recipients');
+  if(!approvers.length){wrap.innerHTML=`<div class="empty-st" style="padding:20px"><i class="bi bi-person-x"></i><p>No Approver users found</p></div>`;return;}
+  wrap.innerHTML=approvers.map(u=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${esc(u.name.charAt(0))}</div><div style="min-width:0"><div style="font-size:13px;font-weight:600">${esc(u.name)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(u.email)}</div></div><span class="bs bs-approved ms-auto" style="font-size:10.5px">Will receive</span></div>`).join('');
+}
 async function _loadTodayRequests(){
   const tbody=el('digest-today-tbody'),today=todayIST();let todayReqs=[];
   if(IS_DEMO){todayReqs=getDemoRequests();}
-  else{try{const{data,error}=await sb.from('hire_requests').select('id,requester_name,transport,from_loc,to_loc,hire_amount,request_type,status,created_at').gte('created_at',today+'T00:00:00+05:30').lte('created_at',today+'T23:59:59+05:30').order('created_at',{ascending:true});if(error)throw error;todayReqs=data||[];}catch(e){toast('Failed to load today\'s requests: '+e.message,'error');}}
+  else{try{const{data,error}=await sb.from('hire_requests').select('id,requester_name,transport,from_loc,to_loc,hire_amount,lr_status,request_type,status,created_at').gte('created_at',today+'T00:00:00+05:30').lte('created_at',today+'T23:59:59+05:30').order('created_at',{ascending:true});if(error)throw error;todayReqs=data||[];}catch(e){toast('Error: '+e.message,'error');}}
   const countEl=el('digest-today-count');countEl.textContent=todayReqs.length?`(${todayReqs.length} request${todayReqs.length>1?'s':''})`: '(none yet)';
-  if(!todayReqs.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-st" style="padding:24px"><i class="bi bi-calendar-x"></i><p>No requests submitted today</p></div></td></tr>`;return;}
-  tbody.innerHTML=todayReqs.map(r=>`<tr><td><code style="font-size:10px;color:var(--blue)">${esc(r.id||'—')}</code></td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');
+  if(!todayReqs.length){tbody.innerHTML=`<tr><td colspan="8"><div class="empty-st" style="padding:24px"><i class="bi bi-calendar-x"></i><p>No requests submitted today</p></div></td></tr>`;return;}
+  tbody.innerHTML=todayReqs.map(r=>`<tr><td><code style="font-size:10px;color:var(--blue)">${esc(r.id||'—')}</code></td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${lrStatusB(r.lr_status)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');
 }
 async function sendDigestNow(){
   const resultEl=el('digest-send-result');resultEl.style.display='none';
-  if(IS_DEMO){toast('Demo mode — email not actually sent.','warn');resultEl.style.display='block';resultEl.innerHTML=`<div class="info-alert"><i class="bi bi-info-circle-fill"></i><span>In <strong>Demo Mode</strong> the Edge Function call is simulated.</span></div>`;return;}
+  if(IS_DEMO){toast('Demo mode — email not actually sent.','warn');resultEl.style.display='block';resultEl.innerHTML=`<div class="info-alert"><i class="bi bi-info-circle-fill"></i><span>In <strong>Demo Mode</strong> emails are simulated.</span></div>`;return;}
   const overrideRaw=gv('digest-override-emails').trim();const overrideEmails=overrideRaw?overrideRaw.split(',').map(s=>s.trim()).filter(Boolean):[];
   setBtnLoad('digest-send-btn',true,'Sending…');
-  try{const res=await fetch(`${SUPA_URL}/functions/v1/daily-digest`,{method:'POST',headers:{'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({emails:overrideEmails})});const json=await res.json();if(!res.ok)throw new Error(json.error||`HTTP ${res.status}`);if(json.skipped){toast('No requests today — digest not sent','info');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;color:#92400e;font-size:12px"><i class="bi bi-info-circle me-2"></i>No requests found for today. Digest was skipped.</div>`;}else{toast(`✅ Digest sent to ${json.sent_to?.length||0} recipient(s)`, 'success');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#d1fae5;border:1px solid #a7f3d0;border-radius:var(--r);padding:10px 14px;color:#065f46;font-size:12px"><i class="bi bi-check-circle-fill me-2"></i><strong>Sent!</strong> Delivered to: ${(json.sent_to||[]).map(e=>`<strong>${esc(e)}</strong>`).join(', ')} · ${json.request_count} request(s).</div>`;loadDigestPage();}}
-  catch(e){toast('Send failed: '+e.message,'error');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:var(--r);padding:10px 14px;color:#991b1b;font-size:12px"><i class="bi bi-x-circle-fill me-2"></i><strong>Error:</strong> ${esc(e.message)}</div>`;}
+  try{const res=await fetch(`${SUPA_URL}/functions/v1/daily-digest`,{method:'POST',headers:{'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({emails:overrideEmails})});const json=await res.json();if(!res.ok)throw new Error(json.error||`HTTP ${res.status}`);
+    if(json.skipped){toast('No requests today — digest skipped','info');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;color:#92400e;font-size:12px"><i class="bi bi-info-circle me-2"></i>No requests found for today.</div>`;}
+    else{toast(`✅ Digest sent to ${json.sent_to?.length||0} recipient(s)`,'success');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#d1fae5;border:1px solid #a7f3d0;border-radius:var(--r);padding:10px 14px;color:#065f46;font-size:12px"><i class="bi bi-check-circle-fill me-2"></i><strong>Sent!</strong> Delivered to: ${(json.sent_to||[]).map(e=>`<strong>${esc(e)}</strong>`).join(', ')}</div>`;loadDigestPage();}
+  }catch(e){toast('Send failed: '+e.message,'error');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:var(--r);padding:10px 14px;color:#991b1b;font-size:12px"><i class="bi bi-x-circle-fill me-2"></i>${esc(e.message)}</div>`;}
   setBtnLoad('digest-send-btn',false,'<i class="bi bi-send-fill me-2"></i>Send Digest Now');
 }
 async function previewDigest(){
@@ -738,29 +1359,68 @@ async function previewDigest(){
   const html=_buildPreviewHTML(todayReqs,todayIST());const win=window.open('','_blank','width=700,height=800,scrollbars=yes');if(win){win.document.write(html);win.document.close();}else toast('Popup blocked','warn');
 }
 function _buildPreviewHTML(requests,today){
-  const fmtDate=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});const inr=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});const total=requests.length,pending=requests.filter(r=>r.status==='Pending').length,approved=requests.filter(r=>r.status==='Approved').length,paid=requests.filter(r=>r.status==='Paid').length,totalAmt=requests.reduce((s,r)=>s+parseFloat(r.hire_amount||0),0);const sc=s=>({Pending:'color:#92400e;background:#fef3c7',Approved:'color:#065f46;background:#d1fae5',Paid:'color:#1e40af;background:#dbeafe',Rejected:'color:#991b1b;background:#fee2e2'})[s]||'color:#374151;background:#f1f5f9';
-  const rows=requests.map(r=>`<tr><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-family:monospace;font-size:12px;color:#1a56f0">${esc(r.id||'')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.requester_name||'—')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.transport||'—')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:11px;color:#475569">${esc((r.lr_numbers||'').replace(/,/g,', '))}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px;font-weight:700">${inr(r.hire_amount)}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;${sc(r.status)}">${esc(r.status)}</span></td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.request_type||'Full')}</td></tr>`).join('');
-  return`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Email Preview — ${fmtDate(today)}</title><style>body{margin:0;padding:20px;background:#f0f4fb;font-family:'Segoe UI',Arial,sans-serif}.preview-banner{background:#1a56f0;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:8px;border-radius:8px;margin-bottom:16px}</style></head><body><div class="preview-banner">📧 EMAIL PREVIEW — This is how the digest will appear in recipients' inboxes</div><table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4fb"><tr><td align="center"><table width="640" cellpadding="0" cellspacing="0" style="max-width:640px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1)"><tr><td style="background:linear-gradient(135deg,#07111f,#1a56f0);padding:32px 36px"><div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px">🚛 Daily Hire Request Digest</div><div style="color:#93c5fd;font-size:13px;margin-top:5px">${fmtDate(today)} · Generated at 7:30 PM IST</div></td></tr><tr><td style="padding:28px 36px 0"><table width="100%" cellspacing="8"><tr><td style="background:#eff3ff;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#1a56f0">${total}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Total</div></td><td style="background:#fef9c3;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#d97706">${pending}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Pending</div></td><td style="background:#dcfce7;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#059669">${approved}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Approved</div></td><td style="background:#dbeafe;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#1d4ed8">${paid}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Paid</div></td></tr></table></td></tr><tr><td style="padding:16px 36px 8px"><div style="background:#f7f9fe;border-radius:10px;padding:12px 18px;display:inline-block"><span style="font-size:13px;font-weight:600;color:#5a6a85">Total Hire Value: </span><span style="font-size:18px;font-weight:800;color:#07111f">${inr(totalAmt)}</span></div></td></tr><tr><td style="padding:12px 36px 28px"><table width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e1e8f5;border-radius:10px;overflow:hidden"><thead><tr style="background:#f1f5fd">${['Ref ID','Requester','Transport','LR Numbers','Route','Hire ₹','Status','Type'].map(h=>`<th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:#5a6a85;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #e1e8f5">${h}</th>`).join('')}</tr></thead><tbody>${rows||'<tr><td colspan="8" style="padding:24px;text-align:center;color:#94a3b8;font-size:13px">No requests submitted today</td></tr>'}</tbody></table></td></tr><tr><td style="padding:20px 36px 28px;border-top:1px solid #e1e8f5;background:#f7f9fe"><p style="margin:0;font-size:11.5px;color:#94a3b8;text-align:center">Hire Request Management System · Automated daily digest · Do not reply</p></td></tr></table></td></tr></table></body></html>`;
+  const fmtDate=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});const inr=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});const total=requests.length,pending=requests.filter(r=>r.status==='Pending').length,approved=requests.filter(r=>r.status==='Approved').length,paid=requests.filter(r=>r.status==='Paid').length,totalAmt=requests.reduce((s,r)=>s+parseFloat(r.hire_amount||0),0);
+  const sc=s=>({Pending:'color:#92400e;background:#fef3c7',Approved:'color:#065f46;background:#d1fae5',Paid:'color:#1e40af;background:#dbeafe',Rejected:'color:#991b1b;background:#fee2e2'})[s]||'color:#374151;background:#f1f5f9';
+  const lrSc=s=>s==='Available'?'color:#065f46;background:#d1fae5':'color:#991b1b;background:#fee2e2';
+  const rows=requests.map(r=>`<tr><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-family:monospace;font-size:12px;color:#1a56f0">${esc(r.id||'')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.requester_name||'—')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.transport||'—')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:11px;color:#475569">${esc((r.lr_numbers||'').replace(/,/g,', '))}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;${lrSc(r.lr_status)}">${r.lr_status||'—'}</span></td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px;font-weight:700">${inr(r.hire_amount)}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;${sc(r.status)}">${esc(r.status)}</span></td></tr>`).join('');
+  return`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Email Preview — ${fmtDate(today)}</title><style>body{margin:0;padding:20px;background:#f0f4fb;font-family:'Segoe UI',Arial,sans-serif}.preview-banner{background:#1a56f0;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:8px;border-radius:8px;margin-bottom:16px}</style></head><body><div class="preview-banner">📧 EMAIL PREVIEW</div><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="640" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1)"><tr><td style="background:linear-gradient(135deg,#07111f,#1a56f0);padding:32px 36px"><div style="font-size:22px;font-weight:800;color:#fff">🚛 Daily Hire Request Digest</div><div style="color:#93c5fd;font-size:13px;margin-top:5px">${fmtDate(today)} · 7:30 PM IST</div></td></tr><tr><td style="padding:28px 36px 0"><table width="100%"><tr><td style="background:#eff3ff;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#1a56f0">${total}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Total</div></td><td style="background:#fef9c3;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#d97706">${pending}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Pending</div></td><td style="background:#dcfce7;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#059669">${approved}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Approved</div></td><td style="background:#dbeafe;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#1d4ed8">${paid}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Paid</div></td></tr></table></td></tr><tr><td style="padding:12px 36px 28px"><table width="100%" style="border:1px solid #e1e8f5;border-radius:10px;overflow:hidden"><thead><tr style="background:#f1f5fd">${['Ref ID','Requester','Transport','LR Numbers','LR Status','Route','Hire ₹','Status'].map(h=>`<th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:#5a6a85;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #e1e8f5">${h}</th>`).join('')}</tr></thead><tbody>${rows||'<tr><td colspan="8" style="padding:24px;text-align:center;color:#94a3b8">No requests today</td></tr>'}</tbody></table></td></tr><tr><td style="padding:20px 36px;border-top:1px solid #e1e8f5;background:#f7f9fe"><p style="margin:0;font-size:11.5px;color:#94a3b8;text-align:center">Hire Request Management System · Automated daily digest</p></td></tr></table></td></tr></table></body></html>`;
 }
 
-function exportCSV(){if(!REQ_DATA.length)return toast('No data to export','info');const h=['ID','Trip Date','Requester','Transport','Account No','IFSC','LR Numbers','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Weight','Halting','Status','Payable','Paid','Balance','Ref ID','Remarks','Request Type','Submitted By'];const k=['id','trip_date','requester_name','transport','account_no','ifsc_code','lr_numbers','load_type','vehicle_type','vehicle_no','from_loc','to_loc','hire_amount','weight','halting_charges','status','payable_amount','paid_amount','balance_amount','reference_id','remarks','request_type','submitted_by'];const rows=[h,...REQ_DATA.map(r=>k.map(key=>`"${String(r[key]||'').replace(/"/g,'""')}"`)  )];const csv=rows.map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`hire-requests-${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('CSV downloaded','success');}
-
+/* ==============================================
+   FILE HELPERS
+   ============================================== */
 function dzOver(e,id){e.preventDefault();el(id).classList.add('drag');}
 function dzLeave(id){el(id).classList.remove('drag');}
 function dzDrop(e,zoneId,inputId){e.preventDefault();dzLeave(zoneId);const file=e.dataTransfer.files[0];if(!file)return;const inp=el(inputId);const dt=new DataTransfer();dt.items.add(file);inp.files=dt.files;handleFile(inputId,zoneId,'fp-'+inputId.replace('f-',''));}
-function handleFile(inputId,zoneId,previewId){const inp=el(inputId),zone=el(zoneId),preEl=el(previewId);const errId='fe-'+inputId.replace('f-',''),errEl=el(errId);if(!inp?.files[0])return;const file=inp.files[0],ext=file.name.split('.').pop().toLowerCase();if(preEl){preEl.innerHTML='';preEl.className='fp';}if(errEl){errEl.style.display='none';errEl.textContent='';}if(!OK_EXTS.includes(ext)){if(errEl){errEl.textContent=`Invalid format. Allowed: PDF, JPG, PNG, WEBP`;errEl.style.display='block';}inp.value='';return;}if(file.size>MAX_FILE){if(errEl){errEl.textContent=`File too large. Max 5 MB (this: ${(file.size/1048576).toFixed(1)} MB)`;errEl.style.display='block';}inp.value='';return;}zone.classList.add('has-file');if(preEl){const reader=new FileReader();reader.onload=ev=>{let inner=ext==='pdf'?`<div class="pdf-nm"><i class="bi bi-filetype-pdf"></i><span>${esc(file.name)}</span><small class="ms-auto text-muted">${(file.size/1024).toFixed(0)} KB</small></div>`:`<img src="${ev.target.result}" alt="preview"/>`;preEl.innerHTML=inner+`<button type="button" class="f-clr" onclick="clearFile('${inputId}','${zoneId}','${previewId}')">×</button>`;preEl.className='fp show';};reader.readAsDataURL(file);}}
+function handleFile(inputId,zoneId,previewId){
+  const inp=el(inputId),zone=el(zoneId),preEl=el(previewId);const errId='fe-'+inputId.replace('f-',''),errEl=el(errId);
+  if(!inp?.files[0])return;const file=inp.files[0],ext=file.name.split('.').pop().toLowerCase();
+  if(preEl){preEl.innerHTML='';preEl.className='fp';}if(errEl){errEl.style.display='none';errEl.textContent='';}
+  if(!OK_EXTS.includes(ext)){if(errEl){errEl.textContent=`Invalid format. Allowed: PDF, JPG, PNG, WEBP`;errEl.style.display='block';}inp.value='';return;}
+  if(file.size>MAX_FILE){if(errEl){errEl.textContent=`File too large. Max 5 MB`;errEl.style.display='block';}inp.value='';return;}
+  zone.classList.add('has-file');
+  if(preEl){const reader=new FileReader();reader.onload=ev=>{let inner=ext==='pdf'?`<div class="pdf-nm"><i class="bi bi-filetype-pdf"></i><span>${esc(file.name)}</span><small class="ms-auto text-muted">${(file.size/1024).toFixed(0)} KB</small></div>`:`<img src="${ev.target.result}" alt="preview"/>`;preEl.innerHTML=inner+`<button type="button" class="f-clr" onclick="clearFile('${inputId}','${zoneId}','${previewId}')">×</button>`;preEl.className='fp show';};reader.readAsDataURL(file);}
+}
 function clearFile(inputId,zoneId,previewId){const inp=el(inputId),zone=el(zoneId),pre=el(previewId);if(inp)inp.value='';if(zone)zone.classList.remove('has-file','drag');if(pre){pre.innerHTML='';pre.className='fp';}}
 function readBase64(inputId){return new Promise(resolve=>{const inp=el(inputId);if(!inp?.files[0]){resolve(null);return;}const r=new FileReader();r.onload=e=>resolve({data:e.target.result,name:inp.files[0].name});r.readAsDataURL(inp.files[0]);});}
 
-function getDemoRequests(){return[{id:'HR-001',trip_date:'2026-05-10',submitted_at:'2026-05-10T09:14:32Z',requester_name:'Demo User',transport:'Chennai Transports',lr_numbers:'D-B23453',vehicle_no:'TN09AB1234',from_loc:'Chennai',to_loc:'Mumbai',load_type:'Full Load',hire_amount:45000,payable_amount:45000,paid_amount:45000,balance_amount:0,reference_id:'REF001',request_type:'Full',status:'Paid',halting_charges:0,submitted_by:'user@hire.com'},{id:'HR-002',trip_date:'2026-05-11',submitted_at:'2026-05-11T11:02:17Z',requester_name:'Finance User',transport:'Fast Cargo',lr_numbers:'D-B23454,D-B23455',vehicle_no:'MH12CD5678',from_loc:'Delhi',to_loc:'Pune',load_type:'Part Load',hire_amount:32000,payable_amount:32500,paid_amount:16000,balance_amount:16500,reference_id:'',request_type:'Advance',status:'Pending',halting_charges:500,submitted_by:'finance@hire.com'},{id:'HR-003',trip_date:'2026-05-12',submitted_at:'2026-05-12T14:55:00Z',requester_name:'Admin User',transport:'Chennai Transports',lr_numbers:'D-B23456',vehicle_no:'KA04EF9999',from_loc:'Bengaluru',to_loc:'Hyderabad',load_type:'Special Load',hire_amount:28000,payable_amount:28000,paid_amount:0,balance_amount:28000,reference_id:'',request_type:'POD',status:'Approved',halting_charges:0,submitted_by:'admin@hire.com'}];}
+/* ==============================================
+   DEMO DATA
+   ============================================== */
+function getDemoRequests(){return[
+  {id:'HR-001',trip_date:'2026-05-10',submitted_at:'2026-05-10T09:14:32Z',requester_name:'Demo User',transport:'Chennai Transports',lr_numbers:'D-B23453',lr_status:'Available',vehicle_no:'TN09AB1234',from_loc:'Chennai',to_loc:'Mumbai',load_type:'Full Load',hire_amount:45000,payable_amount:45000,paid_amount:45000,balance_amount:0,reference_id:'REF001',request_type:'Full',status:'Paid',halting_charges:0,submitted_by:'user@hire.com',requester_id:1},
+  {id:'HR-002',trip_date:'2026-05-11',submitted_at:'2026-05-11T11:02:17Z',requester_name:'Finance User',transport:'Fast Cargo',lr_numbers:'D-B23454,D-B23455',lr_status:'Not Available',vehicle_no:'MH12CD5678',from_loc:'Delhi',to_loc:'Pune',load_type:'Part Load',hire_amount:32000,payable_amount:32500,paid_amount:16000,balance_amount:16500,reference_id:'',request_type:'Advance',status:'Pending',halting_charges:500,submitted_by:'finance@hire.com',requester_id:2},
+  {id:'HR-003',trip_date:'2026-05-12',submitted_at:new Date(Date.now()-60*60*1000).toISOString(),requester_name:'Demo User',transport:'Chennai Transports',lr_numbers:'D-B23456',lr_status:'Available',vehicle_no:'KA04EF9999',from_loc:'Bengaluru',to_loc:'Hyderabad',load_type:'Special Load',hire_amount:28000,payable_amount:28000,paid_amount:0,balance_amount:28000,reference_id:'',request_type:'POD',status:'Approved',halting_charges:0,submitted_by:'user@hire.com',requester_id:1},
+];}
 
-const el=id=>document.getElementById(id);const gv=id=>(el(id)||{}).value||'';const gset=(id,val)=>{const e=el(id);if(e)e.value=val;};const fmtN=n=>Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const hide=id=>{const e=el(id);if(e)e.style.display='none';};const show=id=>{const e=el(id);if(e)e.style.display='';};
+/* ==============================================
+   UTILITIES
+   ============================================== */
+const el=id=>document.getElementById(id);
+const gv=id=>(el(id)||{}).value||'';
+const gset=(id,val)=>{const e=el(id);if(e)e.value=val;};
+const fmtN=n=>Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hide=id=>{const e=el(id);if(e)e.style.display='none';};
+const show=id=>{const e=el(id);if(e)e.style.display='';};
+
 function fmtLR(lr){if(!lr)return'—';return lr.split(',').map(s=>s.trim()).filter(Boolean).map(l=>`<span class="badge-lr">${esc(l)}</span>`).join(' ');}
 function statusB(s){const cls={Pending:'bs-pending',Approved:'bs-approved',Paid:'bs-paid',Rejected:'bs-rejected'}[s]||'bs-pending';const ic={Pending:'bi-clock',Approved:'bi-check-circle-fill',Paid:'bi-currency-rupee',Rejected:'bi-x-circle'}[s]||'bi-clock';return`<span class="bs ${cls}"><i class="bi ${ic}"></i> ${s||'Pending'}</span>`;}
+function lrStatusB(s){if(!s||s==='')return`<span style="font-size:11px;color:var(--muted)">—</span>`;const cls=s==='Available'?'bs-available':'bs-unavailable';const ic=s==='Available'?'bi-check-circle-fill':'bi-x-circle-fill';return`<span class="bs ${cls}"><i class="bi ${ic}"></i> ${s}</span>`;}
 function typeB(t){const cls={Full:'bt-full',Advance:'bt-advance',POD:'bt-pod'}[t]||'bt-full';return`<span class="bt ${cls}">${t||'Full'}</span>`;}
 function roleP(r){const cls={User:'rp-user',Finance:'rp-finance',Approver:'rp-approver'}[r]||'rp-user';return`<span class="role-pill ${cls}">${r||'User'}</span>`;}
 function setBtnLoad(id,on,label){const e=el(id);if(!e)return;e.disabled=on;e.innerHTML=on?`<span class="spinner-border spinner-border-sm me-1"></span>${label}`:label;}
 function toast(msg,type='info'){const w=el('toast-wrap');const d=document.createElement('div');d.className=`toast-msg ${type}`;const ic={success:'bi-check-circle-fill',error:'bi-x-circle-fill',info:'bi-info-circle-fill',warn:'bi-exclamation-triangle-fill'};d.innerHTML=`<i class="bi ${ic[type]||'bi-info-circle-fill'}"></i><span>${msg}</span>`;w.appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300);},4200);}
+
+/*
+=======================================================
+  SQL: Add lr_status column to existing table
+  Run in Supabase SQL Editor if upgrading from v1
+=======================================================
+ALTER TABLE hire_requests
+  ADD COLUMN IF NOT EXISTS lr_status TEXT DEFAULT 'Available';
+=======================================================
+*/
 </script>
 </body>
 </html>
