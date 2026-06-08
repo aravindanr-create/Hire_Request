@@ -341,10 +341,15 @@ code{font-family:'DM Mono',monospace;}
 
           <!-- UPLOAD TAB -->
           <div id="bulk-tab-upload">
-            <div class="row mb-4">
-              <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get the Excel template with correct columns</span></div></div></div>
+            <div class="row mb-3">
+              <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get Excel template with Vendor ID Reference sheet</span></div></div></div>
               <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill &amp; Upload</strong><br><span class="text-muted" style="font-size:12px">Fill Vendor ID — transport &amp; bank details auto-resolved</span></div></div></div>
               <div class="col-md-4"><div class="bs-step"><div class="bs-num">3</div><div><strong style="font-size:13px">Verify &amp; Submit</strong><br><span class="text-muted" style="font-size:12px">Duplicate LRs detected automatically</span></div></div></div>
+            </div>
+            <!-- Auto-capture notice -->
+            <div style="background:#d1fae5;border:1px solid #a7f3d0;border-radius:var(--r);padding:9px 14px;margin-bottom:14px;font-size:12px;color:#065f46;display:flex;align-items:center;gap:8px">
+              <i class="bi bi-person-check-fill" style="font-size:14px;flex-shrink:0"></i>
+              <span><strong>Requester</strong> is automatically set to <strong id="bulk-req-name">—</strong> (your login). No need to fill it in the Excel file.</span>
             </div>
             <div class="bulk-drop" id="bulk-drop" onclick="document.getElementById('bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleBulkDrop(event)">
               <i class="bi bi-cloud-upload"></i><div style="font-size:14px;font-weight:700;color:#374151">Drop Excel / CSV file here</div><div style="font-size:12px;color:var(--muted);margin-top:5px">.xlsx · .xls · .csv supported</div>
@@ -471,6 +476,7 @@ code{font-family:'DM Mono',monospace;}
         <div class="fbar">
           <input type="text" class="form-control" id="vend-srch" placeholder="🔍  Search name, Vendor ID, IFSC…" style="width:260px" oninput="filterVendors()"/>
           <button class="btn btn-outline-secondary btn-sm" onclick="downloadVendorTemplate()"><i class="bi bi-download me-1"></i>Template</button>
+          <button class="btn btn-outline-success btn-sm" onclick="exportVendors()"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export</button>
           <button class="btn btn-primary btn-sm ms-auto" onclick="openVendorModal(null)"><i class="bi bi-plus me-1"></i>Add Vendor</button>
         </div>
         <!-- Vendor ID info card -->
@@ -752,6 +758,8 @@ function doLogout(){localStorage.removeItem('hire_cu');CU=null;REQ_DATA=[];VEND_
 async function bootApp(){
   hide('loader');document.getElementById('app').style.display='flex';
   el('user-name').textContent=CU.name;el('user-role').textContent=CU.role;el('role-badge').textContent=CU.role.toUpperCase();el('user-av').textContent=CU.name.charAt(0).toUpperCase();
+  // Bulk upload auto-requester label
+  const brn=el('bulk-req-name'); if(brn) brn.textContent=CU.name;
   if(CU.role==='Approver'){el('nav-users').style.display='flex';el('nav-roles').style.display='flex';el('nav-digest').style.display='flex';}
   const cb=el('conn-badge');
   if(IS_DEMO){cb.style.background='#fef3c7';cb.style.color='#92400e';cb.innerHTML='<i class="bi bi-lightning-fill"></i> Demo Mode';}
@@ -1369,6 +1377,32 @@ async function delVendor(id){
   try{const{error}=await sb.from('hire_vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','info');await loadVendorData();loadVendors();rebuildVendorTS();}catch(e){toast('Error: '+e.message,'error');}
 }
 
+function exportVendors(){
+  const data = VEND_DATA;
+  if(!data.length) return toast('No vendors to export','info');
+  const headers = ['Vendor ID','Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'];
+  const rows = [
+    headers,
+    ...data.map(v=>[
+      v.vendor_code||'', v.name||'', v.bank||'',
+      v.acct||'',        v.ifsc_code||'', v.mobile||''
+    ])
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [10, 24, 18, 18, 14, 14].map(wch=>({wch}));
+  // Style header row bold (basic xlsx styling)
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for(let C=range.s.c; C<=range.e.c; C++){
+    const addr = XLSX.utils.encode_cell({r:0, c:C});
+    if(!ws[addr]) continue;
+    ws[addr].s = { font:{bold:true}, fill:{fgColor:{rgb:'EEF3FF'}} };
+  }
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Vendors');
+  XLSX.writeFile(wb, `vendors-export-${new Date().toISOString().slice(0,10)}.xlsx`);
+  toast(`Exported ${data.length} vendor(s)`,'success');
+}
+
 // Vendor tab switcher
 function switchVendTab(tab, link) {
   document.querySelectorAll('#vend-tabs .nav-link').forEach(l=>l.classList.remove('active'));
@@ -1575,9 +1609,9 @@ async function saveRole(){const id=gv('rm-id'),role=gv('rm-role');if(IS_DEMO){co
 /* ==============================================
    BULK UPLOAD (New Requests)
    ============================================== */
-const BULK_HEADERS=['Trip Date','Requester Name','Vendor ID','LR Numbers','Request Type','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Halting Charges','Weight','Remarks'];
+const BULK_HEADERS=['Trip Date','Vendor ID','LR Numbers','Request Type','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Halting Charges','Weight','Remarks'];
 const HEADER_MAP={
-  'trip date':'trip_date','date':'trip_date','requester name':'requester_name','requester':'requester_name',
+  'trip date':'trip_date','date':'trip_date',
   // Vendor ID — user fills this; transport/bank auto-resolved from vendor record
   'vendor id':'vendor_id','vendor_id':'vendor_id','vendorid':'vendor_id','vnd id':'vendor_id',
   // Legacy: still accept manual transport/bank if no vendor id
@@ -1591,7 +1625,7 @@ const HEADER_MAP={
   'hire amount':'hire_amount','hire':'hire_amount','amount':'hire_amount',
   'halting charges':'halting_charges','halting':'halting_charges','weight':'weight','remarks':'remarks','notes':'remarks'
 };
-const BULK_REQUIRED=['Trip Date','Requester Name','LR Numbers','Request Type','Vehicle No','From','To','Hire Amount'];
+const BULK_REQUIRED=['Trip Date','LR Numbers','Request Type','Vehicle No','From','To','Hire Amount'];
 
 function downloadTemplate(){
   // Build vendor ID reference sheet so users can look up codes
@@ -1604,8 +1638,8 @@ function downloadTemplate(){
 
   const ws=XLSX.utils.aoa_to_sheet([
     BULK_HEADERS,
-    ['2026-05-15','Ravi Kumar','VND-001','D-B23453','Full','Full Load','20 Feet','TN09AB1234','Chennai','Mumbai',45000,0,25.5,'Sample'],
-    ['2026-05-15','Priya Shah','VND-002','D-B23454,D-B23455','Advance','Part Load','14 Feet','MH12CD5678','Delhi','Pune',32000,500,18,''],
+    ['2026-05-15','VND-001','D-B23453','Full','Full Load','20 Feet','TN09AB1234','Chennai','Mumbai',45000,0,25.5,'Sample'],
+    ['2026-05-15','VND-002','D-B23454,D-B23455','Advance','Part Load','14 Feet','MH12CD5678','Delhi','Pune',32000,500,18,''],
   ]);
   ws['!cols']=BULK_HEADERS.map(()=>({wch:18}));
   const wb=XLSX.utils.book_new();
@@ -1627,6 +1661,10 @@ async function parseBulkRows(raw){
     const out={_rowNum:idx+2, _errors:[], _vendorResolved:false};
     Object.entries(row).forEach(([k,v])=>{const canon=HEADER_MAP[k.toLowerCase().trim()];if(canon)out[canon]=String(v||'').trim();});
 
+    // ── Requester auto-filled from login — never read from Excel
+    out.requester_name = CU.name;
+    out.requester_id   = CU.id;
+
     // ── Vendor ID lookup: resolve transport, account_no, ifsc_code from VEND_DATA
     if(out.vendor_id){
       const vendor = VEND_DATA.find(v=>(v.vendor_code||'').toUpperCase() === out.vendor_id.toUpperCase());
@@ -1640,11 +1678,10 @@ async function parseBulkRows(raw){
         out._errors.push(`Vendor ID "${out.vendor_id}" not found — check the Vendor ID Reference sheet`);
       }
     } else if(!out.transport){
-      // Neither vendor_id nor manual transport — require vendor_id or transport
-      out._errors.push('Vendor ID required (or Transport Name for legacy)');
+      out._errors.push('Vendor ID required (e.g. VND-001) — see Vendor ID Reference sheet in template');
     }
 
-    // Required field check (transport now auto-filled from vendor_id)
+    // Required field check
     BULK_REQUIRED.forEach(h=>{const c=HEADER_MAP[h.toLowerCase()];if(!out[c])out._errors.push(`${h} required`);});
     if(out.request_type&&!['Full','Advance','POD'].includes(out.request_type))out._errors.push('Request Type must be Full/Advance/POD');
     // lr_status is NOT set via bulk upload — Approver updates it via edit modal only
@@ -1677,8 +1714,8 @@ async function runBulkLRVerify(validRows,intraDups=[]){
   el('bulk-summary').innerHTML=`<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${BULK_ROWS.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${okRows.length}</span><div style="font-size:11px;color:var(--muted)">LR OK</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${BULK_ROWS.filter(r=>r._errors.length>0).length+validRows.filter(r=>!r._lrOk).length}</span><div style="font-size:11px;color:var(--muted)">Issues</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${intraDups.length}</span><div style="font-size:11px;color:var(--muted)">Dup LRs</div></div><div style="margin-left:auto;font-size:12px;color:${allOk?'var(--green)':'var(--red)'}"><i class="bi ${allOk?'bi-check-circle-fill':'bi-exclamation-triangle-fill'} me-1"></i>${allOk?'Ready to submit':'Fix issues'}</div>`;
 }
 function renderBulkPreview(rows){
-  el('bulk-thead').innerHTML='<tr><th>Row</th><th>Vendor ID</th><th>Transport (Resolved)</th><th>LR Numbers</th><th>Requester</th><th>Vehicle</th><th>Route</th><th>Load</th><th>Hire ₹</th><th>Type</th><th>Issues</th></tr>';
-  el('bulk-rowct').textContent=`${rows.length} rows`;
+  el('bulk-thead').innerHTML='<tr><th>Row</th><th>Vendor ID</th><th>Transport (Resolved)</th><th>LR Numbers</th><th>Vehicle</th><th>Route</th><th>Load</th><th>Hire ₹</th><th>Type</th><th>Issues</th></tr>';
+  el('bulk-rowct').textContent=`${rows.length} rows · Requester: ${esc(CU.name)} (auto)`;
   el('bulk-tbody').innerHTML=rows.map(r=>{
     const hasErr=r._errors.length>0, hasDup=!!r._intraDups;
     const vendCell = r.vendor_id
@@ -1689,7 +1726,6 @@ function renderBulkPreview(rows){
       <td>${vendCell}</td>
       <td style="font-size:11px;color:var(--muted)">${esc(r.transport||'')}</td>
       <td>${hasDup?`<span class="badge-dup">${esc(r.lr_numbers||'')}</span>`:fmtLR(r.lr_numbers||'')}</td>
-      <td>${esc(r.requester_name||'')}</td>
       <td>${esc(r.vehicle_no||'')}</td>
       <td>${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td>
       <td>${esc(r.load_type||'')}</td>
