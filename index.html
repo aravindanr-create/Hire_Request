@@ -43,7 +43,6 @@ body{background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:h
 #topbar h2{font-size:16.5px;font-weight:700;color:var(--text);}
 #content{flex:1;overflow-y:auto;padding:24px;background:var(--bg);}
 .page{display:none;}.page.active{display:block;}
-/* STAT CARDS */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px;}
 .stat-card{background:var(--card);border-radius:var(--r2);padding:18px 20px;border:1px solid var(--border);box-shadow:var(--sh-sm);position:relative;overflow:hidden;transition:.2s;}
 .stat-card:hover{box-shadow:var(--sh);transform:translateY(-2px);}
@@ -56,19 +55,16 @@ body{background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:h
 .stat-card .s-lbl{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;}
 .stat-card .s-val{font-size:28px;font-weight:800;letter-spacing:-1.5px;line-height:1;margin-bottom:3px;}
 .stat-card .s-sub{font-size:11px;color:var(--muted);}
-/* PANELS */
 .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:20px;box-shadow:var(--sh-sm);}
 .panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--light);}
 .panel-head h3{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:7px;}
 .panel-body{padding:20px;}
-/* TABLE */
 .tbl-wrap{overflow-x:auto;}
 table.dt{width:100%;border-collapse:collapse;font-size:12.5px;}
 table.dt th{background:#f1f5fd;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.6px;padding:10px 13px;border-bottom:1px solid var(--border);white-space:nowrap;}
 table.dt td{padding:10px 13px;border-bottom:1px solid #eef2fc;vertical-align:middle;}
 table.dt tr:last-child td{border-bottom:none;}
 table.dt tr:hover td{background:#f6f9ff;}
-/* BADGES */
 .bs{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;}
 .bs-pending{background:#fef3c7;color:#92400e;}.bs-approved{background:#d1fae5;color:#065f46;}
 .bs-paid{background:#dbeafe;color:#1e40af;}.bs-rejected{background:#fee2e2;color:#991b1b;}
@@ -76,7 +72,6 @@ table.dt tr:hover td{background:#f6f9ff;}
 .bt{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.3px;}
 .bt-full{background:#e0e7ff;color:#3730a3;}.bt-advance{background:#fef3c7;color:#92400e;}.bt-pod{background:#d1fae5;color:#065f46;}
 .badge-lr{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:#f0f4fc;color:var(--muted);border:1px solid var(--border);margin:1px;font-family:'DM Mono',monospace;}
-/* FORM */
 .fsec{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:14px;margin-top:4px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:2px solid var(--border);}
 .fsec i{font-size:14px;color:var(--blue);}
 label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;}
@@ -89,7 +84,6 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .ts-wrapper.focus .ts-control{border-color:var(--blue)!important;box-shadow:0 0 0 3px rgba(26,86,240,.1)!important;}
 .ts-dropdown{border-radius:var(--r)!important;box-shadow:var(--sh-lg)!important;font-family:'DM Sans',sans-serif!important;}
 .ts-dropdown .option{padding:8px 12px!important;}.ts-dropdown .option.active{background:var(--blue-xs)!important;color:var(--blue)!important;}
-/* FILE UPLOAD */
 .fz{border:2px dashed var(--border2);border-radius:var(--r);padding:16px;cursor:pointer;transition:.2s;background:var(--light);text-align:center;position:relative;}
 .fz:hover,.fz.drag{border-color:var(--blue);background:var(--blue-xs);}
 .fz.has-file{border-color:var(--green);background:#f0fdf4;border-style:solid;}
@@ -107,7 +101,6 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .ri-card.show{display:flex;gap:16px;flex-wrap:wrap;}
 .ri-item{display:flex;align-items:center;gap:5px;color:#1d4ed8;font-weight:500;}
 .ri-item i{font-size:13px;}
-/* BUTTONS */
 .btn{font-size:13px;font-weight:600;border-radius:var(--r);font-family:'DM Sans',sans-serif;}
 .btn-primary{background:var(--blue);border-color:var(--blue);}
 .btn-primary:hover{background:var(--blue2);border-color:var(--blue2);}
@@ -117,10 +110,8 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .bsi:hover{background:var(--blue-xs);color:var(--blue);border-color:#c7d2fe;}
 .bsi.del:hover{background:#fee2e2;color:var(--red);border-color:#fca5a5;}
 .bsi:disabled,.bsi[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none;}
-/* FILTERS */
 .fbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
 .fbar .form-control,.fbar .form-select{font-size:12.5px;height:36px;padding:0 11px;}
-/* BULK */
 .bulk-drop{border:2px dashed var(--border2);border-radius:var(--r2);padding:36px;text-align:center;cursor:pointer;transition:.2s;background:var(--light);}
 .bulk-drop:hover,.bulk-drop.drag{border-color:var(--blue);background:var(--blue-xs);}
 .bulk-drop i{font-size:40px;color:#94a3b8;margin-bottom:12px;display:block;}
@@ -133,32 +124,26 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .lt-err{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}.lt-dup{background:#fef9c3;color:#854d0e;border:1px solid #fde047;}
 .dup-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:12px;color:#92400e;display:flex;align-items:flex-start;gap:8px;}
 .badge-dup{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:#fef9c3;color:#854d0e;border:1px solid #fde047;}
-/* MODAL */
 .modal-content{border-radius:var(--r3);border:none;box-shadow:var(--sh-lg);}
 .modal-header{border-bottom:1px solid var(--border);padding:18px 22px;background:var(--light);}
 .modal-header .modal-title{font-size:15px;font-weight:700;}
 .modal-body{padding:22px;max-height:76vh;overflow-y:auto;}
 .modal-footer{border-top:1px solid var(--border);padding:14px 22px;background:var(--light);}
-/* ROLE PILLS */
 .role-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.3px;}
 .rp-user{background:#e0e7ff;color:#3730a3;}.rp-finance{background:#fef9c3;color:#854d0e;}.rp-approver{background:#dcfce7;color:#166534;}
 .info-alert{display:flex;align-items:flex-start;gap:10px;background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:var(--r);padding:10px 14px;font-size:12px;color:#1e40af;margin-bottom:14px;}
 .info-alert i{font-size:15px;flex-shrink:0;margin-top:1px;}
 .warn-alert{display:flex;align-items:flex-start;gap:10px;background:#fef9c3;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:14px;}
 .warn-alert i{font-size:15px;flex-shrink:0;margin-top:1px;}
-/* TIMER BADGE */
 .edit-timer{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:#fef9c3;color:#92400e;border:1px solid #fde68a;}
 .edit-timer.expired{background:#fee2e2;color:#991b1b;border-color:#fca5a5;}
-/* LOCKED FIELD */
 .field-locked{position:relative;}
 .field-locked::after{content:'🔒';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none;}
-/* LOGIN */
 #login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#07111f 0%,#0d1f36 60%,#122846 100%);display:flex;align-items:center;justify-content:center;z-index:9998;}
 .login-card{background:rgba(255,255,255,.97);border-radius:var(--r3);padding:42px 40px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.5);}
 .login-brand{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
 .login-card h2{font-size:24px;font-weight:800;margin-bottom:4px;}
 .login-card p.sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
-/* LOADER / TOAST */
 #loader{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;}
 .spin{width:40px;height:40px;border:3px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
 .spin-sm{width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-left:6px;}
@@ -172,7 +157,6 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .empty-st i{font-size:40px;margin-bottom:14px;color:#cbd5e1;display:block;}
 .empty-st p{font-size:13px;}
 #conn-badge{font-size:11.5px;font-weight:600;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:5px;}
-/* MOBILE */
 @media(max-width:768px){
   #sidebar{position:fixed;left:-248px;height:100%;z-index:200;}
   #sidebar.open{left:0;}#main{width:100%;}
@@ -184,9 +168,10 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .mob-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;}.mob-ov.show{display:block;}
 ::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#c4d0e8;border-radius:3px;}
 code{font-family:'DM Mono',monospace;}
-/* FINANCE LOCKED indicator */
 .finance-only{font-size:10px;font-weight:700;color:var(--yellow);background:#fef9c3;padding:1px 6px;border-radius:4px;margin-left:4px;border:1px solid #fde68a;}
 .approver-only{font-size:10px;font-weight:700;color:var(--blue);background:var(--blue-xs);padding:1px 6px;border-radius:4px;margin-left:4px;border:1px solid #c7d2fe;}
+/* Coerce banner */
+.coerce-banner{display:none;align-items:flex-start;gap:10px;background:#d1fae5;border:1px solid #a7f3d0;border-radius:var(--r);padding:11px 14px;margin-bottom:12px;}
 </style>
 </head>
 <body>
@@ -262,7 +247,6 @@ code{font-family:'DM Mono',monospace;}
         <div class="panel-body">
           <div class="info-alert" id="req-auto-notice" style="display:none"><i class="bi bi-person-check-fill"></i><span>Requester name is automatically set from your login profile: <strong id="req-auto-name">—</strong></span></div>
           <form id="req-form" onsubmit="submitReq(event)" novalidate>
-            <!-- TRIP INFO -->
             <div class="fsec"><i class="bi bi-calendar-check"></i>Trip Information</div>
             <div class="row g-3 mb-4">
               <div class="col-md-3 col-6"><label class="lbl">Trip Date <span class="req-star">*</span></label><input type="date" class="form-control" id="f-tripDate" required/></div>
@@ -274,14 +258,12 @@ code{font-family:'DM Mono',monospace;}
               <div class="col-md-3 col-6"><label class="lbl">Account No</label><input type="text" class="form-control" id="f-accountNo" placeholder="Auto-filled"/></div>
               <div class="col-md-3 col-6"><label class="lbl">IFSC Code</label><input type="text" class="form-control" id="f-ifscCode" oninput="this.value=this.value.toUpperCase()" placeholder="Auto-filled"/></div>
             </div>
-            <!-- LR & TYPE -->
             <div class="fsec"><i class="bi bi-upc-scan"></i>LR Numbers &amp; Request Type</div>
             <div class="row g-3 mb-4">
               <div class="col-md-5 col-12"><label class="lbl">LR Numbers <span class="req-star">*</span> <small class="text-muted fw-normal">(comma-separated)</small></label><input type="text" class="form-control" id="f-lr" placeholder="D-B23453, D-B12345" oninput="debounceLRCheck()"/><div id="lr-tags" class="mt-2 d-flex flex-wrap gap-1"></div><div id="lr-chk" class="mt-1" style="font-size:11.5px"></div></div>
               <div class="col-md-3 col-6"><label class="lbl">Request Type <span class="req-star">*</span></label><select class="form-select" id="f-requestType" onchange="debounceLRCheck();showTypeHint()"><option value="Full">Full</option><option value="Advance">Advance</option><option value="POD">POD</option></select><div id="req-type-hint" class="mt-1 small text-muted"></div></div>
               <div class="col-md-2 col-6"><label class="lbl">Load Type <span class="req-star">*</span></label><select class="form-select" id="f-loadType" required><option value="">Select…</option><option>Full Load</option><option>Part Load</option><option>Special Load</option></select></div>
             </div>
-            <!-- VEHICLE -->
             <div class="fsec"><i class="bi bi-truck"></i>Vehicle Details</div>
             <div class="row g-3 mb-4">
               <div class="col-md-3 col-6"><label class="lbl">Vehicle Type</label><select id="f-vehicleType"><option value="">Select…</option><option>20 Feet</option><option>14 Feet</option><option>Bata Dost</option><option>Bada Dost</option><option>AL</option><option>Others</option></select></div>
@@ -294,14 +276,12 @@ code{font-family:'DM Mono',monospace;}
                 <div class="f-err" id="fe-document"></div><div class="fp" id="fp-document"></div>
               </div>
             </div>
-            <!-- AMOUNTS -->
             <div class="fsec"><i class="bi bi-currency-rupee"></i>Amounts</div>
             <div class="row g-3 mb-4">
               <div class="col-md-3 col-6"><label class="lbl">Hire Amount (₹) <span class="req-star">*</span></label><input type="number" step="0.01" class="form-control" id="f-hireAmount" required oninput="calcPay()" placeholder="0.00"/></div>
               <div class="col-md-3 col-6"><label class="lbl">Halting Charges (₹)</label><input type="number" step="0.01" class="form-control" id="f-haltingCharges" value="0" oninput="calcPay()"/></div>
               <div class="col-md-3 col-6" id="payable-wrap" style="display:none"><label class="lbl">Payable Amount (₹)<span class="approver-only ms-1">Admin</span></label><input type="number" class="form-control" id="f-payable" readonly placeholder="Auto-calculated"/></div>
             </div>
-            <!-- WEIGHMENT -->
             <div class="fsec"><i class="bi bi-clipboard-data"></i>Weighment &amp; Remarks</div>
             <div class="row g-3 mb-4">
               <div class="col-md-4 col-12"><label class="lbl">Weighment With Load <small class="text-muted fw-normal">(max 5MB)</small></label>
@@ -333,7 +313,6 @@ code{font-family:'DM Mono',monospace;}
           </div>
         </div>
         <div class="panel-body">
-          <!-- TABS -->
           <ul class="nav nav-tabs mb-4" id="bulk-tabs">
             <li class="nav-item"><a class="nav-link active" href="#" onclick="switchBulkTab('upload',this)"><i class="bi bi-upload me-1"></i>Upload New</a></li>
             <li class="nav-item"><a class="nav-link" href="#" onclick="switchBulkTab('validate',this)"><i class="bi bi-check2-circle me-1"></i>Validate &amp; Update</a></li>
@@ -346,11 +325,12 @@ code{font-family:'DM Mono',monospace;}
               <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill &amp; Upload</strong><br><span class="text-muted" style="font-size:12px">Fill Vendor ID — transport &amp; bank details auto-resolved</span></div></div></div>
               <div class="col-md-4"><div class="bs-step"><div class="bs-num">3</div><div><strong style="font-size:13px">Verify &amp; Submit</strong><br><span class="text-muted" style="font-size:12px">Duplicate LRs detected automatically</span></div></div></div>
             </div>
-            <!-- Auto-capture notice -->
             <div style="background:#d1fae5;border:1px solid #a7f3d0;border-radius:var(--r);padding:9px 14px;margin-bottom:14px;font-size:12px;color:#065f46;display:flex;align-items:center;gap:8px">
               <i class="bi bi-person-check-fill" style="font-size:14px;flex-shrink:0"></i>
               <span><strong>Requester</strong> is automatically set to <strong id="bulk-req-name">—</strong> (your login). No need to fill it in the Excel file.</span>
             </div>
+            <!-- AUTO-COERCE BANNER (Upload New) -->
+            <div id="bulk-coerce-banner" class="coerce-banner"></div>
             <div class="bulk-drop" id="bulk-drop" onclick="document.getElementById('bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleBulkDrop(event)">
               <i class="bi bi-cloud-upload"></i><div style="font-size:14px;font-weight:700;color:#374151">Drop Excel / CSV file here</div><div style="font-size:12px;color:var(--muted);margin-top:5px">.xlsx · .xls · .csv supported</div>
               <input type="file" id="bulk-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleBulkSelect(event)"/>
@@ -370,24 +350,15 @@ code{font-family:'DM Mono',monospace;}
 
           <!-- VALIDATE TAB -->
           <div id="bulk-tab-validate" style="display:none">
-            <!-- General info (all roles) -->
             <div class="info-alert mb-2"><i class="bi bi-info-circle-fill"></i>
               <span>Export existing requests, fill in the editable columns, then re-upload here to update in bulk. Only allowed fields are updated — all other data is preserved.</span>
             </div>
-            <!-- Finance-only banner -->
             <div id="bulk-val-finance-banner" style="display:none" class="mb-3">
               <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:var(--r);padding:11px 15px;font-size:12.5px;color:#92400e;display:flex;align-items:flex-start;gap:10px">
                 <i class="bi bi-bank" style="font-size:15px;flex-shrink:0;margin-top:1px"></i>
-                <span>
-                  <strong>Finance fields enabled:</strong> You can also update
-                  <strong>Ref No</strong>, <strong>Paid Amount</strong>, and <strong>Status</strong>
-                  via this upload. These columns are highlighted
-                  <span style="background:#fef9c3;border:1px solid #fde068;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;color:#854d0e">yellow</span>
-                  in the preview table. Leave blank to keep existing values.
-                </span>
+                <span><strong>Finance fields enabled:</strong> You can also update <strong>Ref No</strong>, <strong>Paid Amount</strong>, and <strong>Status</strong> via this upload. These columns are highlighted <span style="background:#fef9c3;border:1px solid #fde068;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;color:#854d0e">yellow</span> in the preview table. Leave blank to keep existing values.</span>
               </div>
             </div>
-            <!-- Editable fields summary chips -->
             <div class="d-flex flex-wrap gap-2 mb-3" id="bulk-val-fields-chips">
               <span style="font-size:12px;font-weight:600;color:var(--muted)">Updatable fields:</span>
               <span class="badge-lr" style="background:#d1fae5;color:#065f46;border-color:#a7f3d0">LR Status</span>
@@ -400,25 +371,16 @@ code{font-family:'DM Mono',monospace;}
               </span>
             </div>
             <div class="row g-3 mb-3">
-              <div class="col-md-4">
-                <label class="lbl">Filter by Status</label>
-                <select class="form-select" id="bulk-exp-status">
-                  <option value="All">All Status</option><option>Pending</option><option>Approved</option><option>Paid</option><option>Rejected</option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label class="lbl">Filter by Date (From)</label>
-                <input type="date" class="form-control" id="bulk-exp-from"/>
-              </div>
-              <div class="col-md-4">
-                <label class="lbl">Filter by Date (To)</label>
-                <input type="date" class="form-control" id="bulk-exp-to"/>
-              </div>
+              <div class="col-md-4"><label class="lbl">Filter by Status</label><select class="form-select" id="bulk-exp-status"><option value="All">All Status</option><option>Pending</option><option>Approved</option><option>Paid</option><option>Rejected</option></select></div>
+              <div class="col-md-4"><label class="lbl">Filter by Date (From)</label><input type="date" class="form-control" id="bulk-exp-from"/></div>
+              <div class="col-md-4"><label class="lbl">Filter by Date (To)</label><input type="date" class="form-control" id="bulk-exp-to"/></div>
             </div>
             <div class="d-flex gap-2 mb-4">
               <button class="btn btn-outline-success" onclick="exportBulkRequests()"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel</button>
               <span class="text-muted small align-self-center" id="bulk-val-export-hint">Export → edit allowed fields → re-upload below</span>
             </div>
+            <!-- AUTO-COERCE BANNER (Validate & Update) -->
+            <div id="bulk-val-coerce-banner" class="coerce-banner"></div>
             <div class="bulk-drop" id="bulk-val-drop" onclick="document.getElementById('bulk-val-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleBulkValDrop(event)">
               <i class="bi bi-file-earmark-check"></i><div style="font-size:14px;font-weight:700;color:#374151">Drop validated Excel file here to update</div>
               <div style="font-size:12px;color:var(--muted);margin-top:5px" id="bulk-val-drop-sub">Updates: LR Status · Payable Amount · Remarks</div>
@@ -465,13 +427,10 @@ code{font-family:'DM Mono',monospace;}
 
     <!-- VENDORS -->
     <div id="page-vendors" class="page">
-      <!-- Tabs -->
       <ul class="nav nav-tabs mb-3" id="vend-tabs">
         <li class="nav-item"><a class="nav-link active" href="#" onclick="switchVendTab('list',this)" style="font-size:13px"><i class="bi bi-people me-1"></i>Vendor List</a></li>
         <li class="nav-item"><a class="nav-link" href="#" onclick="switchVendTab('bulk',this)" style="font-size:13px"><i class="bi bi-file-earmark-excel me-1"></i>Bulk Upload</a></li>
       </ul>
-
-      <!-- VENDOR LIST TAB -->
       <div id="vend-tab-list">
         <div class="fbar">
           <input type="text" class="form-control" id="vend-srch" placeholder="🔍  Search name, Vendor ID, IFSC…" style="width:260px" oninput="filterVendors()"/>
@@ -479,22 +438,17 @@ code{font-family:'DM Mono',monospace;}
           <button class="btn btn-outline-success btn-sm" onclick="exportVendors()"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export</button>
           <button class="btn btn-primary btn-sm ms-auto" onclick="openVendorModal(null)"><i class="bi bi-plus me-1"></i>Add Vendor</button>
         </div>
-        <!-- Vendor ID info card -->
         <div style="background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:var(--r);padding:10px 16px;margin-bottom:14px;font-size:12px;color:#1e40af;display:flex;align-items:center;gap:10px">
           <i class="bi bi-info-circle-fill" style="font-size:15px;flex-shrink:0"></i>
           <span>Each vendor is assigned a unique <strong>Vendor ID</strong> (format <code>VND-001</code>). Use this ID in the Bulk Upload template instead of filling transport/bank details manually.</span>
         </div>
         <div class="panel">
           <div class="tbl-wrap">
-            <table class="dt">
-              <thead><tr><th>Vendor ID</th><th>Account Holder</th><th>Bank</th><th>Account No</th><th>IFSC</th><th>Mobile</th><th>Actions</th></tr></thead>
-              <tbody id="vend-tbody"></tbody>
-            </table>
+            <table class="dt"><thead><tr><th>Vendor ID</th><th>Account Holder</th><th>Bank</th><th>Account No</th><th>IFSC</th><th>Mobile</th><th>Actions</th></tr></thead>
+            <tbody id="vend-tbody"></tbody></table>
           </div>
         </div>
       </div>
-
-      <!-- VENDOR BULK UPLOAD TAB -->
       <div id="vend-tab-bulk" style="display:none">
         <div class="row mb-4">
           <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get Excel template for vendor bulk upload</span></div></div></div>
@@ -505,6 +459,8 @@ code{font-family:'DM Mono',monospace;}
           <button class="btn btn-outline-secondary btn-sm" onclick="downloadVendorTemplate()"><i class="bi bi-download me-1"></i>Download Template</button>
           <span class="text-muted small align-self-center">Fill the template and upload below. Duplicate account numbers are detected automatically.</span>
         </div>
+        <!-- AUTO-COERCE BANNER (Vendor Bulk) -->
+        <div id="vend-bulk-coerce-banner" class="coerce-banner"></div>
         <div class="bulk-drop" id="vend-bulk-drop" onclick="document.getElementById('vend-bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleVendBulkDrop(event)">
           <i class="bi bi-cloud-upload"></i>
           <div style="font-size:14px;font-weight:700;color:#374151">Drop Vendor Excel / CSV file here</div>
@@ -581,20 +537,16 @@ code{font-family:'DM Mono',monospace;}
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
-</div><!-- /app -->
+  </div>
+</div>
+</div>
 
 <!-- MODALS -->
-<!-- Request View/Edit Modal -->
 <div class="modal fade" id="reqModal" tabindex="-1">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <div>
-          <h5 class="modal-title" id="reqModal-title">Request Details</h5>
-          <div id="reqModal-timer-wrap" style="margin-top:5px"></div>
-        </div>
+        <div><h5 class="modal-title" id="reqModal-title">Request Details</h5><div id="reqModal-timer-wrap" style="margin-top:5px"></div></div>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="reqModal-body"></div>
@@ -607,19 +559,15 @@ code{font-family:'DM Mono',monospace;}
   </div>
 </div>
 
-<!-- Vendor Modal -->
 <div class="modal fade" id="vendModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
   <div class="modal-header"><h5 class="modal-title" id="vendModal-title">Add Vendor</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
   <div class="modal-body">
     <div class="row g-3">
-      <!-- Vendor ID display (readonly for edit, "Auto-generated" for new) -->
       <div class="col-12">
-        <div style="display:flex;align-items:center;gap:10px;background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:var(--r);padding:10px 14px" id="vendModal-id-row" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:var(--r);padding:10px 14px" id="vendModal-id-row">
           <i class="bi bi-tag-fill" style="color:var(--blue);font-size:16px;flex-shrink:0"></i>
-          <div>
-            <div style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Vendor ID</div>
-            <div style="font-size:15px;font-weight:800;color:var(--blue);font-family:'DM Mono',monospace" id="vendModal-id-display">Auto-generated on save</div>
-          </div>
+          <div><div style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Vendor ID</div>
+          <div style="font-size:15px;font-weight:800;color:var(--blue);font-family:'DM Mono',monospace" id="vendModal-id-display">Auto-generated on save</div></div>
           <button type="button" class="btn btn-outline-primary btn-sm ms-auto" id="vendModal-copy-btn" onclick="copyVendorId()" style="display:none;font-size:11px"><i class="bi bi-clipboard me-1"></i>Copy</button>
         </div>
       </div>
@@ -628,17 +576,14 @@ code{font-family:'DM Mono',monospace;}
       <div class="col-md-6"><label class="lbl">Account Number <span class="req-star">*</span></label><input type="text" class="form-control" id="v-acct"/></div>
       <div class="col-md-6"><label class="lbl">IFSC Code <span class="req-star">*</span></label><input type="text" class="form-control" id="v-ifsc" oninput="this.value=this.value.toUpperCase()"/></div>
       <div class="col-md-6"><label class="lbl">Mobile <span class="req-star">*</span></label><input type="tel" class="form-control" id="v-mobile"/></div>
-      <input type="hidden" id="v-id"/>
-      <input type="hidden" id="v-vendor-code"/>
+      <input type="hidden" id="v-id"/><input type="hidden" id="v-vendor-code"/>
     </div>
   </div>
   <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveVendor()"><i class="bi bi-floppy me-1"></i>Save</button></div>
 </div></div></div>
 
-<!-- User Modal -->
 <div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="userModal-title">Add User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="lbl">Full Name <span class="req-star">*</span></label><input type="text" class="form-control" id="u-name"/></div><div class="col-md-6"><label class="lbl">Email <span class="req-star">*</span></label><input type="email" class="form-control" id="u-email"/></div><div class="col-md-6"><label class="lbl">Department</label><input type="text" class="form-control" id="u-dept" placeholder="e.g. Logistics"/></div><div class="col-md-6"><label class="lbl">Mobile</label><input type="tel" class="form-control" id="u-mobile"/></div><div class="col-md-6"><label class="lbl">Role <span class="req-star">*</span></label><select class="form-select" id="u-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Approver">Approver</option></select></div><div class="col-md-6"><label class="lbl">Status <span class="req-star">*</span></label><select class="form-select" id="u-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div><div class="col-12"><label class="lbl">Password <span class="req-star">*</span></label><input type="password" class="form-control" id="u-pass" placeholder="Set login password"/></div><input type="hidden" id="u-id"/></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveUser()"><i class="bi bi-floppy me-1"></i>Save</button></div></div></div></div>
 
-<!-- Role Modal -->
 <div class="modal fade" id="roleModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Change Role</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;margin-bottom:12px">User: <strong id="rm-email-show">—</strong></p><label class="lbl">Role</label><select class="form-select" id="rm-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Approver">Approver</option></select><input type="hidden" id="rm-id"/></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveRole()">Save</button></div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -648,10 +593,9 @@ code{font-family:'DM Mono',monospace;}
    ============================================== */
 const SUPA_URL = 'https://yjyegrxaoyomtjfgudwd.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqeWVncnhhb3lvbXRqZmd1ZHdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTkxNjEsImV4cCI6MjA5NTg3NTE2MX0.plHH_FiVgc3OH8JK27mzHi0hD4Kq5j5HfOeDR7ha6So';
-
 const MAX_FILE=5*1024*1024, OK_EXTS=['pdf','jpg','jpeg','png','webp'];
 const IS_DEMO=SUPA_URL.includes('YOUR_PROJECT');
-const EDIT_WINDOW_MS = 2 * 60 * 60 * 1000; // 2 hours in ms
+const EDIT_WINDOW_MS = 2 * 60 * 60 * 1000;
 
 /* ==============================================
    STATE
@@ -664,17 +608,121 @@ const {createClient}=supabase;
 const sb=IS_DEMO?null:createClient(SUPA_URL,SUPA_KEY);
 
 /* ==============================================
+   UNIVERSAL TYPE COERCION ENGINE
+   Automatically fixes data types from any Excel/CSV input.
+   Amounts → float, IDs → int, dates → ISO string, rest → string.
+   IFSC / Vehicle No → uppercase.
+   ============================================== */
+const FLOAT_FIELDS = new Set([
+  'hire_amount','halting_charges','payable_amount',
+  'paid_amount','balance_amount','weight'
+]);
+const INT_FIELDS   = new Set(['requester_id']);
+const DATE_FIELDS  = new Set(['trip_date','submitted_at']);
+const UPPER_FIELDS = new Set(['ifsc_code','vehicle_no']);
+
+function _toFloat(raw) {
+  if (raw === null || raw === undefined || raw === '') return 0;
+  let s = String(raw).trim();
+  // Parenthetical negatives: (1,500.00) → -1500
+  if (/^\([\d,.\s]+\)$/.test(s)) s = '-' + s.slice(1, -1);
+  // Strip ₹ $ € £ commas spaces %
+  s = s.replace(/[₹\$€£,\s%]/g, '');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : Math.round(n * 100) / 100;
+}
+
+function _toInt(raw) {
+  return Math.round(_toFloat(raw));
+}
+
+function _toDate(raw) {
+  if (!raw) return '';
+  const s = String(raw).trim();
+  if (!s) return '';
+  // Excel serial number (5-digit, e.g. 45123)
+  if (/^\d{5}$/.test(s)) {
+    const d = new Date(Date.UTC(1899, 11, 30) + parseInt(s) * 86400000);
+    return d.toISOString().slice(0, 10);
+  }
+  // DD/MM/YYYY or DD-MM-YYYY
+  const dmy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if (dmy) {
+    const [, dd, mm, yy] = dmy;
+    const year = yy.length === 2 ? '20' + yy : yy;
+    const dt = new Date(`${year}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`);
+    if (!isNaN(dt)) return dt.toISOString().slice(0, 10);
+  }
+  // ISO or any parseable string
+  const dt = new Date(s);
+  if (!isNaN(dt)) return dt.toISOString().slice(0, 10);
+  return s; // fallback: keep as-is
+}
+
+function coerceField(raw, fieldName) {
+  if (FLOAT_FIELDS.has(fieldName)) return _toFloat(raw);
+  if (INT_FIELDS.has(fieldName))   return _toInt(raw);
+  if (DATE_FIELDS.has(fieldName))  return _toDate(raw);
+  let s = String(raw ?? '').trim();
+  if (UPPER_FIELDS.has(fieldName)) s = s.toUpperCase();
+  return s;
+}
+
+/**
+ * Coerce all recognised fields in a raw row object.
+ * @returns {coerced, changes[]}
+ */
+function coerceRow(rawRow) {
+  const coerced = {};
+  const changes = [];
+  for (const [field, raw] of Object.entries(rawRow)) {
+    const cv = coerceField(raw, field);
+    coerced[field] = cv;
+    const rs = String(raw  ?? '');
+    const cs = String(cv   ?? '');
+    if (rs !== cs && rs !== '') {
+      changes.push({ field, from: rs, to: cs });
+    }
+  }
+  return { coerced, changes };
+}
+
+/**
+ * Render the green auto-coerce banner after a bulk parse.
+ * allChanges: [{row, field, from, to}]
+ */
+function showCoerceBanner(bannerId, allChanges, rowCount) {
+  const bEl = document.getElementById(bannerId);
+  if (!bEl) return;
+  if (!allChanges.length) { bEl.style.display = 'none'; return; }
+  const chips = allChanges.slice(0, 30).map(c =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #a7f3d0;border-radius:5px;padding:2px 8px;font-size:11px;font-family:'DM Mono',monospace;margin:2px">
+      <span style="color:var(--muted)">Row ${c.row}·${c.field}:</span>
+      <span style="color:#991b1b;text-decoration:line-through">${esc(c.from)}</span>
+      <i class="bi bi-arrow-right" style="font-size:9px;color:var(--muted)"></i>
+      <strong style="color:#065f46">${esc(c.to)}</strong>
+    </span>`
+  ).join('');
+  const more = allChanges.length > 30
+    ? `<span style="font-size:11px;color:var(--muted);margin-left:4px">+${allChanges.length - 30} more conversions</span>` : '';
+  bEl.style.display = 'flex';
+  bEl.innerHTML = `
+    <div style="flex-shrink:0;margin-top:2px"><i class="bi bi-magic" style="font-size:16px;color:#059669"></i></div>
+    <div>
+      <div style="font-size:12.5px;font-weight:700;color:#065f46;margin-bottom:6px">
+        <i class="bi bi-check-circle-fill me-1"></i>Auto-converted ${allChanges.length} cell(s) across ${rowCount} row(s) to correct data types
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:3px">${chips}${more}</div>
+    </div>`;
+}
+
+/* ==============================================
    PERMISSIONS HELPER
    ============================================== */
-// Can a user edit/delete a request?
-// Rules:
-//   Approver: full CRUD on all
-//   Finance: can edit paid_amount, reference_id, status only
-//   User: CRUD on OWN requests only within 2 hours of submitted_at
 function canEditRequest(r) {
   if (!r) return false;
   if (CU.role === 'Approver') return true;
-  if (CU.role === 'Finance') return true; // finance edits specific fields
+  if (CU.role === 'Finance') return true;
   if (CU.role === 'User') {
     const isOwn = String(r.requester_id) === String(CU.id) || r.submitted_by === CU.email;
     if (!isOwn) return false;
@@ -682,7 +730,6 @@ function canEditRequest(r) {
   }
   return false;
 }
-
 function canDeleteRequest(r) {
   if (!r) return false;
   if (CU.role === 'Approver') return true;
@@ -692,25 +739,19 @@ function canDeleteRequest(r) {
   }
   return false;
 }
-
 function withinEditWindow(r) {
   const ts = r.submitted_at || r.created_at;
   if (!ts) return false;
   return (Date.now() - new Date(ts).getTime()) <= EDIT_WINDOW_MS;
 }
-
 function editWindowRemaining(r) {
   const ts = r.submitted_at || r.created_at;
   if (!ts) return 0;
-  const remaining = EDIT_WINDOW_MS - (Date.now() - new Date(ts).getTime());
-  return Math.max(0, remaining);
+  return Math.max(0, EDIT_WINDOW_MS - (Date.now() - new Date(ts).getTime()));
 }
-
 function fmtTimeRemaining(ms) {
   if (ms <= 0) return 'Expired';
-  const h = Math.floor(ms / 3600000);
-  const m = Math.floor((ms % 3600000) / 60000);
-  const s = Math.floor((ms % 60000) / 1000);
+  const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000), s = Math.floor((ms % 60000) / 1000);
   if (h > 0) return `${h}h ${m}m remaining`;
   if (m > 0) return `${m}m ${s}s remaining`;
   return `${s}s remaining`;
@@ -719,10 +760,10 @@ function fmtTimeRemaining(ms) {
 /* ==============================================
    INIT
    ============================================== */
-window.onload=async()=>{
-  const stored=localStorage.getItem('hire_cu');
-  if(stored){try{CU=JSON.parse(stored);await bootApp();return;}catch(e){localStorage.removeItem('hire_cu');}}
-  hide('loader');show('login-screen');
+window.onload = async () => {
+  const stored = localStorage.getItem('hire_cu');
+  if (stored) { try { CU = JSON.parse(stored); await bootApp(); return; } catch(e) { localStorage.removeItem('hire_cu'); } }
+  hide('loader'); show('login-screen');
 };
 
 /* ==============================================
@@ -730,8 +771,8 @@ window.onload=async()=>{
    ============================================== */
 async function doLogin(){
   const email=gv('login-email').trim().toLowerCase(), pass=gv('login-pass').trim();
-  const errEl=document.getElementById('login-err');errEl.style.display='none';
-  if(!email||!pass)return showErr(errEl,'Email and password required');
+  const errEl=document.getElementById('login-err'); errEl.style.display='none';
+  if(!email||!pass) return showErr(errEl,'Email and password required');
   setBtnLoad('login-btn',true,'Signing in…');
   if(IS_DEMO){
     const DEMO={'user@hire.com':{id:1,name:'Demo User',role:'User',dept:'Logistics',mobile:'9876543210',status:'Active',pass:'user123'},'finance@hire.com':{id:2,name:'Finance User',role:'Finance',dept:'Accounts',mobile:'9123456780',status:'Active',pass:'fin123'},'admin@hire.com':{id:3,name:'Admin User',role:'Approver',dept:'Management',mobile:'9000112233',status:'Active',pass:'admin123'}};
@@ -756,16 +797,16 @@ function doLogout(){localStorage.removeItem('hire_cu');CU=null;REQ_DATA=[];VEND_
    BOOT
    ============================================== */
 async function bootApp(){
-  hide('loader');document.getElementById('app').style.display='flex';
-  el('user-name').textContent=CU.name;el('user-role').textContent=CU.role;el('role-badge').textContent=CU.role.toUpperCase();el('user-av').textContent=CU.name.charAt(0).toUpperCase();
-  // Bulk upload auto-requester label
+  hide('loader'); document.getElementById('app').style.display='flex';
+  el('user-name').textContent=CU.name; el('user-role').textContent=CU.role;
+  el('role-badge').textContent=CU.role.toUpperCase(); el('user-av').textContent=CU.name.charAt(0).toUpperCase();
   const brn=el('bulk-req-name'); if(brn) brn.textContent=CU.name;
   if(CU.role==='Approver'){el('nav-users').style.display='flex';el('nav-roles').style.display='flex';el('nav-digest').style.display='flex';}
   const cb=el('conn-badge');
   if(IS_DEMO){cb.style.background='#fef3c7';cb.style.color='#92400e';cb.innerHTML='<i class="bi bi-lightning-fill"></i> Demo Mode';}
   else{cb.style.background='#d1fae5';cb.style.color='#065f46';cb.innerHTML='<i class="bi bi-circle-fill" style="font-size:8px"></i> Live Database';}
   await Promise.all([loadVendorData(),loadUserData()]);
-  initFormDropdowns();setupNewReqForm();buildRequestsTableHeader();loadDashboard();
+  initFormDropdowns(); setupNewReqForm(); buildRequestsTableHeader(); loadDashboard();
 }
 
 /* ==============================================
@@ -773,13 +814,18 @@ async function bootApp(){
    ============================================== */
 function goto(page,nav){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if(nav)nav.classList.add('active');
+  if(nav) nav.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   el('page-'+page).classList.add('active');
   const titles={dashboard:'Dashboard',newreq:'New Hire Request',bulk:'Bulk Upload',requests:'All Requests',vendors:'Vendors',users:'Users',userroles:'User Roles',digest:'Email Digest'};
-  el('page-title').textContent=titles[page]||page;closeSidebar();
-  if(page==='requests')loadRequests();if(page==='vendors'){loadVendors();switchVendTab('list',document.querySelector('#vend-tabs .nav-link'));}if(page==='users')loadUsersPage();
-  if(page==='userroles')loadRolesPage();if(page==='dashboard')loadDashboard();if(page==='newreq')_refreshSubmittedAt();if(page==='digest')loadDigestPage();
+  el('page-title').textContent=titles[page]||page; closeSidebar();
+  if(page==='requests')loadRequests();
+  if(page==='vendors'){loadVendors();switchVendTab('list',document.querySelector('#vend-tabs .nav-link'));}
+  if(page==='users')loadUsersPage();
+  if(page==='userroles')loadRolesPage();
+  if(page==='dashboard')loadDashboard();
+  if(page==='newreq')_refreshSubmittedAt();
+  if(page==='digest')loadDigestPage();
   if(page==='bulk'){el('bulk-export-btn').style.display='none';}
 }
 function openSidebar(){el('sidebar').classList.add('open');el('mob-ov').classList.add('show');}
@@ -795,28 +841,14 @@ function switchBulkTab(tab, link) {
 }
 
 function _setupValidateTabForRole() {
-  const isFinanceOrApprover = CU.role==='Finance' || CU.role==='Approver';
-  // Finance banner
-  el('bulk-val-finance-banner').style.display = isFinanceOrApprover ? 'block' : 'none';
-  // Finance chips
-  el('chip-finance-fields').style.display = isFinanceOrApprover ? 'flex' : 'none';
-  // Finance column headers in preview table
-  ['bvh-refno','bvh-paid','bvh-status'].forEach(id => {
-    const e=el(id); if(e) e.style.display = isFinanceOrApprover ? 'table-cell' : 'none';
-  });
-  // Update drop zone hint
-  const dropSub = el('bulk-val-drop-sub');
-  if(dropSub) {
-    dropSub.textContent = isFinanceOrApprover
-      ? 'Updates: LR Status · Payable Amount · Remarks · Ref No · Paid Amount · Status'
-      : 'Updates: LR Status · Payable Amount · Remarks';
-  }
-  const hint = el('bulk-val-export-hint');
-  if(hint) {
-    hint.textContent = isFinanceOrApprover
-      ? 'Export → fill LR Status, Payable, Remarks, Ref No, Paid Amount, Status → re-upload'
-      : 'Export → edit LR Status, Payable Amount, Remarks → re-upload below';
-  }
+  const isFA = CU.role==='Finance' || CU.role==='Approver';
+  el('bulk-val-finance-banner').style.display = isFA ? 'block' : 'none';
+  el('chip-finance-fields').style.display = isFA ? 'flex' : 'none';
+  ['bvh-refno','bvh-paid','bvh-status'].forEach(id=>{const e=el(id);if(e)e.style.display=isFA?'table-cell':'none';});
+  const dropSub=el('bulk-val-drop-sub');
+  if(dropSub) dropSub.textContent=isFA?'Updates: LR Status · Payable Amount · Remarks · Ref No · Paid Amount · Status':'Updates: LR Status · Payable Amount · Remarks';
+  const hint=el('bulk-val-export-hint');
+  if(hint) hint.textContent=isFA?'Export → fill LR Status, Payable, Remarks, Ref No, Paid Amount, Status → re-upload':'Export → edit LR Status, Payable Amount, Remarks → re-upload below';
 }
 
 /* ==============================================
@@ -832,19 +864,11 @@ function rebuildVendorTS(){
     placeholder:'Search by name or Vendor ID…',allowEmptyOption:true,create:false,
     searchField:['text','data_code'],
     render:{
-      option(d){
-        return `<div style="padding:6px 10px;display:flex;align-items:center;gap:8px">
-          ${d.data_code?`<span style="font-size:10px;font-weight:800;background:#eff3ff;color:var(--blue);padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace;flex-shrink:0">${d.data_code}</span>`:''}
-          <span style="font-size:12.5px;font-weight:600">${d.text}</span>
-        </div>`;
-      },
-      item(d){ return `<span>${d.data_code?`[${d.data_code}] `:''} ${d.text}</span>`; }
+      option(d){return`<div style="padding:6px 10px;display:flex;align-items:center;gap:8px">${d.data_code?`<span style="font-size:10px;font-weight:800;background:#eff3ff;color:var(--blue);padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace;flex-shrink:0">${d.data_code}</span>`:''}<span style="font-size:12.5px;font-weight:600">${d.text}</span></div>`;},
+      item(d){return`<span>${d.data_code?`[${d.data_code}] `:''} ${d.text}</span>`;}
     },
     onChange(val){fillVendor(val);},
-    options:[
-      {value:'',text:'— Select vendor —',data_code:''},
-      ...VEND_DATA.map(v=>({value:String(v.id),text:v.name,data_code:v.vendor_code||''}))
-    ],
+    options:[{value:'',text:'— Select vendor —',data_code:''},...VEND_DATA.map(v=>({value:String(v.id),text:v.name,data_code:v.vendor_code||''}))],
     items:['']
   });
 }
@@ -864,7 +888,7 @@ function setupNewReqForm(){
   if(isApprover){el('requester-dropdown-wrap').style.display='block';el('requester-static-wrap').style.display='none';el('req-auto-notice').style.display='none';rebuildRequesterTS();}
   else{el('requester-dropdown-wrap').style.display='none';el('requester-static-wrap').style.display='block';el('req-auto-notice').style.display='flex';el('req-auto-name').textContent=CU.name;el('f-requester-static').value=CU.name;gset('f-requester-id-hidden',String(CU.id));}
 }
-function _refreshSubmittedAt(){const now=new Date();gset('f-submittedAt',now.toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}));}
+function _refreshSubmittedAt(){gset('f-submittedAt',new Date().toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}));}
 function calcPay(){gset('f-payable',(parseFloat(gv('f-hireAmount'))||0)+(parseFloat(gv('f-haltingCharges'))||0));}
 function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance: 50% upfront — LR reusable for POD.',POD:'POD: Requires a prior Advance on same LR.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';}
 
@@ -920,7 +944,7 @@ async function submitReq(evt){
   const[docFile,wwlFile,wwoFile]=await Promise.all([readBase64('f-document'),readBase64('f-weighmentWithLoad'),readBase64('f-weighmentWithoutLoad')]);
   const hire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,payable=hire+halt;
   _refreshSubmittedAt();const submittedAt=new Date().toISOString();
-  const row={trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),lr_numbers:lrStr,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),from_loc:gv('f-from'),to_loc:gv('f-to'),hire_amount:hire,weight:gv('f-weight')||null,vehicle_document_file:docFile?.data||null,vehicle_document_name:docFile?.name||null,weighment_with_load_file:wwlFile?.data||null,weighment_with_load_name:wwlFile?.name||null,weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,remarks:gv('f-remarks'),halting_charges:halt,payable_amount:payable,balance_amount:payable,paid_amount:0,request_type:reqType,status:'Pending',submitted_by:CU.email};
+  const row={trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),lr_numbers:lrStr,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),from_loc:gv('f-from'),to_loc:gv('f-to'),hire_amount:hire,weight:parseFloat(gv('f-weight'))||null,vehicle_document_file:docFile?.data||null,vehicle_document_name:docFile?.name||null,weighment_with_load_file:wwlFile?.data||null,weighment_with_load_name:wwlFile?.name||null,weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,remarks:gv('f-remarks'),halting_charges:halt,payable_amount:payable,balance_amount:payable,paid_amount:0,request_type:reqType,status:'Pending',submitted_by:CU.email};
   setBtnLoad('req-submit-btn',true,'Submitting…');
   if(IS_DEMO){row.id='HR-'+String(Date.now()).slice(-5);REQ_DATA.unshift(row);toast(`Request submitted! ID: ${row.id}`,'success');setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');resetForm();loadDashboard();return;}
   try{const{data,error}=await sb.from('hire_requests').insert(row).select().single();if(error)throw error;toast(`Request submitted! ID: ${data.id}`,'success');resetForm();loadDashboard();}catch(e){toast('Submit error: '+e.message,'error');}
@@ -941,12 +965,7 @@ function resetForm(){
    ============================================== */
 async function loadDashboard(){
   if(IS_DEMO){renderDashboard(getDemoRequests());return;}
-  try{
-    let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
-    // User sees only own requests
-    if(CU.role==='User')q=q.eq('submitted_by',CU.email);
-    const{data,error}=await q;if(error)throw error;renderDashboard(data||[]);
-  }catch(e){toast('Dashboard error: '+e.message,'error');}
+  try{let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});if(CU.role==='User')q=q.eq('submitted_by',CU.email);const{data,error}=await q;if(error)throw error;renderDashboard(data||[]);}catch(e){toast('Dashboard error: '+e.message,'error');}
 }
 function renderDashboard(data){
   const total=data.length,pending=data.filter(r=>r.status==='Pending').length,approved=data.filter(r=>r.status==='Approved').length,paid=data.filter(r=>r.status==='Paid').length;
@@ -955,7 +974,7 @@ function renderDashboard(data){
   el('stat-grid').innerHTML=`<div class="stat-card sc-blue"><div class="s-lbl">Total Requests</div><div class="s-val" style="color:var(--blue)">${total}</div><div class="s-sub">${CU.role==='User'?'Your requests':'All time'}</div></div><div class="stat-card sc-yellow"><div class="s-lbl">Pending</div><div class="s-val" style="color:var(--yellow)">${pending}</div><div class="s-sub">Awaiting action</div></div><div class="stat-card sc-green"><div class="s-lbl">Approved</div><div class="s-val" style="color:var(--green)">${approved}</div><div class="s-sub">Cleared</div></div><div class="stat-card sc-red"><div class="s-lbl">Paid</div><div class="s-val" style="color:var(--red)">${paid}</div><div class="s-sub">Disbursed</div></div><div class="stat-card sc-teal"><div class="s-lbl">Total Hire</div><div class="s-val" style="color:var(--navy);font-size:20px">${fmt(totalH)}</div><div class="s-sub">All requests</div></div><div class="stat-card sc-blue"><div class="s-lbl">Balance Due</div><div class="s-val" style="color:var(--teal);font-size:20px">${fmt(totalH-totalPd)}</div><div class="s-sub">Outstanding</div></div>`;
   const tbody=el('dash-tbody'),recent=data.slice(0,8);
   if(!recent.length){tbody.innerHTML=`<tr><td colspan="9"><div class="empty-st"><i class="bi bi-inbox"></i><p>No requests yet</p></div></td></tr>`;return;}
-  tbody.innerHTML=recent.map(r=>`<tr><td><code style="font-size:10.5px;color:var(--blue)">${r.id||'—'}</code></td><td>${r.trip_date||'—'}</td><td style="font-weight:600">${r.requester_name||'—'}</td><td>${fmtLR(r.lr_numbers||'')}</td><td>${lrStatusB(r.lr_status)}</td><td>${r.from_loc||''}→${r.to_loc||''}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');
+  tbody.innerHTML=recent.map(r=>`<tr><td><code style="font-size:10.5px;color:var(--blue)">${r.id||'—'}</code></td><td>${r.trip_date||'—'}</td><td style="font-weight:600">${r.requester_name||'—'}</td><td>${fmtLR(String(r.lr_numbers||''))}</td><td>${lrStatusB(r.lr_status)}</td><td>${r.from_loc||''}→${r.to_loc||''}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');
 }
 
 /* ==============================================
@@ -963,13 +982,7 @@ function renderDashboard(data){
    ============================================== */
 function buildRequestsTableHeader(){
   const isApprover=CU.role==='Approver',isFinance=CU.role==='Finance';
-  const cols=[
-    {h:'Ref ID'},{h:'Trip Date'},{h:'Requester'},{h:'Transport'},{h:'LR'},{h:'LR Status'},
-    {h:'Vehicle'},{h:'Route'},{h:'Load'},{h:'Hire ₹'},
-    ...(isApprover?[{h:'Payable ₹'}]:[]),
-    ...(isFinance||isApprover?[{h:'Paid ₹'}]:[]),
-    {h:'Balance ₹'},{h:'Ref No'},{h:'Type'},{h:'Status'},{h:'Actions'}
-  ];
+  const cols=[{h:'Ref ID'},{h:'Trip Date'},{h:'Requester'},{h:'Transport'},{h:'LR'},{h:'LR Status'},{h:'Vehicle'},{h:'Route'},{h:'Load'},{h:'Hire ₹'},...(isApprover?[{h:'Payable ₹'}]:[]),...(isFinance||isApprover?[{h:'Paid ₹'}]:[]),{h:'Balance ₹'},{h:'Ref No'},{h:'Type'},{h:'Status'},{h:'Actions'}];
   el('req-thead').innerHTML='<tr>'+cols.map(c=>`<th>${c.h}</th>`).join('')+'</tr>';
 }
 
@@ -995,16 +1008,8 @@ function smartFilter(data,srch,status,type,lrSt){
    ============================================== */
 async function loadRequests(){
   const srch=gv('srch').toLowerCase().trim(),status=gv('flt-status'),type=gv('flt-type'),lrSt=gv('flt-lrstatus');
-  if(IS_DEMO){
-    let all=getDemoRequests();
-    if(CU.role==='User')all=all.filter(r=>r.submitted_by===CU.email);
-    REQ_DATA=all;renderRequests(smartFilter(REQ_DATA,srch,status,type,lrSt));return;
-  }
-  try{
-    let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
-    if(CU.role==='User')q=q.eq('submitted_by',CU.email);
-    const{data,error}=await q;if(error)throw error;REQ_DATA=data||[];renderRequests(smartFilter(REQ_DATA,srch,status,type,lrSt));
-  }catch(e){toast('Error: '+e.message,'error');}
+  if(IS_DEMO){let all=getDemoRequests();if(CU.role==='User')all=all.filter(r=>r.submitted_by===CU.email);REQ_DATA=all;renderRequests(smartFilter(REQ_DATA,srch,status,type,lrSt));return;}
+  try{let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});if(CU.role==='User')q=q.eq('submitted_by',CU.email);const{data,error}=await q;if(error)throw error;REQ_DATA=data||[];renderRequests(smartFilter(REQ_DATA,srch,status,type,lrSt));}catch(e){toast('Error: '+e.message,'error');}
 }
 
 /* ==============================================
@@ -1015,17 +1020,12 @@ function renderRequests(data){
   if(!data.length){tbody.innerHTML=`<tr><td colspan="20"><div class="empty-st"><i class="bi bi-inbox"></i><p>No matching requests</p></div></td></tr>`;return;}
   tbody.innerHTML=data.map(r=>{
     const bal=parseFloat(r.balance_amount||0),safeId=esc(r.id||'');
-    const canEdit=canEditRequest(r), canDel=canDeleteRequest(r);
-    let cols=`<td><code style="font-size:10px;color:var(--blue)">${safeId}</code></td><td style="white-space:nowrap">${r.trip_date||'—'}</td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td>${fmtLR(r.lr_numbers||'')}</td><td>${lrStatusB(r.lr_status)}</td><td style="font-weight:600">${esc(r.vehicle_no||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td>${esc(r.load_type||'—')}</td><td>₹${fmtN(r.hire_amount||0)}</td>`;
+    const canEdit=canEditRequest(r),canDel=canDeleteRequest(r);
+    let cols=`<td><code style="font-size:10px;color:var(--blue)">${safeId}</code></td><td style="white-space:nowrap">${r.trip_date||'—'}</td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td>${fmtLR(String(r.lr_numbers||''))}</td><td>${lrStatusB(r.lr_status)}</td><td style="font-weight:600">${esc(r.vehicle_no||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td>${esc(r.load_type||'—')}</td><td>₹${fmtN(r.hire_amount||0)}</td>`;
     if(isApprover)cols+=`<td>₹${fmtN(r.payable_amount||0)}</td>`;
     if(isFinance||isApprover)cols+=`<td>₹${fmtN(r.paid_amount||0)}</td>`;
     cols+=`<td style="font-weight:700;color:${bal>0?'var(--red)':'var(--green)'}">₹${fmtN(bal)}</td><td><small>${esc(r.reference_id||'—')}</small></td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td>`;
-    cols+=`<td style="white-space:nowrap">
-      <button class="bsi view-btn me-1" data-id="${safeId}" title="View/Edit" ${canEdit?'':''}>
-        <i class="bi bi-eye"></i>
-      </button>
-      ${canDel?`<button class="bsi del del-btn" data-id="${safeId}" title="Delete"><i class="bi bi-trash"></i></button>`:''}
-    </td>`;
+    cols+=`<td style="white-space:nowrap"><button class="bsi view-btn me-1" data-id="${safeId}" title="View/Edit"><i class="bi bi-eye"></i></button>${canDel?`<button class="bsi del del-btn" data-id="${safeId}" title="Delete"><i class="bi bi-trash"></i></button>`:''}</td>`;
     return`<tr>${cols}</tr>`;
   }).join('');
   tbody.querySelectorAll('.view-btn').forEach(btn=>{btn.addEventListener('click',()=>viewReq(btn.dataset.id));});
@@ -1039,68 +1039,21 @@ function viewReq(id){
   let r=REQ_DATA.find(x=>x.id===id);if(!r&&IS_DEMO)r=getDemoRequests().find(x=>x.id===id);
   if(!r){toast('Record not found. Refresh the table.','warn');return;}
   EDIT_ID=id;
-
-  const isApprover=CU.role==='Approver';
-  const isFinance=CU.role==='Finance';
-  const isUser=CU.role==='User';
-  const canSave=canEditRequest(r);
-  const canDel=canDeleteRequest(r);
-
+  const isApprover=CU.role==='Approver',isFinance=CU.role==='Finance',isUser=CU.role==='User';
+  const canSave=canEditRequest(r),canDel=canDeleteRequest(r);
   el('reqModal-title').textContent=`Request: ${id}`;
   el('reqModal-save').style.display=canSave?'inline-flex':'none';
   el('reqModal-delete').style.display=canDel?'inline-flex':'none';
-
-  // Timer display for User role
-  const timerWrap=el('reqModal-timer-wrap');
-  timerWrap.innerHTML='';
-  if(isUser){
-    const remaining=editWindowRemaining(r);
-    const expired=remaining<=0;
-    const timerEl=document.createElement('span');
-    timerEl.className=`edit-timer${expired?' expired':''}`;
-    timerEl.id='modal-edit-timer';
-    timerEl.innerHTML=`<i class="bi bi-clock me-1"></i>${expired?'Edit window expired':fmtTimeRemaining(remaining)}`;
-    timerWrap.appendChild(timerEl);
-    if(!expired&&remaining>0){
-      const iv=setInterval(()=>{
-        const rem=editWindowRemaining(r);
-        const tel=document.getElementById('modal-edit-timer');
-        if(!tel){clearInterval(iv);return;}
-        if(rem<=0){tel.textContent='Edit window expired';tel.className='edit-timer expired';el('reqModal-save').style.display='none';el('reqModal-delete').style.display='none';clearInterval(iv);}
-        else{tel.innerHTML=`<i class="bi bi-clock me-1"></i>${fmtTimeRemaining(rem)}`;}
-      },1000);
-    }
-  }
-
-  // Field helpers
-  // ro = read-only; ed = editable input; sel = select
+  const timerWrap=el('reqModal-timer-wrap');timerWrap.innerHTML='';
+  if(isUser){const remaining=editWindowRemaining(r);const expired=remaining<=0;const timerEl=document.createElement('span');timerEl.className=`edit-timer${expired?' expired':''}`;timerEl.id='modal-edit-timer';timerEl.innerHTML=`<i class="bi bi-clock me-1"></i>${expired?'Edit window expired':fmtTimeRemaining(remaining)}`;timerWrap.appendChild(timerEl);if(!expired&&remaining>0){const iv=setInterval(()=>{const rem=editWindowRemaining(r);const tel=document.getElementById('modal-edit-timer');if(!tel){clearInterval(iv);return;}if(rem<=0){tel.textContent='Edit window expired';tel.className='edit-timer expired';el('reqModal-save').style.display='none';el('reqModal-delete').style.display='none';clearInterval(iv);}else{tel.innerHTML=`<i class="bi bi-clock me-1"></i>${fmtTimeRemaining(rem)}`;}},1000);}}
   const ro=(v,t='text')=>`<input type="${t}" class="form-control form-control-sm" value="${esc(String(v??''))}" readonly/>`;
   const ed=(v,eid,t='text')=>`<input type="${t}" class="form-control form-control-sm" id="e-${eid}" value="${esc(String(v??''))}"/>`;
   const fld=(label,eid,val,editable=false,t='text')=>`<div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">${label}</label>${editable?ed(val,eid,t):ro(val,t)}</div>`;
-
-  // Status options
   const statusOpts=['Pending','Approved','Paid','Rejected'].map(o=>`<option ${r.status===o?'selected':''}>${o}</option>`).join('');
   const loadOpts=['Full Load','Part Load','Special Load'].map(o=>`<option ${(r.load_type||'')==o?'selected':''}>${o}</option>`).join('');
   const lrStatusOpts=['Available','Not Available'].map(o=>`<option ${(r.lr_status||'')==o?'selected':''}>${o}</option>`).join('');
-
-  // Determine which fields each role can edit
-  // Approver: trip_date, requester_name, transport, vehicle_no, from/to, load_type, hire_amount, halting_charges, payable_amount, lr_status, remarks
-  // Finance:  paid_amount, reference_id, status ONLY
-  // User (own, within 2h): lr_status, payable_amount(no), remarks
-
-  const approverCanEdit = isApprover && canSave;
-  const financeCanEdit  = isFinance  && canSave;
-  const userCanEdit     = isUser     && canSave;
-
-  // lr_status: User, Approver can edit; Finance cannot
-  const lrStatusEdit = (approverCanEdit || userCanEdit);
-  // payable_amount: Approver only
-  const payableEdit  = approverCanEdit;
-  // paid_amount, reference_id, status: Finance + Approver
-  const finFieldEdit = financeCanEdit || approverCanEdit;
-  // general fields: Approver + User(own+2h)
-  const generalEdit  = approverCanEdit || userCanEdit;
-
+  const approverCanEdit=isApprover&&canSave,financeCanEdit=isFinance&&canSave,userCanEdit=isUser&&canSave;
+  const lrStatusEdit=approverCanEdit||userCanEdit,payableEdit=approverCanEdit,finFieldEdit=financeCanEdit||approverCanEdit,generalEdit=approverCanEdit||userCanEdit;
   let body=`<div class="row">
     ${fld('Trip Date','trip_date',r.trip_date,approverCanEdit)}
     ${fld('Submitted At','submitted_at',r.submitted_at||r.created_at||'')}
@@ -1111,351 +1064,131 @@ function viewReq(id){
     ${fld('Vehicle No','vehicle_no',r.vehicle_no,approverCanEdit)}
     ${fld('From','from_loc',r.from_loc,approverCanEdit)}
     ${fld('To','to_loc',r.to_loc,approverCanEdit)}
-    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Load Type</label>
-      ${approverCanEdit?`<select class="form-select form-select-sm" id="e-load_type"><option value="">—</option>${loadOpts}</select>`:ro(r.load_type)}
-    </div>
-    <!-- LR STATUS -->
-    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">LR Status</label>
-      ${lrStatusEdit?`<select class="form-select form-select-sm" id="e-lr_status"><option value="">—</option>${lrStatusOpts}</select>`:ro(r.lr_status||'—')}
-    </div>
+    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Load Type</label>${approverCanEdit?`<select class="form-select form-select-sm" id="e-load_type"><option value="">—</option>${loadOpts}</select>`:ro(r.load_type)}</div>
+    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">LR Status</label>${lrStatusEdit?`<select class="form-select form-select-sm" id="e-lr_status"><option value="">—</option>${lrStatusOpts}</select>`:ro(r.lr_status||'—')}</div>
     ${fld('Vehicle Type','vehicle_type',r.vehicle_type)}
     ${fld('Account No','account_no',r.account_no)}
     ${fld('IFSC','ifsc_code',r.ifsc_code)}
     ${fld('Hire Amount','hire_amount',r.hire_amount,approverCanEdit,'number')}
     ${fld('Halting','halting_charges',r.halting_charges||0,approverCanEdit,'number')}
     ${fld('Weight','weight',r.weight)}`;
-
-  // Payable — Approver only
   if(isApprover){body+=fld('Payable Amount','payable_amount',r.payable_amount,payableEdit,'number');}
-
-  // Paid Amount, Ref ID, Status — Finance + Approver
-  body+=`
-    <div class="col-md-3 mb-2">
-      <label class="lbl" style="font-size:11px">Paid Amount (₹)${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
-      ${finFieldEdit?`<input type="number" class="form-control form-control-sm" id="e-paid_amount" value="${esc(String(r.paid_amount??'0'))}"/>`:ro(r.paid_amount||0,'number')}
-    </div>
+  body+=`<div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Paid Amount (₹)${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>${finFieldEdit?`<input type="number" class="form-control form-control-sm" id="e-paid_amount" value="${esc(String(r.paid_amount??'0'))}"/>`:ro(r.paid_amount||0,'number')}</div>
     ${fld('Balance','balance_amount',r.balance_amount)}
-    <div class="col-md-3 mb-2">
-      <label class="lbl" style="font-size:11px">Ref ID${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
-      ${finFieldEdit?`<input type="text" class="form-control form-control-sm" id="e-reference_id" value="${esc(r.reference_id||'')}"/>`:ro(r.reference_id||'—')}
-    </div>
-    <div class="col-md-3 mb-2">
-      <label class="lbl" style="font-size:11px">Status${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
-      ${finFieldEdit?`<select class="form-select form-select-sm" id="e-status">${statusOpts}</select>`:`<span class="bs ${r.status==='Pending'?'bs-pending':r.status==='Approved'?'bs-approved':r.status==='Paid'?'bs-paid':'bs-rejected'}">${r.status||'Pending'}</span>`}
-    </div>
+    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Ref ID${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>${finFieldEdit?`<input type="text" class="form-control form-control-sm" id="e-reference_id" value="${esc(r.reference_id||'')}"/>`:ro(r.reference_id||'—')}</div>
+    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Status${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>${finFieldEdit?`<select class="form-select form-select-sm" id="e-status">${statusOpts}</select>`:`<span class="bs ${r.status==='Pending'?'bs-pending':r.status==='Approved'?'bs-approved':r.status==='Paid'?'bs-paid':'bs-rejected'}">${r.status||'Pending'}</span>`}</div>
   </div>
-  <div class="row">
-    <div class="col-12 mb-2"><label class="lbl" style="font-size:11px">Remarks</label>
-      ${(generalEdit)?`<textarea class="form-control form-control-sm" id="e-remarks" rows="2">${esc(r.remarks||'')}</textarea>`:ro(r.remarks||'')}
-    </div>
-  </div>
+  <div class="row"><div class="col-12 mb-2"><label class="lbl" style="font-size:11px">Remarks</label>${generalEdit?`<textarea class="form-control form-control-sm" id="e-remarks" rows="2">${esc(r.remarks||'')}</textarea>`:ro(r.remarks||'')}</div></div>
   ${r.vehicle_document_name?`<div class="mb-2"><div style="display:flex;align-items:center;gap:6px;background:var(--light);padding:7px 12px;border-radius:7px;border:1px solid var(--border);font-size:12px"><i class="bi bi-file-earmark text-primary"></i>${esc(r.vehicle_document_name)}</div></div>`:''}
   <small class="text-muted">Submitted by: ${esc(r.submitted_by||'—')} · ${r.submitted_at||r.created_at?new Date(r.submitted_at||r.created_at).toLocaleString('en-IN'):'—'}</small>`;
-
   el('reqModal-body').innerHTML=body;
   new bootstrap.Modal(el('reqModal')).show();
 }
 
 async function saveReqEdit(){
   if(!EDIT_ID)return;
-  let r=REQ_DATA.find(x=>x.id===EDIT_ID);
-  if(!r&&IS_DEMO)r=getDemoRequests().find(x=>x.id===EDIT_ID);
+  let r=REQ_DATA.find(x=>x.id===EDIT_ID);if(!r&&IS_DEMO)r=getDemoRequests().find(x=>x.id===EDIT_ID);
   if(!canEditRequest(r))return toast('Edit permission denied','error');
-
-  const isApprover=CU.role==='Approver', isFinance=CU.role==='Finance', isUser=CU.role==='User';
+  const isApprover=CU.role==='Approver',isFinance=CU.role==='Finance',isUser=CU.role==='User';
   const ge=id=>{const e=document.getElementById('e-'+id);return e?e.value:undefined;};
   const patch={};
-
-  // Fields each role can patch
   if(isApprover){
-    ['trip_date','requester_name','transport','vehicle_no','from_loc','to_loc','load_type','hire_amount','halting_charges','weight','payable_amount','lr_status'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=v;});
+    ['trip_date','requester_name','transport','vehicle_no','from_loc','to_loc','load_type','lr_status'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=v;});
+    // Numeric fields — explicitly parse
+    ['hire_amount','halting_charges','payable_amount'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=parseFloat(v)||0;});
     const pr=ge('remarks');if(pr!==undefined)patch.remarks=pr;
   }
   if(isFinance||isApprover){
-    ['paid_amount','reference_id','status'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=v;});
+    const pa=ge('paid_amount');if(pa!==undefined)patch.paid_amount=parseFloat(pa)||0;
+    const ri=ge('reference_id');if(ri!==undefined)patch.reference_id=ri;
+    const st=ge('status');if(st!==undefined)patch.status=st;
   }
-  if(isUser){
-    // User can only edit lr_status and remarks within 2h
-    const ls=ge('lr_status');if(ls!==undefined)patch.lr_status=ls;
-    const rm=ge('remarks');if(rm!==undefined)patch.remarks=rm;
-  }
-
-  // Recalculate balance if payable or paid changed
+  if(isUser){const ls=ge('lr_status');if(ls!==undefined)patch.lr_status=ls;const rm=ge('remarks');if(rm!==undefined)patch.remarks=rm;}
   if(patch.payable_amount!==undefined||patch.paid_amount!==undefined){
     const pay=parseFloat(patch.payable_amount??r.payable_amount??0);
     const paid=parseFloat(patch.paid_amount??r.paid_amount??0);
     patch.balance_amount=pay-paid;
   }
-
-  if(IS_DEMO){
-    const idx=REQ_DATA.findIndex(x=>x.id===EDIT_ID);if(idx>=0)Object.assign(REQ_DATA[idx],patch);
-    toast('Updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();return;
-  }
+  if(IS_DEMO){const idx=REQ_DATA.findIndex(x=>x.id===EDIT_ID);if(idx>=0)Object.assign(REQ_DATA[idx],patch);toast('Updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();return;}
   setBtnLoad('reqModal-save',true,'Saving…');
-  try{
-    const{error}=await sb.from('hire_requests').update(patch).eq('id',EDIT_ID);
-    if(error)throw error;
-    toast('Request updated','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();
-  }catch(e){toast('Update failed: '+e.message,'error');}
+  try{const{error}=await sb.from('hire_requests').update(patch).eq('id',EDIT_ID);if(error)throw error;toast('Request updated','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();}catch(e){toast('Update failed: '+e.message,'error');}
   setBtnLoad('reqModal-save',false,'<i class="bi bi-floppy me-1"></i>Save Changes');
 }
 
-async function deleteReq(){
-  if(!EDIT_ID)return;
-  if(!confirm(`Delete request ${EDIT_ID}? This cannot be undone.`))return;
-  await deleteReqById(EDIT_ID, true);
-}
-
-async function deleteReqById(id, fromModal=false){
+async function deleteReq(){if(!EDIT_ID)return;if(!confirm(`Delete request ${EDIT_ID}? This cannot be undone.`))return;await deleteReqById(EDIT_ID,true);}
+async function deleteReqById(id,fromModal=false){
   const r=REQ_DATA.find(x=>x.id===id)||(IS_DEMO?getDemoRequests().find(x=>x.id===id):null);
   if(!canDeleteRequest(r)){toast('Delete permission denied','error');return;}
   if(!fromModal&&!confirm(`Delete request ${id}?`))return;
-  if(IS_DEMO){
-    REQ_DATA=REQ_DATA.filter(x=>x.id!==id);
-    if(fromModal)bootstrap.Modal.getInstance(el('reqModal'))?.hide();
-    toast('Deleted (demo)','info');loadRequests();loadDashboard();return;
-  }
-  try{
-    const{error}=await sb.from('hire_requests').delete().eq('id',id);
-    if(error)throw error;
-    if(fromModal)bootstrap.Modal.getInstance(el('reqModal'))?.hide();
-    toast('Request deleted','info');loadRequests();loadDashboard();
-  }catch(e){toast('Delete failed: '+e.message,'error');}
+  if(IS_DEMO){REQ_DATA=REQ_DATA.filter(x=>x.id!==id);if(fromModal)bootstrap.Modal.getInstance(el('reqModal'))?.hide();toast('Deleted (demo)','info');loadRequests();loadDashboard();return;}
+  try{const{error}=await sb.from('hire_requests').delete().eq('id',id);if(error)throw error;if(fromModal)bootstrap.Modal.getInstance(el('reqModal'))?.hide();toast('Request deleted','info');loadRequests();loadDashboard();}catch(e){toast('Delete failed: '+e.message,'error');}
 }
 
 /* ==============================================
-   VENDORS — with auto Vendor ID (VND-001)
+   VENDORS
    ============================================== */
-
-// Generate next vendor code from existing data
-function nextVendorCode() {
-  const nums = VEND_DATA
-    .map(v => v.vendor_code || '')
-    .filter(c => /^VND-\d+$/.test(c))
-    .map(c => parseInt(c.replace('VND-', ''), 10));
-  const max = nums.length ? Math.max(...nums) : 0;
-  return 'VND-' + String(max + 1).padStart(3, '0');
-}
-
-function vendorIdBadge(code) {
-  if (!code) return '<span style="color:var(--muted);font-size:11px">—</span>';
-  return `<span style="display:inline-flex;align-items:center;gap:5px;background:#eff3ff;color:var(--blue);font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px;border:1px solid #c7d2fe;font-family:'DM Mono',monospace;letter-spacing:.5px"><i class="bi bi-tag-fill" style="font-size:10px"></i>${esc(code)}</span>`;
-}
-
-function copyVendorId() {
-  const code = gv('v-vendor-code') || el('vendModal-id-display')?.textContent;
-  if (!code || code === 'Auto-generated on save') return;
-  navigator.clipboard.writeText(code).then(() => {
-    const btn = el('vendModal-copy-btn');
-    if (btn) { btn.innerHTML = '<i class="bi bi-check me-1"></i>Copied!'; setTimeout(() => { btn.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy'; }, 1800); }
-  });
-}
-
+function nextVendorCode(){const nums=VEND_DATA.map(v=>v.vendor_code||'').filter(c=>/^VND-\d+$/.test(c)).map(c=>parseInt(c.replace('VND-',''),10));const max=nums.length?Math.max(...nums):0;return'VND-'+String(max+1).padStart(3,'0');}
+function vendorIdBadge(code){if(!code)return'<span style="color:var(--muted);font-size:11px">—</span>';return`<span style="display:inline-flex;align-items:center;gap:5px;background:#eff3ff;color:var(--blue);font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px;border:1px solid #c7d2fe;font-family:'DM Mono',monospace;letter-spacing:.5px"><i class="bi bi-tag-fill" style="font-size:10px"></i>${esc(code)}</span>`;}
+function copyVendorId(){const code=gv('v-vendor-code')||el('vendModal-id-display')?.textContent;if(!code||code==='Auto-generated on save')return;navigator.clipboard.writeText(code).then(()=>{const btn=el('vendModal-copy-btn');if(btn){btn.innerHTML='<i class="bi bi-check me-1"></i>Copied!';setTimeout(()=>{btn.innerHTML='<i class="bi bi-clipboard me-1"></i>Copy';},1800);}});}
 async function loadVendorData(){
-  if(IS_DEMO){
-    VEND_DATA=[
-      {id:1,vendor_code:'VND-001',name:'Chennai Transports',bank:'SBI',acct:'123456789',ifsc_code:'SBIN0001234',mobile:'9876543210'},
-      {id:2,vendor_code:'VND-002',name:'Fast Cargo',bank:'HDFC',acct:'987654321',ifsc_code:'HDFC0001234',mobile:'9123456780'},
-    ];
-    return;
-  }
+  if(IS_DEMO){VEND_DATA=[{id:1,vendor_code:'VND-001',name:'Chennai Transports',bank:'SBI',acct:'123456789',ifsc_code:'SBIN0001234',mobile:'9876543210'},{id:2,vendor_code:'VND-002',name:'Fast Cargo',bank:'HDFC',acct:'987654321',ifsc_code:'HDFC0001234',mobile:'9123456780'}];return;}
   try{const{data,error}=await sb.from('hire_vendors').select('*').order('vendor_code');if(error)throw error;VEND_DATA=data||[];}catch(e){console.warn('Vendor load:',e.message);}
 }
-
 async function loadVendors(){
   if(IS_DEMO){renderVendors(VEND_DATA);return;}
-  try{
-    const{data,error}=await sb.from('hire_vendors').select('*').order('vendor_code');
-    if(error)throw error;VEND_DATA=data||[];rebuildVendorTS();renderVendors(VEND_DATA);
-  }catch(e){toast('Error: '+e.message,'error');}
+  try{const{data,error}=await sb.from('hire_vendors').select('*').order('vendor_code');if(error)throw error;VEND_DATA=data||[];rebuildVendorTS();renderVendors(VEND_DATA);}catch(e){toast('Error: '+e.message,'error');}
 }
-
-function filterVendors(){
-  const q=gv('vend-srch').toLowerCase().trim();
-  if(!q){renderVendors(VEND_DATA);return;}
-  const filtered=VEND_DATA.filter(v=>
-    (v.vendor_code||'').toLowerCase().includes(q)||
-    (v.name||'').toLowerCase().includes(q)||
-    (v.bank||'').toLowerCase().includes(q)||
-    (v.acct||'').toLowerCase().includes(q)||
-    (v.ifsc_code||'').toLowerCase().includes(q)||
-    (v.mobile||'').toLowerCase().includes(q)
-  );
-  renderVendors(filtered);
-}
-
+function filterVendors(){const q=gv('vend-srch').toLowerCase().trim();if(!q){renderVendors(VEND_DATA);return;}renderVendors(VEND_DATA.filter(v=>(v.vendor_code||'').toLowerCase().includes(q)||(v.name||'').toLowerCase().includes(q)||(v.bank||'').toLowerCase().includes(q)||(v.acct||'').toLowerCase().includes(q)||(v.ifsc_code||'').toLowerCase().includes(q)||(v.mobile||'').toLowerCase().includes(q)));}
 function renderVendors(data){
   const tbody=el('vend-tbody'),canDel=CU.role==='Approver';
   if(!data.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-people"></i><p>No vendors yet</p></div></td></tr>`;return;}
-  tbody.innerHTML=data.map(v=>`<tr>
-    <td>${vendorIdBadge(v.vendor_code)}</td>
-    <td style="font-weight:600">${esc(v.name)}</td>
-    <td>${esc(v.bank)}</td>
-    <td><code>${esc(v.acct)}</code></td>
-    <td>${esc(v.ifsc_code||'')}</td>
-    <td>${esc(v.mobile)}</td>
-    <td style="white-space:nowrap">
-      <span class="bsi" onclick="openVendorModal(${v.id})" title="Edit"><i class="bi bi-pencil"></i></span>
-      <span class="bsi ms-1" onclick="copyCodeToClipboard('${esc(v.vendor_code||'')}')" title="Copy Vendor ID"><i class="bi bi-clipboard"></i></span>
-      ${canDel?`<span class="bsi del ms-1" onclick="delVendor(${v.id})" title="Delete"><i class="bi bi-trash"></i></span>`:''}
-    </td>
-  </tr>`).join('');
+  tbody.innerHTML=data.map(v=>`<tr><td>${vendorIdBadge(v.vendor_code)}</td><td style="font-weight:600">${esc(v.name)}</td><td>${esc(v.bank)}</td><td><code>${esc(v.acct)}</code></td><td>${esc(v.ifsc_code||'')}</td><td>${esc(v.mobile)}</td><td style="white-space:nowrap"><span class="bsi" onclick="openVendorModal(${v.id})" title="Edit"><i class="bi bi-pencil"></i></span><span class="bsi ms-1" onclick="copyCodeToClipboard('${esc(v.vendor_code||'')}')" title="Copy Vendor ID"><i class="bi bi-clipboard"></i></span>${canDel?`<span class="bsi del ms-1" onclick="delVendor(${v.id})" title="Delete"><i class="bi bi-trash"></i></span>`:''}</td></tr>`).join('');
 }
-
-function copyCodeToClipboard(code) {
-  if (!code) return;
-  navigator.clipboard.writeText(code).then(() => toast(`Vendor ID <strong>${code}</strong> copied!`, 'success'));
-}
-
+function copyCodeToClipboard(code){if(!code)return;navigator.clipboard.writeText(code).then(()=>toast(`Vendor ID <strong>${code}</strong> copied!`,'success'));}
 function openVendorModal(id){
-  const v = id ? VEND_DATA.find(x=>x.id==id) : null;
-  el('vendModal-title').textContent = v ? 'Edit Vendor' : 'Add Vendor';
-  gset('v-name', v?.name||''); gset('v-bank', v?.bank||''); gset('v-acct', v?.acct||'');
-  gset('v-ifsc', v?.ifsc_code||''); gset('v-mobile', v?.mobile||'');
-  gset('v-id', v?.id??''); gset('v-vendor-code', v?.vendor_code||'');
-
-  const idDisplay = el('vendModal-id-display');
-  const copyBtn = el('vendModal-copy-btn');
-  if(v && v.vendor_code){
-    idDisplay.textContent = v.vendor_code;
-    idDisplay.style.color = 'var(--blue)';
-    if(copyBtn) copyBtn.style.display = 'inline-flex';
-  } else {
-    idDisplay.textContent = 'Auto-generated on save';
-    idDisplay.style.color = 'var(--muted)';
-    if(copyBtn) copyBtn.style.display = 'none';
-  }
+  const v=id?VEND_DATA.find(x=>x.id==id):null;
+  el('vendModal-title').textContent=v?'Edit Vendor':'Add Vendor';
+  gset('v-name',v?.name||'');gset('v-bank',v?.bank||'');gset('v-acct',v?.acct||'');gset('v-ifsc',v?.ifsc_code||'');gset('v-mobile',v?.mobile||'');gset('v-id',v?.id??'');gset('v-vendor-code',v?.vendor_code||'');
+  const idDisplay=el('vendModal-id-display'),copyBtn=el('vendModal-copy-btn');
+  if(v&&v.vendor_code){idDisplay.textContent=v.vendor_code;idDisplay.style.color='var(--blue)';if(copyBtn)copyBtn.style.display='inline-flex';}
+  else{idDisplay.textContent='Auto-generated on save';idDisplay.style.color='var(--muted)';if(copyBtn)copyBtn.style.display='none';}
   new bootstrap.Modal(el('vendModal')).show();
 }
-
 async function saveVendor(){
   const d={name:gv('v-name'),bank:gv('v-bank'),acct:gv('v-acct'),ifsc_code:gv('v-ifsc'),mobile:gv('v-mobile')};
-  if(!d.name||!d.bank||!d.acct||!d.ifsc_code||!d.mobile) return toast('All fields required','error');
+  if(!d.name||!d.bank||!d.acct||!d.ifsc_code||!d.mobile)return toast('All fields required','error');
   const id=gv('v-id');
-
-  if(IS_DEMO){
-    if(id){
-      const i=VEND_DATA.findIndex(x=>x.id==id);
-      if(i>=0) Object.assign(VEND_DATA[i],d);
-      toast('Vendor updated (demo)','success');
-    } else {
-      const newCode = nextVendorCode();
-      VEND_DATA.push({...d, id:Date.now(), vendor_code:newCode});
-      toast(`Vendor saved! ID: <strong>${newCode}</strong>`,'success');
-      // Update display
-      el('vendModal-id-display').textContent = newCode;
-      el('vendModal-id-display').style.color = 'var(--blue)';
-      if(el('vendModal-copy-btn')) el('vendModal-copy-btn').style.display='inline-flex';
-      gset('v-vendor-code', newCode);
-    }
-    bootstrap.Modal.getInstance(el('vendModal')).hide();
-    loadVendors(); rebuildVendorTS(); return;
-  }
-  try{
-    let row = {...d};
-    if(!id) {
-      // New vendor — generate code
-      row.vendor_code = nextVendorCode();
-    }
-    const q = id ? sb.from('hire_vendors').update(row).eq('id',id) : sb.from('hire_vendors').insert(row).select().single();
-    const {data:saved, error} = await q;
-    if(error) throw error;
-    const savedCode = saved?.vendor_code || row.vendor_code;
-    if(!id && savedCode) {
-      toast(`Vendor saved! ID: <strong>${savedCode}</strong>`,'success');
-    } else {
-      toast('Vendor updated','success');
-    }
-    bootstrap.Modal.getInstance(el('vendModal')).hide();
-    await loadVendorData(); loadVendors(); rebuildVendorTS();
-  }catch(e){toast('Error: '+e.message,'error');}
+  if(IS_DEMO){if(id){const i=VEND_DATA.findIndex(x=>x.id==id);if(i>=0)Object.assign(VEND_DATA[i],d);toast('Vendor updated (demo)','success');}else{const newCode=nextVendorCode();VEND_DATA.push({...d,id:Date.now(),vendor_code:newCode});toast(`Vendor saved! ID: <strong>${newCode}</strong>`,'success');el('vendModal-id-display').textContent=newCode;el('vendModal-id-display').style.color='var(--blue)';if(el('vendModal-copy-btn'))el('vendModal-copy-btn').style.display='inline-flex';gset('v-vendor-code',newCode);}bootstrap.Modal.getInstance(el('vendModal')).hide();loadVendors();rebuildVendorTS();return;}
+  try{let row={...d};if(!id)row.vendor_code=nextVendorCode();const q=id?sb.from('hire_vendors').update(row).eq('id',id):sb.from('hire_vendors').insert(row).select().single();const{data:saved,error}=await q;if(error)throw error;const savedCode=saved?.vendor_code||row.vendor_code;toast(id?'Vendor updated':`Vendor saved! ID: <strong>${savedCode}</strong>`,'success');bootstrap.Modal.getInstance(el('vendModal')).hide();await loadVendorData();loadVendors();rebuildVendorTS();}catch(e){toast('Error: '+e.message,'error');}
 }
-
-async function delVendor(id){
-  if(!confirm('Delete this vendor?')) return;
-  if(IS_DEMO){VEND_DATA=VEND_DATA.filter(x=>x.id!=id);renderVendors(VEND_DATA);rebuildVendorTS();toast('Deleted (demo)','info');return;}
-  try{const{error}=await sb.from('hire_vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','info');await loadVendorData();loadVendors();rebuildVendorTS();}catch(e){toast('Error: '+e.message,'error');}
-}
-
+async function delVendor(id){if(!confirm('Delete this vendor?'))return;if(IS_DEMO){VEND_DATA=VEND_DATA.filter(x=>x.id!=id);renderVendors(VEND_DATA);rebuildVendorTS();toast('Deleted (demo)','info');return;}try{const{error}=await sb.from('hire_vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','info');await loadVendorData();loadVendors();rebuildVendorTS();}catch(e){toast('Error: '+e.message,'error');}}
 function exportVendors(){
-  const data = VEND_DATA;
-  if(!data.length) return toast('No vendors to export','info');
-  const headers = ['Vendor ID','Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'];
-  const rows = [
-    headers,
-    ...data.map(v=>[
-      v.vendor_code||'', v.name||'', v.bank||'',
-      v.acct||'',        v.ifsc_code||'', v.mobile||''
-    ])
-  ];
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols'] = [10, 24, 18, 18, 14, 14].map(wch=>({wch}));
-  // Style header row bold (basic xlsx styling)
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for(let C=range.s.c; C<=range.e.c; C++){
-    const addr = XLSX.utils.encode_cell({r:0, c:C});
-    if(!ws[addr]) continue;
-    ws[addr].s = { font:{bold:true}, fill:{fgColor:{rgb:'EEF3FF'}} };
-  }
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Vendors');
-  XLSX.writeFile(wb, `vendors-export-${new Date().toISOString().slice(0,10)}.xlsx`);
+  const data=VEND_DATA;if(!data.length)return toast('No vendors to export','info');
+  const headers=['Vendor ID','Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'];
+  const rows=[headers,...data.map(v=>[v.vendor_code||'',v.name||'',v.bank||'',v.acct||'',v.ifsc_code||'',v.mobile||''])];
+  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[10,24,18,18,14,14].map(wch=>({wch}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Vendors');XLSX.writeFile(wb,`vendors-export-${new Date().toISOString().slice(0,10)}.xlsx`);
   toast(`Exported ${data.length} vendor(s)`,'success');
 }
-
-// Vendor tab switcher
-function switchVendTab(tab, link) {
-  document.querySelectorAll('#vend-tabs .nav-link').forEach(l=>l.classList.remove('active'));
-  link.classList.add('active');
-  el('vend-tab-list').style.display = tab==='list' ? 'block' : 'none';
-  el('vend-tab-bulk').style.display = tab==='bulk' ? 'block' : 'none';
-}
+function switchVendTab(tab,link){document.querySelectorAll('#vend-tabs .nav-link').forEach(l=>l.classList.remove('active'));link.classList.add('active');el('vend-tab-list').style.display=tab==='list'?'block':'none';el('vend-tab-bulk').style.display=tab==='bulk'?'block':'none';}
 
 /* ==============================================
-   VENDOR BULK UPLOAD
+   VENDOR BULK UPLOAD  ← coercion applied
    ============================================== */
-let VEND_BULK_ROWS = [];
-
+let VEND_BULK_ROWS=[];
 function downloadVendorTemplate(){
-  const headers = ['Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'];
-  const ws = XLSX.utils.aoa_to_sheet([
-    headers,
-    ['Chennai Transports','State Bank of India','123456789012','SBIN0001234','9876543210'],
-    ['Fast Cargo Pvt Ltd','HDFC Bank','987654321098','HDFC0001234','9123456780'],
-    ['Mumbai Freight','ICICI Bank','112233445566','ICIC0001234','9000112233'],
-  ]);
-  ws['!cols'] = headers.map(()=>({wch:22}));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Vendors');
-  XLSX.writeFile(wb, 'vendor-upload-template.xlsx');
-  toast('Vendor template downloaded','success');
+  const headers=['Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'];
+  const ws=XLSX.utils.aoa_to_sheet([headers,['Chennai Transports','State Bank of India','123456789012','SBIN0001234','9876543210'],['Fast Cargo Pvt Ltd','HDFC Bank','987654321098','HDFC0001234','9123456780'],['Mumbai Freight','ICICI Bank','112233445566','ICIC0001234','9000112233']]);
+  ws['!cols']=headers.map(()=>({wch:22}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Vendors');XLSX.writeFile(wb,'vendor-upload-template.xlsx');toast('Vendor template downloaded','success');
 }
-
-function handleVendBulkDrop(e){
-  e.preventDefault(); el('vend-bulk-drop').classList.remove('drag');
-  const f=e.dataTransfer.files[0]; if(f) processVendBulkFile(f);
-}
-function handleVendBulkSelect(e){
-  const f=e.target.files[0]; if(f) processVendBulkFile(f);
-}
-
+function handleVendBulkDrop(e){e.preventDefault();el('vend-bulk-drop').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processVendBulkFile(f);}
+function handleVendBulkSelect(e){const f=e.target.files[0];if(f)processVendBulkFile(f);}
 function processVendBulkFile(file){
-  const ext=file.name.split('.').pop().toLowerCase();
-  if(!['xlsx','xls','csv'].includes(ext)) return toast('Upload .xlsx, .xls, or .csv','error');
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const wb=XLSX.read(e.target.result,{type:'binary'});
-      const ws=wb.Sheets[wb.SheetNames[0]];
-      const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
-      if(!raw.length) return toast('File is empty','error');
-      parseVendBulkRows(raw);
-    }catch(err){toast('Parse error: '+err.message,'error');}
-  };
-  r.readAsBinaryString(file);
+  const ext=file.name.split('.').pop().toLowerCase();if(!['xlsx','xls','csv'].includes(ext))return toast('Upload .xlsx, .xls, or .csv','error');
+  const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets[wb.SheetNames[0]];const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});if(!raw.length)return toast('File is empty','error');parseVendBulkRows(raw);}catch(err){toast('Parse error: '+err.message,'error');}};r.readAsBinaryString(file);
 }
 
-function parseVendBulkRows(raw){
+function parseVendBulkRows(raw) {
   const VEND_HEADER_MAP={
     'account holder name':'name','account holder':'name','name':'name','vendor name':'name',
     'bank name':'bank','bank':'bank',
@@ -1464,161 +1197,109 @@ function parseVendBulkRows(raw){
     'mobile':'mobile','mobile number':'mobile','phone':'mobile',
   };
 
-  const mapped = raw.map((row, idx)=>{
-    const out = {_rowNum:idx+2, _errors:[]};
-    Object.entries(row).forEach(([k,v])=>{
+  const allCoerceChanges = [];
+
+  const mapped = raw.map((row, idx) => {
+    // Step 1: map headers to canonical field names
+    const rawMapped = { _rowNum: idx + 2, _errors: [] };
+    Object.entries(row).forEach(([k, v]) => {
       const canon = VEND_HEADER_MAP[k.toLowerCase().trim()];
-      if(canon) out[canon] = String(v||'').trim();
+      if (canon) rawMapped[canon] = v; // keep raw for coercion
     });
-    if(out.ifsc_code) out.ifsc_code = out.ifsc_code.toUpperCase();
+
+    // Step 2: coerce each recognised field
+    const fieldsToCoerce = ['name','bank','acct','ifsc_code','mobile'];
+    const rowChanges = [];
+    fieldsToCoerce.forEach(f => {
+      if (rawMapped[f] !== undefined) {
+        const raw_v = rawMapped[f];
+        const coerced_v = coerceField(raw_v, f);
+        if (String(raw_v) !== String(coerced_v) && String(raw_v) !== '') {
+          rowChanges.push({ row: idx + 2, field: f, from: String(raw_v), to: String(coerced_v) });
+        }
+        rawMapped[f] = coerced_v;
+      }
+    });
+    allCoerceChanges.push(...rowChanges);
+
+    const out = rawMapped;
     // Validate required
-    if(!out.name)      out._errors.push('Account Holder Name required');
-    if(!out.bank)      out._errors.push('Bank Name required');
-    if(!out.acct)      out._errors.push('Account Number required');
-    if(!out.ifsc_code) out._errors.push('IFSC Code required');
-    if(!out.mobile)    out._errors.push('Mobile required');
-    // Duplicate account check within file
+    if (!out.name)      out._errors.push('Account Holder Name required');
+    if (!out.bank)      out._errors.push('Bank Name required');
+    if (!out.acct)      out._errors.push('Account Number required');
+    if (!out.ifsc_code) out._errors.push('IFSC Code required');
+    if (!out.mobile)    out._errors.push('Mobile required');
     return out;
   });
 
-  // Flag intra-file duplicate account numbers
+  // Intra-file and DB duplicate account check
   const acctMap = {};
-  mapped.forEach(r=>{ if(!r.acct) return; const k=r.acct; if(!acctMap[k]) acctMap[k]=[]; acctMap[k].push(r._rowNum); });
-  const fileAcctDups = Object.entries(acctMap).filter(([,rows])=>rows.length>1);
-
-  // Flag duplicates against existing VEND_DATA
-  mapped.forEach(r=>{
-    if(!r.acct) return;
-    const existsInDB = VEND_DATA.some(v=>v.acct===r.acct);
-    const intradup = fileAcctDups.some(([k])=>k===r.acct);
-    if(existsInDB) r._errors.push(`Account No ${r.acct} already exists`);
-    if(intradup)   r._errors.push(`Duplicate account No in rows: ${acctMap[r.acct].join(', ')}`);
+  mapped.forEach(r => { if (!r.acct) return; const k = r.acct; if (!acctMap[k]) acctMap[k] = []; acctMap[k].push(r._rowNum); });
+  const fileAcctDups = Object.entries(acctMap).filter(([, rows]) => rows.length > 1);
+  mapped.forEach(r => {
+    if (!r.acct) return;
+    if (VEND_DATA.some(v => v.acct === r.acct)) r._errors.push(`Account No ${r.acct} already exists`);
+    if (fileAcctDups.some(([k]) => k === r.acct)) r._errors.push(`Duplicate account No in rows: ${acctMap[r.acct].join(', ')}`);
   });
 
-  VEND_BULK_ROWS = mapped;
-  const valid   = mapped.filter(r=>r._errors.length===0);
-  const invalid = mapped.filter(r=>r._errors.length>0);
+  // Show coerce banner
+  showCoerceBanner('vend-bulk-coerce-banner', allCoerceChanges, raw.length);
 
-  el('vend-bulk-summary').innerHTML=`
+  VEND_BULK_ROWS = mapped;
+  const valid = mapped.filter(r => r._errors.length === 0);
+  const invalid = mapped.filter(r => r._errors.length > 0);
+
+  el('vend-bulk-summary').innerHTML = `
     <div><span style="font-size:22px;font-weight:800;color:var(--blue)">${mapped.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div>
     <div style="width:1px;background:var(--border)"></div>
     <div><span style="font-size:22px;font-weight:800;color:var(--green)">${valid.length}</span><div style="font-size:11px;color:var(--muted)">Valid</div></div>
     <div style="width:1px;background:var(--border)"></div>
     <div><span style="font-size:22px;font-weight:800;color:var(--red)">${invalid.length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div>
-    <div style="margin-left:auto;font-size:12px;color:${valid.length>0?'var(--green)':'var(--muted)'}">
-      <i class="bi ${valid.length>0?'bi-check-circle-fill':'bi-exclamation-circle-fill'} me-1"></i>
-      ${valid.length>0?`${valid.length} vendor(s) ready`:'No valid rows'}
+    <div style="margin-left:auto;font-size:12px;color:${valid.length > 0 ? 'var(--green)' : 'var(--muted)'}">
+      <i class="bi ${valid.length > 0 ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'} me-1"></i>
+      ${valid.length > 0 ? `${valid.length} vendor(s) ready` : 'No valid rows'}
     </div>`;
 
   el('vend-bulk-rowct').textContent = `${mapped.length} rows`;
-  el('vend-bulk-tbody').innerHTML = mapped.map(r=>{
-    const hasErr = r._errors.length>0;
-    return `<tr style="${hasErr?'background:#fff5f5':''}">
+  el('vend-bulk-tbody').innerHTML = mapped.map(r => {
+    const hasErr = r._errors.length > 0;
+    return `<tr style="${hasErr ? 'background:#fff5f5' : ''}">
       <td>${r._rowNum}</td>
-      <td style="font-weight:600">${esc(r.name||'')}</td>
-      <td>${esc(r.bank||'')}</td>
-      <td><code>${esc(r.acct||'')}</code></td>
-      <td>${esc(r.ifsc_code||'')}</td>
-      <td>${esc(r.mobile||'')}</td>
-      <td>${hasErr
-        ? `<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`
-        : '<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i> Ready</span>'
-      }</td>
+      <td style="font-weight:600">${esc(r.name || '')}</td>
+      <td>${esc(r.bank || '')}</td>
+      <td><code>${esc(r.acct || '')}</code></td>
+      <td>${esc(r.ifsc_code || '')}</td>
+      <td>${esc(r.mobile || '')}</td>
+      <td>${hasErr ? `<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>` : '<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i> Ready</span>'}</td>
     </tr>`;
   }).join('');
 
   el('vend-bulk-result').style.display = 'block';
-  el('vend-bulk-submit-btn').disabled = valid.length===0;
+  el('vend-bulk-submit-btn').disabled = valid.length === 0;
   el('vend-bulk-msg').textContent = valid.length ? `${valid.length} vendor(s) will be saved with auto-generated IDs` : 'No valid rows';
 }
 
 async function submitVendBulk(){
-  const valid = VEND_BULK_ROWS.filter(r=>r._errors.length===0);
-  if(!valid.length) return toast('No valid rows','error');
-  setBtnLoad('vend-bulk-submit-btn', true, 'Saving…');
-
-  if(IS_DEMO){
-    let startNum = VEND_DATA.filter(v=>/^VND-\d+$/.test(v.vendor_code||'')).length;
-    valid.forEach(r=>{
-      startNum++;
-      const code = 'VND-'+String(startNum).padStart(3,'0');
-      VEND_DATA.push({...r, id:Date.now()+startNum, vendor_code:code});
-    });
-    toast(`${valid.length} vendor(s) saved (demo)! IDs: ${valid.map((_,i)=>'VND-'+String(VEND_DATA.length-valid.length+i+1).padStart(3,'0')).join(', ')}`, 'success');
-    setBtnLoad('vend-bulk-submit-btn', false, '<i class="bi bi-upload me-2"></i>Save Valid Vendors');
-    clearVendBulk(); loadVendors(); rebuildVendorTS(); return;
-  }
-
-  // Build rows with vendor_code pre-assigned
-  const rows = [];
-  let nextNum = VEND_DATA.filter(v=>/^VND-\d+$/.test(v.vendor_code||'')).map(v=>parseInt(v.vendor_code.replace('VND-',''),10)).reduce((a,b)=>Math.max(a,b), 0);
-  for(const r of valid){
-    nextNum++;
-    rows.push({
-      name: r.name, bank: r.bank, acct: r.acct,
-      ifsc_code: r.ifsc_code, mobile: r.mobile,
-      vendor_code: 'VND-'+String(nextNum).padStart(3,'0'),
-    });
-  }
-
-  try{
-    const {error} = await sb.from('hire_vendors').insert(rows);
-    if(error) throw error;
-    toast(`${rows.length} vendor(s) saved! IDs: ${rows.map(r=>r.vendor_code).join(', ')}`, 'success');
-    clearVendBulk(); await loadVendorData(); loadVendors(); rebuildVendorTS();
-    switchVendTab('list', document.querySelector('#vend-tabs .nav-link'));
-  }catch(e){toast('Upload error: '+e.message,'error');}
-  setBtnLoad('vend-bulk-submit-btn', false, '<i class="bi bi-upload me-2"></i>Save Valid Vendors');
+  const valid=VEND_BULK_ROWS.filter(r=>r._errors.length===0);if(!valid.length)return toast('No valid rows','error');
+  setBtnLoad('vend-bulk-submit-btn',true,'Saving…');
+  if(IS_DEMO){let startNum=VEND_DATA.filter(v=>/^VND-\d+$/.test(v.vendor_code||'')).length;valid.forEach(r=>{startNum++;const code='VND-'+String(startNum).padStart(3,'0');VEND_DATA.push({...r,id:Date.now()+startNum,vendor_code:code});});toast(`${valid.length} vendor(s) saved (demo)!`,'success');setBtnLoad('vend-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Vendors');clearVendBulk();loadVendors();rebuildVendorTS();return;}
+  const rows=[];let nextNum=VEND_DATA.filter(v=>/^VND-\d+$/.test(v.vendor_code||'')).map(v=>parseInt(v.vendor_code.replace('VND-',''),10)).reduce((a,b)=>Math.max(a,b),0);
+  for(const r of valid){nextNum++;rows.push({name:r.name,bank:r.bank,acct:r.acct,ifsc_code:r.ifsc_code,mobile:r.mobile,vendor_code:'VND-'+String(nextNum).padStart(3,'0')});}
+  try{const{error}=await sb.from('hire_vendors').insert(rows);if(error)throw error;toast(`${rows.length} vendor(s) saved! IDs: ${rows.map(r=>r.vendor_code).join(', ')}`,'success');clearVendBulk();await loadVendorData();loadVendors();rebuildVendorTS();switchVendTab('list',document.querySelector('#vend-tabs .nav-link'));}catch(e){toast('Upload error: '+e.message,'error');}
+  setBtnLoad('vend-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Vendors');
 }
-
-function clearVendBulk(){
-  VEND_BULK_ROWS=[];
-  el('vend-bulk-result').style.display='none';
-  el('vend-bulk-file').value='';
-}
+function clearVendBulk(){VEND_BULK_ROWS=[];el('vend-bulk-result').style.display='none';el('vend-bulk-file').value='';}
 
 /* ==============================================
-   USERS
-   ============================================== */
-async function loadUserData(){
-  if(IS_DEMO){USER_DATA=[{id:1,name:'Demo User',email:'user@hire.com',role:'User',department:'Logistics',mobile:'9876543210',status:'Active'},{id:2,name:'Finance User',email:'finance@hire.com',role:'Finance',department:'Accounts',mobile:'9123456780',status:'Active'},{id:3,name:'Admin User',email:'admin@hire.com',role:'Approver',department:'Management',mobile:'9000112233',status:'Active'}];return;}
-  try{const{data,error}=await sb.from('app_users').select('id,email,name,role,department,mobile,status').order('name');if(error)throw error;USER_DATA=data||[];}catch(e){console.warn('User load:',e.message);}
-}
-async function loadUsersPage(){
-  if(IS_DEMO){renderUsers(USER_DATA);return;}
-  try{const{data,error}=await sb.from('app_users').select('*').order('name');if(error)throw error;USER_DATA=data||[];renderUsers(USER_DATA);rebuildRequesterTS();}catch(e){toast('Error: '+e.message,'error');}
-}
-function renderUsers(data){
-  const tbody=el('user-tbody');
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-person-badge"></i><p>No users yet</p></div></td></tr>`;return;}
-  tbody.innerHTML=data.map(u=>`<tr><td style="font-weight:600">${esc(u.name)}</td><td>${esc(u.email)}</td><td>${esc(u.department||'—')}</td><td>${esc(u.mobile||'—')}</td><td>${roleP(u.role)}</td><td><span class="bs ${u.status==='Active'?'bs-approved':'bs-rejected'}" style="font-size:10.5px">${u.status}</span></td><td><span class="bsi" onclick="openUserModal(${u.id})" title="Edit"><i class="bi bi-pencil"></i></span><span class="bsi del ms-1" onclick="delUser(${u.id})" title="Delete"><i class="bi bi-trash"></i></span></td></tr>`).join('');
-}
-function openUserModal(id){const u=id?USER_DATA.find(x=>x.id==id):null;el('userModal-title').textContent=u?'Edit User':'Add User';gset('u-name',u?.name||'');gset('u-email',u?.email||'');gset('u-dept',u?.department||'');gset('u-mobile',u?.mobile||'');gset('u-role',u?.role||'User');gset('u-status',u?.status||'Active');gset('u-pass','');gset('u-id',u?.id??'');if(u)el('u-pass').placeholder='Leave blank to keep current';else el('u-pass').placeholder='Set login password';new bootstrap.Modal(el('userModal')).show();}
-async function saveUser(){
-  const d={name:gv('u-name').trim(),email:gv('u-email').trim().toLowerCase(),department:gv('u-dept').trim(),mobile:gv('u-mobile').trim(),role:gv('u-role'),status:gv('u-status')};
-  const pass=gv('u-pass'),id=gv('u-id');if(!d.name||!d.email)return toast('Name and email required','error');if(!id&&!pass)return toast('Password required for new user','error');if(pass)d.password=pass;
-  if(IS_DEMO){if(id){const i=USER_DATA.findIndex(x=>x.id==id);if(i>=0)Object.assign(USER_DATA[i],d);}else USER_DATA.push({...d,id:Date.now()});toast('User saved (demo)','success');bootstrap.Modal.getInstance(el('userModal')).hide();renderUsers(USER_DATA);rebuildRequesterTS();return;}
-  try{const q=id?sb.from('app_users').update(d).eq('id',id):sb.from('app_users').insert(d);const{error}=await q;if(error)throw error;toast('User saved','success');bootstrap.Modal.getInstance(el('userModal')).hide();await loadUserData();loadUsersPage();}catch(e){toast('Error: '+e.message,'error');}
-}
-async function delUser(id){if(!confirm('Delete this user?'))return;if(IS_DEMO){USER_DATA=USER_DATA.filter(x=>x.id!=id);renderUsers(USER_DATA);rebuildRequesterTS();toast('Deleted (demo)','info');return;}try{const{error}=await sb.from('app_users').delete().eq('id',id);if(error)throw error;toast('User deleted','info');await loadUserData();loadUsersPage();}catch(e){toast('Error: '+e.message,'error');}}
-async function loadRolesPage(){if(IS_DEMO){renderRoles(USER_DATA);return;}try{const{data,error}=await sb.from('app_users').select('id,email,name,role').order('name');if(error)throw error;renderRoles(data||[]);}catch(e){toast('Error: '+e.message,'error');}}
-function renderRoles(data){const tbody=el('role-tbody');if(!data.length){tbody.innerHTML=`<tr><td colspan="4"><div class="empty-st"><i class="bi bi-shield-person"></i><p>No users</p></div></td></tr>`;return;}tbody.innerHTML=data.map(u=>`<tr><td>${esc(u.email)}</td><td style="font-weight:600">${esc(u.name)}</td><td>${roleP(u.role)}</td><td><span class="bsi" onclick="openRoleModal(${u.id},'${esc(u.email)}','${esc(u.role)}')" title="Change Role"><i class="bi bi-pencil"></i></span></td></tr>`).join('');}
-function openRoleModal(id,email,role){gset('rm-id',id);gset('rm-role',role);el('rm-email-show').textContent=email;new bootstrap.Modal(el('roleModal')).show();}
-async function saveRole(){const id=gv('rm-id'),role=gv('rm-role');if(IS_DEMO){const i=USER_DATA.findIndex(x=>x.id==id);if(i>=0)USER_DATA[i].role=role;toast('Role updated (demo)','success');bootstrap.Modal.getInstance(el('roleModal')).hide();renderRoles(USER_DATA);return;}try{const{error}=await sb.from('app_users').update({role}).eq('id',id);if(error)throw error;toast('Role updated','success');bootstrap.Modal.getInstance(el('roleModal')).hide();await loadUserData();loadRolesPage();}catch(e){toast('Error: '+e.message,'error');}}
-
-/* ==============================================
-   BULK UPLOAD (New Requests)
+   BULK UPLOAD (New Requests)  ← coercion applied
    ============================================== */
 const BULK_HEADERS=['Trip Date','Vendor ID','LR Numbers','Request Type','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Halting Charges','Weight','Remarks'];
 const HEADER_MAP={
   'trip date':'trip_date','date':'trip_date',
-  // Vendor ID — user fills this; transport/bank auto-resolved from vendor record
   'vendor id':'vendor_id','vendor_id':'vendor_id','vendorid':'vendor_id','vnd id':'vendor_id',
-  // Legacy: still accept manual transport/bank if no vendor id
   'transport name':'transport','transport':'transport','account no':'account_no','account number':'account_no',
   'ifsc code':'ifsc_code','ifsc':'ifsc_code',
   'lr numbers':'lr_numbers','lr number':'lr_numbers','lr':'lr_numbers','lr no':'lr_numbers',
-  // lr_status intentionally excluded — Approver updates via edit modal only
   'request type':'request_type','type':'request_type','load type':'load_type',
   'vehicle type':'vehicle_type','vehicle no':'vehicle_no','vehicle number':'vehicle_no','vehicle':'vehicle_no',
   'from':'from_loc','origin':'from_loc','from loc':'from_loc','to':'to_loc','destination':'to_loc','to loc':'to_loc',
@@ -1628,27 +1309,13 @@ const HEADER_MAP={
 const BULK_REQUIRED=['Trip Date','LR Numbers','Request Type','Vehicle No','From','To','Hire Amount'];
 
 function downloadTemplate(){
-  // Build vendor ID reference sheet so users can look up codes
-  const vendRef = [
-    ['Vendor ID','Account Holder','Bank','Account No','IFSC'],
-    ...VEND_DATA.map(v=>[v.vendor_code||'',v.name||'',v.bank||'',v.acct||'',v.ifsc_code||'']),
-  ];
-  const wsRef = XLSX.utils.aoa_to_sheet(vendRef);
-  wsRef['!cols'] = [10,22,16,18,14].map(wch=>({wch}));
-
-  const ws=XLSX.utils.aoa_to_sheet([
-    BULK_HEADERS,
-    ['2026-05-15','VND-001','D-B23453','Full','Full Load','20 Feet','TN09AB1234','Chennai','Mumbai',45000,0,25.5,'Sample'],
-    ['2026-05-15','VND-002','D-B23454,D-B23455','Advance','Part Load','14 Feet','MH12CD5678','Delhi','Pune',32000,500,18,''],
-  ]);
+  const vendRef=[['Vendor ID','Account Holder','Bank','Account No','IFSC'],...VEND_DATA.map(v=>[v.vendor_code||'',v.name||'',v.bank||'',v.acct||'',v.ifsc_code||''])];
+  const wsRef=XLSX.utils.aoa_to_sheet(vendRef);wsRef['!cols']=[10,22,16,18,14].map(wch=>({wch}));
+  const ws=XLSX.utils.aoa_to_sheet([BULK_HEADERS,['2026-05-15','VND-001','D-B23453','Full','Full Load','20 Feet','TN09AB1234','Chennai','Mumbai',45000,0,25.5,'Sample'],['2026-05-15','VND-002','D-B23454,D-B23455','Advance','Part Load','14 Feet','MH12CD5678','Delhi','Pune',32000,500,18,'']]);
   ws['!cols']=BULK_HEADERS.map(()=>({wch:18}));
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'Hire Requests');
-  XLSX.utils.book_append_sheet(wb,wsRef,'Vendor ID Reference');
-  XLSX.writeFile(wb,'hire-request-template.xlsx');
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Hire Requests');XLSX.utils.book_append_sheet(wb,wsRef,'Vendor ID Reference');XLSX.writeFile(wb,'hire-request-template.xlsx');
   toast('Template downloaded (includes Vendor ID Reference sheet)','success');
 }
-
 function handleBulkDrop(e){e.preventDefault();el('bulk-drop').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processBulkFile(f);}
 function handleBulkSelect(e){const f=e.target.files[0];if(f)processBulkFile(f);}
 function processBulkFile(file){
@@ -1656,60 +1323,104 @@ function processBulkFile(file){
   const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});if(!raw.length)return toast('File is empty','error');parseBulkRows(raw);}catch(err){toast('Parse error: '+err.message,'error');}};r.readAsBinaryString(file);
 }
 
-async function parseBulkRows(raw){
-  const mapped=raw.map((row,idx)=>{
-    const out={_rowNum:idx+2, _errors:[], _vendorResolved:false};
-    Object.entries(row).forEach(([k,v])=>{const canon=HEADER_MAP[k.toLowerCase().trim()];if(canon)out[canon]=String(v||'').trim();});
+async function parseBulkRows(raw) {
+  const allCoerceChanges = [];
 
-    // ── Requester auto-filled from login — never read from Excel
+  const mapped = raw.map((row, idx) => {
+    // Step 1: map headers
+    const out = { _rowNum: idx + 2, _errors: [], _vendorResolved: false };
+    Object.entries(row).forEach(([k, v]) => {
+      const canon = HEADER_MAP[k.toLowerCase().trim()];
+      if (canon) out[canon] = v; // keep raw for now
+    });
+
+    // Step 2: coerce numeric/date/string fields
+    const dbFields = ['trip_date','hire_amount','halting_charges','weight','vehicle_no','ifsc_code'];
+    const rowChanges = [];
+    dbFields.forEach(f => {
+      if (out[f] !== undefined) {
+        const raw_v = out[f];
+        const cv = coerceField(raw_v, f);
+        if (String(raw_v) !== String(cv) && String(raw_v) !== '') {
+          rowChanges.push({ row: idx + 2, field: f, from: String(raw_v), to: String(cv) });
+        }
+        out[f] = cv;
+      }
+    });
+    allCoerceChanges.push(...rowChanges);
+
+    // Requester auto-filled from login
     out.requester_name = CU.name;
     out.requester_id   = CU.id;
 
-    // ── Vendor ID lookup: resolve transport, account_no, ifsc_code from VEND_DATA
-    if(out.vendor_id){
-      const vendor = VEND_DATA.find(v=>(v.vendor_code||'').toUpperCase() === out.vendor_id.toUpperCase());
-      if(vendor){
-        out.transport   = vendor.name;
-        out.account_no  = vendor.acct;
-        out.ifsc_code   = vendor.ifsc_code;
+    // Vendor ID lookup
+    if (out.vendor_id) {
+      const vendor = VEND_DATA.find(v => (v.vendor_code || '').toUpperCase() === String(out.vendor_id).toUpperCase());
+      if (vendor) {
+        out.transport = vendor.name;
+        out.account_no = vendor.acct;
+        out.ifsc_code = vendor.ifsc_code;
         out._vendorResolved = true;
         out._vendorName = vendor.name;
       } else {
         out._errors.push(`Vendor ID "${out.vendor_id}" not found — check the Vendor ID Reference sheet`);
       }
-    } else if(!out.transport){
+    } else if (!out.transport) {
       out._errors.push('Vendor ID required (e.g. VND-001) — see Vendor ID Reference sheet in template');
     }
 
     // Required field check
-    BULK_REQUIRED.forEach(h=>{const c=HEADER_MAP[h.toLowerCase()];if(!out[c])out._errors.push(`${h} required`);});
-    if(out.request_type&&!['Full','Advance','POD'].includes(out.request_type))out._errors.push('Request Type must be Full/Advance/POD');
-    // lr_status is NOT set via bulk upload — Approver updates it via edit modal only
+    BULK_REQUIRED.forEach(h => { const c = HEADER_MAP[h.toLowerCase()]; if (!out[c]) out._errors.push(`${h} required`); });
+    if (out.request_type && !['Full','Advance','POD'].includes(out.request_type)) out._errors.push('Request Type must be Full/Advance/POD');
     delete out.lr_status;
 
-    const hire=parseFloat(out.hire_amount)||0,halt=parseFloat(out.halting_charges)||0;
-    out.payable_amount=hire+halt;out.balance_amount=hire+halt;out.paid_amount=0;
-    out.status='Pending';out.submitted_by=CU.email;out.submitted_at=new Date().toISOString();
+    // Calculated fields — use already-coerced floats
+    const hire = _toFloat(out.hire_amount), halt = _toFloat(out.halting_charges);
+    out.hire_amount     = hire;
+    out.halting_charges = halt;
+    out.payable_amount  = Math.round((hire + halt) * 100) / 100;
+    out.balance_amount  = out.payable_amount;
+    out.paid_amount     = 0;
+    out.status          = 'Pending';
+    out.submitted_by    = CU.email;
+    out.submitted_at    = new Date().toISOString();
     return out;
   });
-  const lrRowMap={};mapped.forEach(r=>{if(!r.lr_numbers)return;parseLR(r.lr_numbers).forEach(lr=>{const k=lr.toUpperCase().trim();if(!lrRowMap[k])lrRowMap[k]=[];lrRowMap[k].push(r._rowNum);});});
-  const intraDups=Object.entries(lrRowMap).filter(([,rows])=>rows.length>1);
-  mapped.forEach(r=>{if(!r.lr_numbers)return;const myLRs=parseLR(r.lr_numbers).map(l=>l.toUpperCase().trim());const dh=intraDups.filter(([k])=>myLRs.includes(k)).map(([k,rows])=>({lr:k,rows}));if(dh.length){r._intraDups=dh;r._errors.push(`Dup LR(s): ${dh.map(d=>d.lr).join(', ')}`);}});
-  const banEl=el('bulk-dup-banner');if(intraDups.length){el('bulk-dup-detail').innerHTML=intraDups.map(([lr,rows])=>`<strong>${lr}</strong> in rows: ${rows.join(', ')}`).join(' — ');banEl.style.display='flex';}else{banEl.style.display='none';}
-  BULK_ROWS=mapped;const validRows=mapped.filter(r=>r._errors.length===0),invalidRows=mapped.filter(r=>r._errors.length>0);
-  el('bulk-summary').innerHTML=`<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${mapped.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${validRows.length}</span><div style="font-size:11px;color:var(--muted)">Valid</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${invalidRows.length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${intraDups.length}</span><div style="font-size:11px;color:var(--muted)">Dup LRs</div></div><div style="margin-left:auto;font-size:12px;color:var(--muted)">Verifying LRs<span class="spin spin-sm"></span></div>`;
-  el('bulk-result').style.display='block';renderBulkPreview(mapped);await runBulkLRVerify(validRows,intraDups);
-  const okRows=validRows.filter(r=>r._lrOk!==false);el('bulk-submit-btn').disabled=okRows.length===0;el('bulk-msg').textContent=okRows.length?`${okRows.length} row(s) ready to submit`:'No valid rows';
+
+  // Show coerce banner
+  showCoerceBanner('bulk-coerce-banner', allCoerceChanges, raw.length);
+
+  // Intra-file LR duplicate detection
+  const lrRowMap = {};
+  mapped.forEach(r => { if (!r.lr_numbers) return; parseLR(String(r.lr_numbers)).forEach(lr => { const k = lr.toUpperCase().trim(); if (!lrRowMap[k]) lrRowMap[k] = []; lrRowMap[k].push(r._rowNum); }); });
+  const intraDups = Object.entries(lrRowMap).filter(([, rows]) => rows.length > 1);
+  mapped.forEach(r => { if (!r.lr_numbers) return; const myLRs = parseLR(String(r.lr_numbers)).map(l => l.toUpperCase().trim()); const dh = intraDups.filter(([k]) => myLRs.includes(k)).map(([k, rows]) => ({lr: k, rows})); if (dh.length) { r._intraDups = dh; r._errors.push(`Dup LR(s): ${dh.map(d => d.lr).join(', ')}`); } });
+
+  const banEl = el('bulk-dup-banner');
+  if (intraDups.length) { el('bulk-dup-detail').innerHTML = intraDups.map(([lr, rows]) => `<strong>${lr}</strong> in rows: ${rows.join(', ')}`).join(' — '); banEl.style.display = 'flex'; }
+  else banEl.style.display = 'none';
+
+  BULK_ROWS = mapped;
+  const validRows = mapped.filter(r => r._errors.length === 0), invalidRows = mapped.filter(r => r._errors.length > 0);
+
+  el('bulk-summary').innerHTML = `<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${mapped.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${validRows.length}</span><div style="font-size:11px;color:var(--muted)">Valid</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${invalidRows.length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${intraDups.length}</span><div style="font-size:11px;color:var(--muted)">Dup LRs</div></div><div style="margin-left:auto;font-size:12px;color:var(--muted)">Verifying LRs<span class="spin spin-sm"></span></div>`;
+  el('bulk-result').style.display = 'block';
+  renderBulkPreview(mapped);
+  await runBulkLRVerify(validRows, intraDups);
+  const okRows = validRows.filter(r => r._lrOk !== false);
+  el('bulk-submit-btn').disabled = okRows.length === 0;
+  el('bulk-msg').textContent = okRows.length ? `${okRows.length} row(s) ready to submit` : 'No valid rows';
 }
+
 async function runBulkLRVerify(validRows,intraDups=[]){
   const verEl=el('bulk-vbody'),badgeEl=el('bulk-vbadge'),byType={};
-  validRows.forEach(r=>{parseLR(r.lr_numbers||'').forEach(lr=>{if(!byType[r.request_type])byType[r.request_type]=[];byType[r.request_type].push(lr);});});
+  validRows.forEach(r=>{parseLR(String(r.lr_numbers||'')).forEach(lr=>{if(!byType[r.request_type])byType[r.request_type]=[];byType[r.request_type].push(lr);});});
   let html='',allOk=true,lrResMap={};
   intraDups.forEach(([lr,rows])=>{allOk=false;html+=`<div class="vr-row vr-dup"><i class="bi bi-exclamation-triangle-fill"></i><strong>${lr}</strong><span class="bt bt-advance">DUP</span><span>In rows: ${rows.join(', ')}</span></div>`;});
   for(const[reqType,lrs]of Object.entries(byType)){const uniq=[...new Set(lrs)];const results=await verifyLRList(uniq,reqType);results.forEach(r=>{lrResMap[`${r.lr}_${reqType}`]=r;if(!r.ok)allOk=false;const isDup=intraDups.some(([k])=>k===r.lr.toUpperCase());if(!isDup)html+=`<div class="vr-row ${r.ok?'vr-ok':'vr-err'}"><i class="bi ${r.ok?'bi-check-circle-fill':'bi-x-circle-fill'}"></i><strong>${r.lr}</strong><span class="bt ${reqType==='Full'?'bt-full':reqType==='Advance'?'bt-advance':'bt-pod'}">${reqType}</span><span>${r.msg}</span></div>`;});}
   if(!Object.keys(byType).length&&intraDups.length===0)html='<div class="text-muted small">No LR numbers in valid rows.</div>';
   verEl.innerHTML=html||'<div class="text-muted small">No LR numbers to verify.</div>';badgeEl.className=`bs ${allOk?'bs-approved':'bs-rejected'}`;badgeEl.textContent=allOk?'✓ All Verified':'⚠ Issues Found';
-  validRows.forEach(r=>{const lrs=parseLR(r.lr_numbers||'');r._lrOk=lrs.every(lr=>{const isDup=intraDups.some(([k])=>k===lr.toUpperCase().trim());if(isDup)return false;return lrResMap[`${lr}_${r.request_type}`]?.ok!==false;});});
+  validRows.forEach(r=>{const lrs=parseLR(String(r.lr_numbers||''));r._lrOk=lrs.every(lr=>{const isDup=intraDups.some(([k])=>k===lr.toUpperCase().trim());if(isDup)return false;return lrResMap[`${lr}_${r.request_type}`]?.ok!==false;});});
   const okRows=validRows.filter(r=>r._lrOk);
   el('bulk-summary').innerHTML=`<div><span style="font-size:22px;font-weight:800;color:var(--blue)">${BULK_ROWS.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--green)">${okRows.length}</span><div style="font-size:11px;color:var(--muted)">LR OK</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--red)">${BULK_ROWS.filter(r=>r._errors.length>0).length+validRows.filter(r=>!r._lrOk).length}</span><div style="font-size:11px;color:var(--muted)">Issues</div></div><div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${intraDups.length}</span><div style="font-size:11px;color:var(--muted)">Dup LRs</div></div><div style="margin-left:auto;font-size:12px;color:${allOk?'var(--green)':'var(--red)'}"><i class="bi ${allOk?'bi-check-circle-fill':'bi-exclamation-triangle-fill'} me-1"></i>${allOk?'Ready to submit':'Fix issues'}</div>`;
 }
@@ -1717,19 +1428,14 @@ function renderBulkPreview(rows){
   el('bulk-thead').innerHTML='<tr><th>Row</th><th>Vendor ID</th><th>Transport (Resolved)</th><th>LR Numbers</th><th>Vehicle</th><th>Route</th><th>Load</th><th>Hire ₹</th><th>Type</th><th>Issues</th></tr>';
   el('bulk-rowct').textContent=`${rows.length} rows · Requester: ${esc(CU.name)} (auto)`;
   el('bulk-tbody').innerHTML=rows.map(r=>{
-    const hasErr=r._errors.length>0, hasDup=!!r._intraDups;
-    const vendCell = r.vendor_id
-      ? `${vendorIdBadge(r.vendor_id)} ${r._vendorResolved?`<span style="font-size:10px;color:var(--green)"><i class="bi bi-check-circle-fill"></i></span>`:''}`
-      : '<span style="color:var(--muted);font-size:11px">—</span>';
+    const hasErr=r._errors.length>0,hasDup=!!r._intraDups;
+    const vendCell=r.vendor_id?`${vendorIdBadge(r.vendor_id)} ${r._vendorResolved?'<span style="font-size:10px;color:var(--green)"><i class="bi bi-check-circle-fill"></i></span>':''}`:'<span style="color:var(--muted);font-size:11px">—</span>';
     return`<tr style="${hasErr?'background:#fff5f5':''}">
-      <td>${r._rowNum}</td>
-      <td>${vendCell}</td>
+      <td>${r._rowNum}</td><td>${vendCell}</td>
       <td style="font-size:11px;color:var(--muted)">${esc(r.transport||'')}</td>
-      <td>${hasDup?`<span class="badge-dup">${esc(r.lr_numbers||'')}</span>`:fmtLR(r.lr_numbers||'')}</td>
-      <td>${esc(r.vehicle_no||'')}</td>
-      <td>${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td>
-      <td>${esc(r.load_type||'')}</td>
-      <td>₹${fmtN(r.hire_amount||0)}</td>
+      <td>${hasDup?`<span class="badge-dup">${esc(String(r.lr_numbers||''))}</span>`:fmtLR(String(r.lr_numbers||''))}</td>
+      <td>${esc(r.vehicle_no||'')}</td><td>${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td>
+      <td>${esc(r.load_type||'')}</td><td>₹${fmtN(r.hire_amount||0)}</td>
       <td>${typeB(r.request_type||'Full')}</td>
       <td>${hasErr?`<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`:'<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i></span>'}</td>
     </tr>`;
@@ -1738,13 +1444,8 @@ function renderBulkPreview(rows){
 async function submitBulk(){
   const toSubmit=BULK_ROWS.filter(r=>r._errors.length===0&&r._lrOk!==false);if(!toSubmit.length)return toast('No valid rows','error');
   setBtnLoad('bulk-submit-btn',true,'Uploading…');
-  // Strip ALL internal processing keys (underscore-prefixed) AND vendor_id (not a DB column)
   const DB_COLS=new Set(['trip_date','submitted_at','requester_id','requester_name','transport','account_no','ifsc_code','lr_numbers','load_type','vehicle_type','vehicle_no','from_loc','to_loc','hire_amount','weight','vehicle_document_file','vehicle_document_name','weighment_with_load_file','weighment_with_load_name','weighment_without_load_file','weighment_without_load_name','remarks','halting_charges','payable_amount','balance_amount','paid_amount','request_type','status','submitted_by','lr_status','reference_id']);
-  const clean=toSubmit.map(r=>{
-    const out={};
-    Object.entries(r).forEach(([k,v])=>{if(DB_COLS.has(k))out[k]=v;});
-    return out;
-  });
+  const clean=toSubmit.map(r=>{const out={};Object.entries(r).forEach(([k,v])=>{if(DB_COLS.has(k))out[k]=v;});return out;});
   if(IS_DEMO){clean.forEach(r=>{r.id='HR-'+String(Date.now()+Math.random()).replace('.','').slice(-6);REQ_DATA.unshift(r);});toast(`${clean.length} request(s) submitted (demo)!`,'success');setBtnLoad('bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Submit Valid Rows');clearBulk();loadDashboard();goto('requests',document.querySelector('[data-page="requests"]'));return;}
   try{const{error}=await sb.from('hire_requests').insert(clean);if(error)throw error;toast(`${clean.length} request(s) submitted!`,'success');clearBulk();loadDashboard();goto('requests',document.querySelector('[data-page="requests"]'));}catch(e){toast('Upload error: '+e.message,'error');}
   setBtnLoad('bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Submit Valid Rows');
@@ -1752,41 +1453,25 @@ async function submitBulk(){
 function clearBulk(){BULK_ROWS=[];el('bulk-result').style.display='none';el('bulk-file').value='';el('bulk-dup-banner').style.display='none';}
 
 /* ==============================================
-   BULK EXPORT (for validate tab)
+   BULK EXPORT
    ============================================== */
 async function exportBulkRequests(){
   setBtnLoad('bulk-export-btn',true,'Exporting…');
   let data=[];
-  const statusFlt=gv('bulk-exp-status'), fromFlt=gv('bulk-exp-from'), toFlt=gv('bulk-exp-to');
-  if(IS_DEMO){
-    data=getDemoRequests();
-  } else {
-    try{
-      let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
-      if(CU.role==='User')q=q.eq('submitted_by',CU.email);
-      if(statusFlt!=='All')q=q.eq('status',statusFlt);
-      if(fromFlt)q=q.gte('trip_date',fromFlt);
-      if(toFlt)q=q.lte('trip_date',toFlt);
-      const{data:d,error}=await q;if(error)throw error;data=d||[];
-    }catch(e){toast('Export error: '+e.message,'error');setBtnLoad('bulk-export-btn',false,'<i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel');return;}
-  }
+  const statusFlt=gv('bulk-exp-status'),fromFlt=gv('bulk-exp-from'),toFlt=gv('bulk-exp-to');
+  if(IS_DEMO){data=getDemoRequests();}
+  else{try{let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});if(CU.role==='User')q=q.eq('submitted_by',CU.email);if(statusFlt!=='All')q=q.eq('status',statusFlt);if(fromFlt)q=q.gte('trip_date',fromFlt);if(toFlt)q=q.lte('trip_date',toFlt);const{data:d,error}=await q;if(error)throw error;data=d||[];}catch(e){toast('Export error: '+e.message,'error');setBtnLoad('bulk-export-btn',false,'<i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel');return;}}
   if(!data.length){toast('No requests to export','info');setBtnLoad('bulk-export-btn',false,'<i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel');return;}
-
-  // Build export with columns needed for validation update
   const headers=['Ref ID','Trip Date','Requester Name','Transport Name','LR Numbers','LR Status','Request Type','Load Type','Vehicle No','From','To','Hire Amount','Halting Charges','Payable Amount','Paid Amount','Balance Amount','Ref No','Status','Remarks','Submitted By','Submitted At'];
   const rows=[headers,...data.map(r=>[r.id||'',r.trip_date||'',r.requester_name||'',r.transport||'',r.lr_numbers||'',r.lr_status||'',r.request_type||'',r.load_type||'',r.vehicle_no||'',r.from_loc||'',r.to_loc||'',r.hire_amount||0,r.halting_charges||0,r.payable_amount||0,r.paid_amount||0,r.balance_amount||0,r.reference_id||'',r.status||'',r.remarks||'',r.submitted_by||'',r.submitted_at||r.created_at||''])];
-
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=headers.map(()=>({wch:18}));
-  // Color header
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Hire Requests');
-  XLSX.writeFile(wb,`hire-requests-export-${new Date().toISOString().slice(0,10)}.xlsx`);
+  const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=headers.map(()=>({wch:18}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Hire Requests');XLSX.writeFile(wb,`hire-requests-export-${new Date().toISOString().slice(0,10)}.xlsx`);
   toast(`Exported ${data.length} request(s)`,'success');
   setBtnLoad('bulk-export-btn',false,'<i class="bi bi-file-earmark-arrow-down me-1"></i>Export to Excel');
 }
 
 /* ==============================================
-   BULK VALIDATE & RE-UPLOAD
+   BULK VALIDATE & RE-UPLOAD  ← coercion applied
    ============================================== */
 function handleBulkValDrop(e){e.preventDefault();el('bulk-val-drop').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processBulkValFile(f);}
 function handleBulkValSelect(e){const f=e.target.files[0];if(f)processBulkValFile(f);}
@@ -1794,166 +1479,136 @@ function processBulkValFile(file){
   const ext=file.name.split('.').pop().toLowerCase();if(!['xlsx','xls','csv'].includes(ext))return toast('Upload .xlsx, .xls, or .csv','error');
   const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});if(!raw.length)return toast('File is empty','error');parseBulkValRows(raw);}catch(err){toast('Parse error: '+err.message,'error');}};r.readAsBinaryString(file);
 }
-async function parseBulkValRows(raw){
-  const isFinanceOrApprover = CU.role==='Finance' || CU.role==='Approver';
 
-  // Map headers to fields
-  const mapped=raw.map((row,idx)=>{
-    const out={_rowNum:idx+2,_errors:[],_matched:false};
-    Object.entries(row).forEach(([k,v])=>{
-      const kl=k.toLowerCase().trim();
-      if(kl==='ref id'||kl==='id'||kl==='ref_id')                              out.id=String(v||'').trim();
-      if(kl==='lr status'||kl==='lr_status'||kl==='lrstatus')                   out.lr_status=String(v||'').trim();
-      if(kl==='payable amount'||kl==='payable_amount'||kl==='payable')           out.payable_amount=String(v||'').trim();
-      if(kl==='remarks'||kl==='notes')                                           out.remarks=String(v||'').trim();
-      // Read-only reference fields (display only)
-      if(kl==='requester name')                                                  out.requester_name=String(v||'').trim();
-      if(kl==='lr numbers')                                                      out.lr_numbers=String(v||'').trim();
-      // Finance-only fields
-      if(kl==='ref no'||kl==='reference_id'||kl==='ref no.'||kl==='ref_id'||kl==='reference id') out.reference_id=String(v||'').trim();
-      if(kl==='paid amount'||kl==='paid_amount'||kl==='paid')                   out.paid_amount=String(v||'').trim();
-      if(kl==='status')                                                          out.status=String(v||'').trim();
+async function parseBulkValRows(raw) {
+  const isFinanceOrApprover = CU.role === 'Finance' || CU.role === 'Approver';
+  const allCoerceChanges = [];
+
+  const mapped = raw.map((row, idx) => {
+    const out = { _rowNum: idx + 2, _errors: [], _matched: false };
+    Object.entries(row).forEach(([k, v]) => {
+      const kl = k.toLowerCase().trim();
+      if (kl === 'ref id' || kl === 'id' || kl === 'ref_id')                           out.id = String(v || '').trim();
+      if (kl === 'lr status' || kl === 'lr_status' || kl === 'lrstatus')                out.lr_status = String(v || '').trim();
+      if (kl === 'payable amount' || kl === 'payable_amount' || kl === 'payable')        out.payable_amount = v;
+      if (kl === 'remarks' || kl === 'notes')                                            out.remarks = String(v || '').trim();
+      if (kl === 'requester name')                                                       out.requester_name = String(v || '').trim();
+      if (kl === 'lr numbers')                                                           out.lr_numbers = String(v || '').trim();
+      if (kl === 'ref no' || kl === 'reference_id' || kl === 'ref no.' || kl === 'reference id') out.reference_id = String(v || '').trim();
+      if (kl === 'paid amount' || kl === 'paid_amount' || kl === 'paid')                out.paid_amount = v;
+      if (kl === 'status')                                                               out.status = String(v || '').trim();
+    });
+
+    // Coerce numeric fields
+    ['payable_amount','paid_amount'].forEach(f => {
+      if (out[f] !== undefined && out[f] !== '') {
+        const raw_v = out[f];
+        const cv = _toFloat(raw_v);
+        if (String(raw_v) !== String(cv)) {
+          allCoerceChanges.push({ row: idx + 2, field: f, from: String(raw_v), to: String(cv) });
+        }
+        out[f] = cv;
+      }
     });
 
     // Validations
-    if(!out.id) out._errors.push('Ref ID required');
-    if(out.lr_status && !['Available','Not Available'].includes(out.lr_status))
-      out._errors.push('LR Status must be Available or Not Available');
-    if(out.status && !['Pending','Approved','Paid','Rejected'].includes(out.status))
-      out._errors.push('Status must be Pending/Approved/Paid/Rejected');
-    if(out.paid_amount && isNaN(parseFloat(out.paid_amount)))
-      out._errors.push('Paid Amount must be a number');
-    if(out.payable_amount && isNaN(parseFloat(out.payable_amount)))
-      out._errors.push('Payable Amount must be a number');
-
-    // If Finance fields are present but user is not Finance/Approver — warn
+    if (!out.id) out._errors.push('Ref ID required');
+    if (out.lr_status && !['Available','Not Available'].includes(out.lr_status)) out._errors.push('LR Status must be Available or Not Available');
+    if (out.status && !['Pending','Approved','Paid','Rejected'].includes(out.status)) out._errors.push('Status must be Pending/Approved/Paid/Rejected');
     const hasFinanceFields = out.reference_id || out.paid_amount || out.status;
-    if(hasFinanceFields && !isFinanceOrApprover)
-      out._errors.push('Ref No / Paid Amount / Status update requires Finance role');
+    if (hasFinanceFields && !isFinanceOrApprover) out._errors.push('Ref No / Paid Amount / Status update requires Finance role');
 
     return out;
-  }).filter(r=>r.id); // skip blank rows
+  }).filter(r => r.id);
 
-  // Match against existing REQ_DATA
-  if(!IS_DEMO && REQ_DATA.length===0){
-    try{const{data}=await sb.from('hire_requests').select('id,requester_name,lr_numbers,lr_status,payable_amount,paid_amount,balance_amount,reference_id,status,remarks');REQ_DATA=data||[];}catch(e){}
+  // Match against DB
+  if (!IS_DEMO && REQ_DATA.length === 0) {
+    try { const { data } = await sb.from('hire_requests').select('id,requester_name,lr_numbers,lr_status,payable_amount,paid_amount,balance_amount,reference_id,status,remarks'); REQ_DATA = data || []; } catch(e) {}
   }
-  mapped.forEach(r=>{
-    const existing=REQ_DATA.find(x=>x.id===r.id)||(IS_DEMO?getDemoRequests().find(x=>x.id===r.id):null);
-    r._matched=!!existing;
-    r._existing=existing||null;
-    if(!existing)r._errors.push('Ref ID not found in database');
+  mapped.forEach(r => {
+    const existing = REQ_DATA.find(x => x.id === r.id) || (IS_DEMO ? getDemoRequests().find(x => x.id === r.id) : null);
+    r._matched = !!existing; r._existing = existing || null;
+    if (!existing) r._errors.push('Ref ID not found in database');
   });
 
-  BULK_VAL_ROWS=mapped;
-  const valid=mapped.filter(r=>r._errors.length===0&&r._matched);
+  // Show coerce banner
+  showCoerceBanner('bulk-val-coerce-banner', allCoerceChanges, raw.length);
 
-  el('bulk-val-summary').innerHTML=`
+  BULK_VAL_ROWS = mapped;
+  const valid = mapped.filter(r => r._errors.length === 0 && r._matched);
+
+  el('bulk-val-summary').innerHTML = `
     <div><span style="font-size:22px;font-weight:800;color:var(--blue)">${mapped.length}</span><div style="font-size:11px;color:var(--muted)">Rows</div></div>
     <div style="width:1px;background:var(--border)"></div>
     <div><span style="font-size:22px;font-weight:800;color:var(--green)">${valid.length}</span><div style="font-size:11px;color:var(--muted)">Matched</div></div>
     <div style="width:1px;background:var(--border)"></div>
-    <div><span style="font-size:22px;font-weight:800;color:var(--red)">${mapped.filter(r=>r._errors.length>0).length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div>
-    ${isFinanceOrApprover?`<div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${mapped.filter(r=>r.reference_id||r.paid_amount||r.status).length}</span><div style="font-size:11px;color:var(--muted)">Finance Updates</div></div>`:''}`;
+    <div><span style="font-size:22px;font-weight:800;color:var(--red)">${mapped.filter(r => r._errors.length > 0).length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div>
+    ${isFinanceOrApprover ? `<div style="width:1px;background:var(--border)"></div><div><span style="font-size:22px;font-weight:800;color:var(--yellow)">${mapped.filter(r=>r.reference_id||r.paid_amount||r.status).length}</span><div style="font-size:11px;color:var(--muted)">Finance Updates</div></div>` : ''}`;
 
-  el('bulk-val-rowct').textContent=`${mapped.length} rows`;
-
-  // Ensure Finance column visibility matches role
+  el('bulk-val-rowct').textContent = `${mapped.length} rows`;
   _setupValidateTabForRole();
 
-  el('bulk-val-tbody').innerHTML=mapped.map(r=>{
-    const hasErr=r._errors.length>0;
-    const ex=r._existing;
-    // Show old→new for changed fields
-    const chg=(newVal,oldVal,fmt=v=>v)=>{
-      if(!newVal)return`<span style="color:var(--muted);font-size:10.5px">${fmt(oldVal||'—')}</span>`;
-      if(String(newVal)===String(oldVal))return`<span style="color:var(--muted)">${fmt(newVal)}</span>`;
-      return`<span style="color:var(--muted);text-decoration:line-through;font-size:10px">${fmt(oldVal||'—')}</span> <i class="bi bi-arrow-right" style="font-size:9px;color:var(--muted)"></i> <strong style="color:var(--green)">${fmt(newVal)}</strong>`;
+  el('bulk-val-tbody').innerHTML = mapped.map(r => {
+    const hasErr = r._errors.length > 0, ex = r._existing;
+    const chg = (newVal, oldVal, fmt = v => v) => {
+      if (newVal === undefined || newVal === '') return `<span style="color:var(--muted);font-size:10.5px">${fmt(oldVal || '—')}</span>`;
+      if (String(newVal) === String(oldVal)) return `<span style="color:var(--muted)">${fmt(newVal)}</span>`;
+      return `<span style="color:var(--muted);text-decoration:line-through;font-size:10px">${fmt(oldVal || '—')}</span> <i class="bi bi-arrow-right" style="font-size:9px;color:var(--muted)"></i> <strong style="color:var(--green)">${fmt(newVal)}</strong>`;
     };
     const finCols = isFinanceOrApprover ? `
       <td style="background:#fffde7">${chg(r.reference_id, ex?.reference_id)}</td>
-      <td style="background:#fffde7">${r.paid_amount?chg(r.paid_amount,ex?.paid_amount,v=>'₹'+fmtN(v)):`<span style="color:var(--muted);font-size:10.5px">₹${fmtN(ex?.paid_amount||0)}</span>`}</td>
-      <td style="background:#fffde7">${r.status?chg(r.status,ex?.status):statusB(ex?.status)}</td>` : '';
-    return`<tr style="${hasErr?'background:#fff5f5':''}">
+      <td style="background:#fffde7">${r.paid_amount !== undefined && r.paid_amount !== '' ? chg(r.paid_amount, ex?.paid_amount, v => '₹' + fmtN(v)) : `<span style="color:var(--muted);font-size:10.5px">₹${fmtN(ex?.paid_amount || 0)}</span>`}</td>
+      <td style="background:#fffde7">${r.status ? chg(r.status, ex?.status) : statusB(ex?.status)}</td>` : '';
+    return `<tr style="${hasErr ? 'background:#fff5f5' : ''}">
       <td><code style="color:var(--blue)">${esc(r.id)}</code></td>
-      <td>${esc(r.requester_name||ex?.requester_name||'')}</td>
-      <td>${fmtLR(r.lr_numbers||ex?.lr_numbers||'')}</td>
-      <td>${r.lr_status?chg(r.lr_status,ex?.lr_status):lrStatusB(ex?.lr_status)}</td>
-      <td>${r.payable_amount?chg(r.payable_amount,ex?.payable_amount,v=>'₹'+fmtN(v)):`<span style="color:var(--muted);font-size:10.5px">₹${fmtN(ex?.payable_amount||0)}</span>`}</td>
-      <td>${r.remarks!==undefined&&r.remarks!==''?chg(r.remarks,ex?.remarks):esc(ex?.remarks||'—')}</td>
+      <td>${esc(r.requester_name || ex?.requester_name || '')}</td>
+      <td>${fmtLR(String(r.lr_numbers || ex?.lr_numbers || ''))}</td>
+      <td>${r.lr_status ? chg(r.lr_status, ex?.lr_status) : lrStatusB(ex?.lr_status)}</td>
+      <td>${r.payable_amount !== undefined && r.payable_amount !== '' ? chg(r.payable_amount, ex?.payable_amount, v => '₹' + fmtN(v)) : `<span style="color:var(--muted);font-size:10.5px">₹${fmtN(ex?.payable_amount || 0)}</span>`}</td>
+      <td>${r.remarks !== undefined && r.remarks !== '' ? chg(r.remarks, ex?.remarks) : esc(ex?.remarks || '—')}</td>
       ${finCols}
-      <td>${hasErr?`<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`:'<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i> Matched</span>'}</td>
+      <td>${hasErr ? `<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>` : '<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i> Matched</span>'}</td>
     </tr>`;
   }).join('');
 
-  el('bulk-val-result').style.display='block';
-  el('bulk-val-submit-btn').disabled=valid.length===0;
-  el('bulk-val-msg').textContent=valid.length?`${valid.length} row(s) will be updated`:'No valid rows to update';
+  el('bulk-val-result').style.display = 'block';
+  el('bulk-val-submit-btn').disabled = valid.length === 0;
+  el('bulk-val-msg').textContent = valid.length ? `${valid.length} row(s) will be updated` : 'No valid rows to update';
 }
 
 async function submitBulkValidation(){
-  const isFinanceOrApprover = CU.role==='Finance' || CU.role==='Approver';
-  const valid=BULK_VAL_ROWS.filter(r=>r._errors.length===0&&r._matched);
-  if(!valid.length)return toast('No valid rows','error');
+  const isFinanceOrApprover=CU.role==='Finance'||CU.role==='Approver';
+  const valid=BULK_VAL_ROWS.filter(r=>r._errors.length===0&&r._matched);if(!valid.length)return toast('No valid rows','error');
   setBtnLoad('bulk-val-submit-btn',true,'Applying…');
-
   if(IS_DEMO){
-    valid.forEach(r=>{
-      const idx=REQ_DATA.findIndex(x=>x.id===r.id);
-      if(idx<0)return;
-      const rec=REQ_DATA[idx];
-      // All roles: LR Status, Payable, Remarks
-      if(r.lr_status)         rec.lr_status=r.lr_status;
-      if(r.payable_amount)    rec.payable_amount=parseFloat(r.payable_amount);
-      if(r.remarks!==undefined&&r.remarks!=='') rec.remarks=r.remarks;
-      // Finance/Approver only: Ref No, Paid Amount, Status
-      if(isFinanceOrApprover){
-        if(r.reference_id!==undefined&&r.reference_id!=='') rec.reference_id=r.reference_id;
-        if(r.paid_amount&&r.paid_amount!=='')  rec.paid_amount=parseFloat(r.paid_amount);
-        if(r.status&&r.status!=='')            rec.status=r.status;
-      }
-      // Recalculate balance
+    valid.forEach(r=>{const idx=REQ_DATA.findIndex(x=>x.id===r.id);if(idx<0)return;const rec=REQ_DATA[idx];
+      if(r.lr_status)rec.lr_status=r.lr_status;
+      if(r.payable_amount!==undefined&&r.payable_amount!=='')rec.payable_amount=parseFloat(r.payable_amount)||0;
+      if(r.remarks!==undefined&&r.remarks!=='')rec.remarks=r.remarks;
+      if(isFinanceOrApprover){if(r.reference_id!==undefined&&r.reference_id!=='')rec.reference_id=r.reference_id;if(r.paid_amount!==undefined&&r.paid_amount!=='')rec.paid_amount=parseFloat(r.paid_amount)||0;if(r.status&&r.status!=='')rec.status=r.status;}
       rec.balance_amount=parseFloat(rec.payable_amount||0)-parseFloat(rec.paid_amount||0);
     });
-    toast(`${valid.length} request(s) updated (demo)!`,'success');
-    clearBulkVal();loadDashboard();loadRequests();
-    setBtnLoad('bulk-val-submit-btn',false,'<i class="bi bi-check2-all me-2"></i>Apply Updates');
-    return;
+    toast(`${valid.length} request(s) updated (demo)!`,'success');clearBulkVal();loadDashboard();loadRequests();
+    setBtnLoad('bulk-val-submit-btn',false,'<i class="bi bi-check2-all me-2"></i>Apply Updates');return;
   }
-
-  let successCount=0, failCount=0;
+  let successCount=0,failCount=0;
   for(const row of valid){
     const patch={};
-    // All roles
-    if(row.lr_status)          patch.lr_status=row.lr_status;
-    if(row.payable_amount)     patch.payable_amount=parseFloat(row.payable_amount);
-    if(row.remarks!==undefined&&row.remarks!=='') patch.remarks=row.remarks;
-    // Finance / Approver only
-    if(isFinanceOrApprover){
-      if(row.reference_id!==undefined&&row.reference_id!=='') patch.reference_id=row.reference_id;
-      if(row.paid_amount&&row.paid_amount!=='')  patch.paid_amount=parseFloat(row.paid_amount);
-      if(row.status&&row.status!=='')            patch.status=row.status;
-    }
-    // Auto-recalculate balance if payable or paid changed
+    if(row.lr_status)patch.lr_status=row.lr_status;
+    if(row.payable_amount!==undefined&&row.payable_amount!=='')patch.payable_amount=parseFloat(row.payable_amount)||0;
+    if(row.remarks!==undefined&&row.remarks!=='')patch.remarks=row.remarks;
+    if(isFinanceOrApprover){if(row.reference_id!==undefined&&row.reference_id!=='')patch.reference_id=row.reference_id;if(row.paid_amount!==undefined&&row.paid_amount!=='')patch.paid_amount=parseFloat(row.paid_amount)||0;if(row.status&&row.status!=='')patch.status=row.status;}
     const ex=row._existing||{};
     const payable=parseFloat(patch.payable_amount??ex.payable_amount??0);
     const paid=parseFloat(patch.paid_amount??ex.paid_amount??0);
     patch.balance_amount=payable-paid;
-
     if(!Object.keys(patch).length)continue;
-    try{
-      const{error}=await sb.from('hire_requests').update(patch).eq('id',row.id);
-      if(error)throw error;
-      successCount++;
-    }catch(e){failCount++;console.error('Bulk val update error',row.id,e.message);}
+    try{const{error}=await sb.from('hire_requests').update(patch).eq('id',row.id);if(error)throw error;successCount++;}catch(e){failCount++;console.error('Bulk val update error',row.id,e.message);}
   }
-
-  const msg=`Updated ${successCount} request(s)${failCount?` · ${failCount} failed`:''}`;
-  toast(msg, failCount?'warn':'success');
+  toast(`Updated ${successCount} request(s)${failCount?` · ${failCount} failed`:''}`,(failCount?'warn':'success'));
   clearBulkVal();loadDashboard();loadRequests();
   setBtnLoad('bulk-val-submit-btn',false,'<i class="bi bi-check2-all me-2"></i>Apply Updates');
 }
-
 function clearBulkVal(){BULK_VAL_ROWS=[];el('bulk-val-result').style.display='none';el('bulk-val-file').value='';}
 
 /* ==============================================
@@ -1969,48 +1624,35 @@ function exportCSV(){
 }
 
 /* ==============================================
+   USERS
+   ============================================== */
+async function loadUserData(){
+  if(IS_DEMO){USER_DATA=[{id:1,name:'Demo User',email:'user@hire.com',role:'User',department:'Logistics',mobile:'9876543210',status:'Active'},{id:2,name:'Finance User',email:'finance@hire.com',role:'Finance',department:'Accounts',mobile:'9123456780',status:'Active'},{id:3,name:'Admin User',email:'admin@hire.com',role:'Approver',department:'Management',mobile:'9000112233',status:'Active'}];return;}
+  try{const{data,error}=await sb.from('app_users').select('id,email,name,role,department,mobile,status').order('name');if(error)throw error;USER_DATA=data||[];}catch(e){console.warn('User load:',e.message);}
+}
+async function loadUsersPage(){
+  if(IS_DEMO){renderUsers(USER_DATA);return;}
+  try{const{data,error}=await sb.from('app_users').select('*').order('name');if(error)throw error;USER_DATA=data||[];renderUsers(USER_DATA);rebuildRequesterTS();}catch(e){toast('Error: '+e.message,'error');}
+}
+function renderUsers(data){const tbody=el('user-tbody');if(!data.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-person-badge"></i><p>No users yet</p></div></td></tr>`;return;}tbody.innerHTML=data.map(u=>`<tr><td style="font-weight:600">${esc(u.name)}</td><td>${esc(u.email)}</td><td>${esc(u.department||'—')}</td><td>${esc(u.mobile||'—')}</td><td>${roleP(u.role)}</td><td><span class="bs ${u.status==='Active'?'bs-approved':'bs-rejected'}" style="font-size:10.5px">${u.status}</span></td><td><span class="bsi" onclick="openUserModal(${u.id})" title="Edit"><i class="bi bi-pencil"></i></span><span class="bsi del ms-1" onclick="delUser(${u.id})" title="Delete"><i class="bi bi-trash"></i></span></td></tr>`).join('');}
+function openUserModal(id){const u=id?USER_DATA.find(x=>x.id==id):null;el('userModal-title').textContent=u?'Edit User':'Add User';gset('u-name',u?.name||'');gset('u-email',u?.email||'');gset('u-dept',u?.department||'');gset('u-mobile',u?.mobile||'');gset('u-role',u?.role||'User');gset('u-status',u?.status||'Active');gset('u-pass','');gset('u-id',u?.id??'');if(u)el('u-pass').placeholder='Leave blank to keep current';else el('u-pass').placeholder='Set login password';new bootstrap.Modal(el('userModal')).show();}
+async function saveUser(){const d={name:gv('u-name').trim(),email:gv('u-email').trim().toLowerCase(),department:gv('u-dept').trim(),mobile:gv('u-mobile').trim(),role:gv('u-role'),status:gv('u-status')};const pass=gv('u-pass'),id=gv('u-id');if(!d.name||!d.email)return toast('Name and email required','error');if(!id&&!pass)return toast('Password required for new user','error');if(pass)d.password=pass;if(IS_DEMO){if(id){const i=USER_DATA.findIndex(x=>x.id==id);if(i>=0)Object.assign(USER_DATA[i],d);}else USER_DATA.push({...d,id:Date.now()});toast('User saved (demo)','success');bootstrap.Modal.getInstance(el('userModal')).hide();renderUsers(USER_DATA);rebuildRequesterTS();return;}try{const q=id?sb.from('app_users').update(d).eq('id',id):sb.from('app_users').insert(d);const{error}=await q;if(error)throw error;toast('User saved','success');bootstrap.Modal.getInstance(el('userModal')).hide();await loadUserData();loadUsersPage();}catch(e){toast('Error: '+e.message,'error');}}
+async function delUser(id){if(!confirm('Delete this user?'))return;if(IS_DEMO){USER_DATA=USER_DATA.filter(x=>x.id!=id);renderUsers(USER_DATA);rebuildRequesterTS();toast('Deleted (demo)','info');return;}try{const{error}=await sb.from('app_users').delete().eq('id',id);if(error)throw error;toast('User deleted','info');await loadUserData();loadUsersPage();}catch(e){toast('Error: '+e.message,'error');}}
+async function loadRolesPage(){if(IS_DEMO){renderRoles(USER_DATA);return;}try{const{data,error}=await sb.from('app_users').select('id,email,name,role').order('name');if(error)throw error;renderRoles(data||[]);}catch(e){toast('Error: '+e.message,'error');}}
+function renderRoles(data){const tbody=el('role-tbody');if(!data.length){tbody.innerHTML=`<tr><td colspan="4"><div class="empty-st"><i class="bi bi-shield-person"></i><p>No users</p></div></td></tr>`;return;}tbody.innerHTML=data.map(u=>`<tr><td>${esc(u.email)}</td><td style="font-weight:600">${esc(u.name)}</td><td>${roleP(u.role)}</td><td><span class="bsi" onclick="openRoleModal(${u.id},'${esc(u.email)}','${esc(u.role)}')" title="Change Role"><i class="bi bi-pencil"></i></span></td></tr>`).join('');}
+function openRoleModal(id,email,role){gset('rm-id',id);gset('rm-role',role);el('rm-email-show').textContent=email;new bootstrap.Modal(el('roleModal')).show();}
+async function saveRole(){const id=gv('rm-id'),role=gv('rm-role');if(IS_DEMO){const i=USER_DATA.findIndex(x=>x.id==id);if(i>=0)USER_DATA[i].role=role;toast('Role updated (demo)','success');bootstrap.Modal.getInstance(el('roleModal')).hide();renderRoles(USER_DATA);return;}try{const{error}=await sb.from('app_users').update({role}).eq('id',id);if(error)throw error;toast('Role updated','success');bootstrap.Modal.getInstance(el('roleModal')).hide();await loadUserData();loadRolesPage();}catch(e){toast('Error: '+e.message,'error');}}
+
+/* ==============================================
    EMAIL DIGEST
    ============================================== */
 function todayIST(){const now=new Date();return new Date(now.getTime()+(5.5*60*60*1000)).toISOString().slice(0,10);}
-async function loadDigestPage(){
-  el('digest-demo-warn').style.display=IS_DEMO?'flex':'none';
-  _renderDigestRecipients();await _loadTodayRequests();
-}
-function _renderDigestRecipients(){
-  const approvers=USER_DATA.filter(u=>u.role==='Approver'&&u.status!=='Inactive');const wrap=el('digest-recipients');
-  if(!approvers.length){wrap.innerHTML=`<div class="empty-st" style="padding:20px"><i class="bi bi-person-x"></i><p>No Approver users found</p></div>`;return;}
-  wrap.innerHTML=approvers.map(u=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${esc(u.name.charAt(0))}</div><div style="min-width:0"><div style="font-size:13px;font-weight:600">${esc(u.name)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(u.email)}</div></div><span class="bs bs-approved ms-auto" style="font-size:10.5px">Will receive</span></div>`).join('');
-}
-async function _loadTodayRequests(){
-  const tbody=el('digest-today-tbody'),today=todayIST();let todayReqs=[];
-  if(IS_DEMO){todayReqs=getDemoRequests();}
-  else{try{const{data,error}=await sb.from('hire_requests').select('id,requester_name,transport,from_loc,to_loc,hire_amount,lr_status,request_type,status,created_at').gte('created_at',today+'T00:00:00+05:30').lte('created_at',today+'T23:59:59+05:30').order('created_at',{ascending:true});if(error)throw error;todayReqs=data||[];}catch(e){toast('Error: '+e.message,'error');}}
-  const countEl=el('digest-today-count');countEl.textContent=todayReqs.length?`(${todayReqs.length} request${todayReqs.length>1?'s':''})`: '(none yet)';
-  if(!todayReqs.length){tbody.innerHTML=`<tr><td colspan="8"><div class="empty-st" style="padding:24px"><i class="bi bi-calendar-x"></i><p>No requests submitted today</p></div></td></tr>`;return;}
-  tbody.innerHTML=todayReqs.map(r=>`<tr><td><code style="font-size:10px;color:var(--blue)">${esc(r.id||'—')}</code></td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${lrStatusB(r.lr_status)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');
-}
-async function sendDigestNow(){
-  const resultEl=el('digest-send-result');resultEl.style.display='none';
-  if(IS_DEMO){toast('Demo mode — email not actually sent.','warn');resultEl.style.display='block';resultEl.innerHTML=`<div class="info-alert"><i class="bi bi-info-circle-fill"></i><span>In <strong>Demo Mode</strong> emails are simulated.</span></div>`;return;}
-  const overrideRaw=gv('digest-override-emails').trim();const overrideEmails=overrideRaw?overrideRaw.split(',').map(s=>s.trim()).filter(Boolean):[];
-  setBtnLoad('digest-send-btn',true,'Sending…');
-  try{const res=await fetch(`${SUPA_URL}/functions/v1/daily-digest`,{method:'POST',headers:{'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({emails:overrideEmails})});const json=await res.json();if(!res.ok)throw new Error(json.error||`HTTP ${res.status}`);
-    if(json.skipped){toast('No requests today — digest skipped','info');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;color:#92400e;font-size:12px"><i class="bi bi-info-circle me-2"></i>No requests found for today.</div>`;}
-    else{toast(`✅ Digest sent to ${json.sent_to?.length||0} recipient(s)`,'success');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#d1fae5;border:1px solid #a7f3d0;border-radius:var(--r);padding:10px 14px;color:#065f46;font-size:12px"><i class="bi bi-check-circle-fill me-2"></i><strong>Sent!</strong> Delivered to: ${(json.sent_to||[]).map(e=>`<strong>${esc(e)}</strong>`).join(', ')}</div>`;loadDigestPage();}
-  }catch(e){toast('Send failed: '+e.message,'error');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:var(--r);padding:10px 14px;color:#991b1b;font-size:12px"><i class="bi bi-x-circle-fill me-2"></i>${esc(e.message)}</div>`;}
-  setBtnLoad('digest-send-btn',false,'<i class="bi bi-send-fill me-2"></i>Send Digest Now');
-}
-async function previewDigest(){
-  let todayReqs=[];if(IS_DEMO){todayReqs=getDemoRequests();}else{try{const today=todayIST();const{data}=await sb.from('hire_requests').select('*').gte('created_at',today+'T00:00:00+05:30').lte('created_at',today+'T23:59:59+05:30').order('created_at',{ascending:true});todayReqs=data||[];}catch(e){toast('Preview error: '+e.message,'error');return;}}
-  const html=_buildPreviewHTML(todayReqs,todayIST());const win=window.open('','_blank','width=700,height=800,scrollbars=yes');if(win){win.document.write(html);win.document.close();}else toast('Popup blocked','warn');
-}
-function _buildPreviewHTML(requests,today){
-  const fmtDate=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});const inr=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});const total=requests.length,pending=requests.filter(r=>r.status==='Pending').length,approved=requests.filter(r=>r.status==='Approved').length,paid=requests.filter(r=>r.status==='Paid').length,totalAmt=requests.reduce((s,r)=>s+parseFloat(r.hire_amount||0),0);
-  const sc=s=>({Pending:'color:#92400e;background:#fef3c7',Approved:'color:#065f46;background:#d1fae5',Paid:'color:#1e40af;background:#dbeafe',Rejected:'color:#991b1b;background:#fee2e2'})[s]||'color:#374151;background:#f1f5f9';
-  const lrSc=s=>s==='Available'?'color:#065f46;background:#d1fae5':'color:#991b1b;background:#fee2e2';
-  const rows=requests.map(r=>`<tr><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-family:monospace;font-size:12px;color:#1a56f0">${esc(r.id||'')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.requester_name||'—')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.transport||'—')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:11px;color:#475569">${esc((r.lr_numbers||'').replace(/,/g,', '))}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;${lrSc(r.lr_status)}">${r.lr_status||'—'}</span></td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px;font-weight:700">${inr(r.hire_amount)}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;${sc(r.status)}">${esc(r.status)}</span></td></tr>`).join('');
-  return`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Email Preview — ${fmtDate(today)}</title><style>body{margin:0;padding:20px;background:#f0f4fb;font-family:'Segoe UI',Arial,sans-serif}.preview-banner{background:#1a56f0;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:8px;border-radius:8px;margin-bottom:16px}</style></head><body><div class="preview-banner">📧 EMAIL PREVIEW</div><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="640" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1)"><tr><td style="background:linear-gradient(135deg,#07111f,#1a56f0);padding:32px 36px"><div style="font-size:22px;font-weight:800;color:#fff">🚛 Daily Hire Request Digest</div><div style="color:#93c5fd;font-size:13px;margin-top:5px">${fmtDate(today)} · 7:30 PM IST</div></td></tr><tr><td style="padding:28px 36px 0"><table width="100%"><tr><td style="background:#eff3ff;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#1a56f0">${total}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Total</div></td><td style="background:#fef9c3;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#d97706">${pending}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Pending</div></td><td style="background:#dcfce7;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#059669">${approved}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Approved</div></td><td style="background:#dbeafe;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#1d4ed8">${paid}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Paid</div></td></tr></table></td></tr><tr><td style="padding:12px 36px 28px"><table width="100%" style="border:1px solid #e1e8f5;border-radius:10px;overflow:hidden"><thead><tr style="background:#f1f5fd">${['Ref ID','Requester','Transport','LR Numbers','LR Status','Route','Hire ₹','Status'].map(h=>`<th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:#5a6a85;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #e1e8f5">${h}</th>`).join('')}</tr></thead><tbody>${rows||'<tr><td colspan="8" style="padding:24px;text-align:center;color:#94a3b8">No requests today</td></tr>'}</tbody></table></td></tr><tr><td style="padding:20px 36px;border-top:1px solid #e1e8f5;background:#f7f9fe"><p style="margin:0;font-size:11.5px;color:#94a3b8;text-align:center">Hire Request Management System · Automated daily digest</p></td></tr></table></td></tr></table></body></html>`;
-}
+async function loadDigestPage(){el('digest-demo-warn').style.display=IS_DEMO?'flex':'none';_renderDigestRecipients();await _loadTodayRequests();}
+function _renderDigestRecipients(){const approvers=USER_DATA.filter(u=>u.role==='Approver'&&u.status!=='Inactive');const wrap=el('digest-recipients');if(!approvers.length){wrap.innerHTML=`<div class="empty-st" style="padding:20px"><i class="bi bi-person-x"></i><p>No Approver users found</p></div>`;return;}wrap.innerHTML=approvers.map(u=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${esc(u.name.charAt(0))}</div><div style="min-width:0"><div style="font-size:13px;font-weight:600">${esc(u.name)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(u.email)}</div></div><span class="bs bs-approved ms-auto" style="font-size:10.5px">Will receive</span></div>`).join('');}
+async function _loadTodayRequests(){const tbody=el('digest-today-tbody'),today=todayIST();let todayReqs=[];if(IS_DEMO){todayReqs=getDemoRequests();}else{try{const{data,error}=await sb.from('hire_requests').select('id,requester_name,transport,from_loc,to_loc,hire_amount,lr_status,request_type,status,created_at').gte('created_at',today+'T00:00:00+05:30').lte('created_at',today+'T23:59:59+05:30').order('created_at',{ascending:true});if(error)throw error;todayReqs=data||[];}catch(e){toast('Error: '+e.message,'error');}}const countEl=el('digest-today-count');countEl.textContent=todayReqs.length?`(${todayReqs.length} request${todayReqs.length>1?'s':''})':'(none yet)';if(!todayReqs.length){tbody.innerHTML=`<tr><td colspan="8"><div class="empty-st" style="padding:24px"><i class="bi bi-calendar-x"></i><p>No requests submitted today</p></div></td></tr>`;return;}tbody.innerHTML=todayReqs.map(r=>`<tr><td><code style="font-size:10px;color:var(--blue)">${esc(r.id||'—')}</code></td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${lrStatusB(r.lr_status)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');}
+async function sendDigestNow(){const resultEl=el('digest-send-result');resultEl.style.display='none';if(IS_DEMO){toast('Demo mode — email not actually sent.','warn');resultEl.style.display='block';resultEl.innerHTML=`<div class="info-alert"><i class="bi bi-info-circle-fill"></i><span>In <strong>Demo Mode</strong> emails are simulated.</span></div>`;return;}const overrideRaw=gv('digest-override-emails').trim();const overrideEmails=overrideRaw?overrideRaw.split(',').map(s=>s.trim()).filter(Boolean):[];setBtnLoad('digest-send-btn',true,'Sending…');try{const res=await fetch(`${SUPA_URL}/functions/v1/daily-digest`,{method:'POST',headers:{'Authorization':`Bearer ${SUPA_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({emails:overrideEmails})});const json=await res.json();if(!res.ok)throw new Error(json.error||`HTTP ${res.status}`);if(json.skipped){toast('No requests today — digest skipped','info');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;color:#92400e;font-size:12px"><i class="bi bi-info-circle me-2"></i>No requests found for today.</div>`;}else{toast(`✅ Digest sent to ${json.sent_to?.length||0} recipient(s)`,'success');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#d1fae5;border:1px solid #a7f3d0;border-radius:var(--r);padding:10px 14px;color:#065f46;font-size:12px"><i class="bi bi-check-circle-fill me-2"></i><strong>Sent!</strong> Delivered to: ${(json.sent_to||[]).map(e=>`<strong>${esc(e)}</strong>`).join(', ')}</div>`;loadDigestPage();}}catch(e){toast('Send failed: '+e.message,'error');resultEl.style.display='block';resultEl.innerHTML=`<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:var(--r);padding:10px 14px;color:#991b1b;font-size:12px"><i class="bi bi-x-circle-fill me-2"></i>${esc(e.message)}</div>`;}setBtnLoad('digest-send-btn',false,'<i class="bi bi-send-fill me-2"></i>Send Digest Now');}
+async function previewDigest(){let todayReqs=[];if(IS_DEMO){todayReqs=getDemoRequests();}else{try{const today=todayIST();const{data}=await sb.from('hire_requests').select('*').gte('created_at',today+'T00:00:00+05:30').lte('created_at',today+'T23:59:59+05:30').order('created_at',{ascending:true});todayReqs=data||[];}catch(e){toast('Preview error: '+e.message,'error');return;}}const html=_buildPreviewHTML(todayReqs,todayIST());const win=window.open('','_blank','width=700,height=800,scrollbars=yes');if(win){win.document.write(html);win.document.close();}else toast('Popup blocked','warn');}
+function _buildPreviewHTML(requests,today){const fmtDate=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});const inr=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});const total=requests.length,pending=requests.filter(r=>r.status==='Pending').length,approved=requests.filter(r=>r.status==='Approved').length,paid=requests.filter(r=>r.status==='Paid').length,totalAmt=requests.reduce((s,r)=>s+parseFloat(r.hire_amount||0),0);const sc=s=>({Pending:'color:#92400e;background:#fef3c7',Approved:'color:#065f46;background:#d1fae5',Paid:'color:#1e40af;background:#dbeafe',Rejected:'color:#991b1b;background:#fee2e2'})[s]||'color:#374151;background:#f1f5f9';const lrSc=s=>s==='Available'?'color:#065f46;background:#d1fae5':'color:#991b1b;background:#fee2e2';const rows=requests.map(r=>`<tr><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-family:monospace;font-size:12px;color:#1a56f0">${esc(r.id||'')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.requester_name||'—')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.transport||'—')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:11px;color:#475569">${esc((r.lr_numbers||'').replace(/,/g,', '))}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;${lrSc(r.lr_status)}">${r.lr_status||'—'}</span></td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6;font-size:12px;font-weight:700">${inr(r.hire_amount)}</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f6"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;${sc(r.status)}">${esc(r.status)}</span></td></tr>`).join('');return`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Email Preview — ${fmtDate(today)}</title><style>body{margin:0;padding:20px;background:#f0f4fb;font-family:'Segoe UI',Arial,sans-serif}.preview-banner{background:#1a56f0;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:8px;border-radius:8px;margin-bottom:16px}</style></head><body><div class="preview-banner">📧 EMAIL PREVIEW</div><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center"><table width="640" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1)"><tr><td style="background:linear-gradient(135deg,#07111f,#1a56f0);padding:32px 36px"><div style="font-size:22px;font-weight:800;color:#fff">🚛 Daily Hire Request Digest</div><div style="color:#93c5fd;font-size:13px;margin-top:5px">${fmtDate(today)} · 7:30 PM IST</div></td></tr><tr><td style="padding:28px 36px 0"><table width="100%"><tr><td style="background:#eff3ff;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#1a56f0">${total}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Total</div></td><td style="background:#fef9c3;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#d97706">${pending}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Pending</div></td><td style="background:#dcfce7;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#059669">${approved}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Approved</div></td><td style="background:#dbeafe;border-radius:10px;padding:16px;text-align:center;width:25%"><div style="font-size:26px;font-weight:800;color:#1d4ed8">${paid}</div><div style="font-size:11px;color:#5a6a85;font-weight:600;text-transform:uppercase;margin-top:3px">Paid</div></td></tr></table></td></tr><tr><td style="padding:12px 36px 28px"><table width="100%" style="border:1px solid #e1e8f5;border-radius:10px;overflow:hidden"><thead><tr style="background:#f1f5fd">${['Ref ID','Requester','Transport','LR Numbers','LR Status','Route','Hire ₹','Status'].map(h=>`<th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:#5a6a85;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #e1e8f5">${h}</th>`).join('')}</tr></thead><tbody>${rows||'<tr><td colspan="8" style="padding:24px;text-align:center;color:#94a3b8">No requests today</td></tr>'}</tbody></table></td></tr><tr><td style="padding:20px 36px;border-top:1px solid #e1e8f5;background:#f7f9fe"><p style="margin:0;font-size:11.5px;color:#94a3b8;text-align:center">Hire Request Management System · Automated daily digest</p></td></tr></table></td></tr></table></body></html>`;}
 
 /* ==============================================
    FILE HELPERS
@@ -2018,15 +1660,7 @@ function _buildPreviewHTML(requests,today){
 function dzOver(e,id){e.preventDefault();el(id).classList.add('drag');}
 function dzLeave(id){el(id).classList.remove('drag');}
 function dzDrop(e,zoneId,inputId){e.preventDefault();dzLeave(zoneId);const file=e.dataTransfer.files[0];if(!file)return;const inp=el(inputId);const dt=new DataTransfer();dt.items.add(file);inp.files=dt.files;handleFile(inputId,zoneId,'fp-'+inputId.replace('f-',''));}
-function handleFile(inputId,zoneId,previewId){
-  const inp=el(inputId),zone=el(zoneId),preEl=el(previewId);const errId='fe-'+inputId.replace('f-',''),errEl=el(errId);
-  if(!inp?.files[0])return;const file=inp.files[0],ext=file.name.split('.').pop().toLowerCase();
-  if(preEl){preEl.innerHTML='';preEl.className='fp';}if(errEl){errEl.style.display='none';errEl.textContent='';}
-  if(!OK_EXTS.includes(ext)){if(errEl){errEl.textContent=`Invalid format. Allowed: PDF, JPG, PNG, WEBP`;errEl.style.display='block';}inp.value='';return;}
-  if(file.size>MAX_FILE){if(errEl){errEl.textContent=`File too large. Max 5 MB`;errEl.style.display='block';}inp.value='';return;}
-  zone.classList.add('has-file');
-  if(preEl){const reader=new FileReader();reader.onload=ev=>{let inner=ext==='pdf'?`<div class="pdf-nm"><i class="bi bi-filetype-pdf"></i><span>${esc(file.name)}</span><small class="ms-auto text-muted">${(file.size/1024).toFixed(0)} KB</small></div>`:`<img src="${ev.target.result}" alt="preview"/>`;preEl.innerHTML=inner+`<button type="button" class="f-clr" onclick="clearFile('${inputId}','${zoneId}','${previewId}')">×</button>`;preEl.className='fp show';};reader.readAsDataURL(file);}
-}
+function handleFile(inputId,zoneId,previewId){const inp=el(inputId),zone=el(zoneId),preEl=el(previewId);const errId='fe-'+inputId.replace('f-',''),errEl=el(errId);if(!inp?.files[0])return;const file=inp.files[0],ext=file.name.split('.').pop().toLowerCase();if(preEl){preEl.innerHTML='';preEl.className='fp';}if(errEl){errEl.style.display='none';errEl.textContent='';}if(!OK_EXTS.includes(ext)){if(errEl){errEl.textContent=`Invalid format. Allowed: PDF, JPG, PNG, WEBP`;errEl.style.display='block';}inp.value='';return;}if(file.size>MAX_FILE){if(errEl){errEl.textContent=`File too large. Max 5 MB`;errEl.style.display='block';}inp.value='';return;}zone.classList.add('has-file');if(preEl){const reader=new FileReader();reader.onload=ev=>{let inner=ext==='pdf'?`<div class="pdf-nm"><i class="bi bi-filetype-pdf"></i><span>${esc(file.name)}</span><small class="ms-auto text-muted">${(file.size/1024).toFixed(0)} KB</small></div>`:`<img src="${ev.target.result}" alt="preview"/>`;preEl.innerHTML=inner+`<button type="button" class="f-clr" onclick="clearFile('${inputId}','${zoneId}','${previewId}')">×</button>`;preEl.className='fp show';};reader.readAsDataURL(file);}}
 function clearFile(inputId,zoneId,previewId){const inp=el(inputId),zone=el(zoneId),pre=el(previewId);if(inp)inp.value='';if(zone)zone.classList.remove('has-file','drag');if(pre){pre.innerHTML='';pre.className='fp';}}
 function readBase64(inputId){return new Promise(resolve=>{const inp=el(inputId);if(!inp?.files[0]){resolve(null);return;}const r=new FileReader();r.onload=e=>resolve({data:e.target.result,name:inp.files[0].name});r.readAsDataURL(inp.files[0]);});}
 
@@ -2050,7 +1684,7 @@ const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const hide=id=>{const e=el(id);if(e)e.style.display='none';};
 const show=id=>{const e=el(id);if(e)e.style.display='';};
 
-function fmtLR(lr){if(!lr)return'—';return lr.split(',').map(s=>s.trim()).filter(Boolean).map(l=>`<span class="badge-lr">${esc(l)}</span>`).join(' ');}
+function fmtLR(lr){if(!lr)return'—';return String(lr).split(',').map(s=>s.trim()).filter(Boolean).map(l=>`<span class="badge-lr">${esc(l)}</span>`).join(' ');}
 function statusB(s){const cls={Pending:'bs-pending',Approved:'bs-approved',Paid:'bs-paid',Rejected:'bs-rejected'}[s]||'bs-pending';const ic={Pending:'bi-clock',Approved:'bi-check-circle-fill',Paid:'bi-currency-rupee',Rejected:'bi-x-circle'}[s]||'bi-clock';return`<span class="bs ${cls}"><i class="bi ${ic}"></i> ${s||'Pending'}</span>`;}
 function lrStatusB(s){if(!s||s==='')return`<span style="font-size:11px;color:var(--muted)">—</span>`;const cls=s==='Available'?'bs-available':'bs-unavailable';const ic=s==='Available'?'bi-check-circle-fill':'bi-x-circle-fill';return`<span class="bs ${cls}"><i class="bi ${ic}"></i> ${s}</span>`;}
 function typeB(t){const cls={Full:'bt-full',Advance:'bt-advance',POD:'bt-pod'}[t]||'bt-full';return`<span class="bt ${cls}">${t||'Full'}</span>`;}
@@ -2063,25 +1697,9 @@ function toast(msg,type='info'){const w=el('toast-wrap');const d=document.create
   SQL: Add vendor_code column to hire_vendors
   Run in Supabase SQL Editor if upgrading from v1
 =======================================================
-ALTER TABLE hire_vendors
-  ADD COLUMN IF NOT EXISTS vendor_code TEXT UNIQUE;
-
--- Backfill existing vendors with VND-XXX codes
-DO $$
-DECLARE
-  rec RECORD;
-  counter INT := 1;
-BEGIN
-  FOR rec IN SELECT id FROM hire_vendors ORDER BY id LOOP
-    UPDATE hire_vendors
-      SET vendor_code = 'VND-' || LPAD(counter::text, 3, '0')
-    WHERE id = rec.id AND vendor_code IS NULL;
-    counter := counter + 1;
-  END LOOP;
-END $$;
-=======================================================
-ALTER TABLE hire_requests
-  ADD COLUMN IF NOT EXISTS lr_status TEXT DEFAULT 'Available';
+ALTER TABLE hire_vendors ADD COLUMN IF NOT EXISTS vendor_code TEXT UNIQUE;
+DO $$ DECLARE rec RECORD; counter INT := 1; BEGIN FOR rec IN SELECT id FROM hire_vendors ORDER BY id LOOP UPDATE hire_vendors SET vendor_code = 'VND-' || LPAD(counter::text, 3, '0') WHERE id = rec.id AND vendor_code IS NULL; counter := counter + 1; END LOOP; END $$;
+ALTER TABLE hire_requests ADD COLUMN IF NOT EXISTS lr_status TEXT DEFAULT 'Available';
 =======================================================
 */
 </script>
