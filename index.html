@@ -220,6 +220,7 @@ code{font-family:'DM Mono',monospace;}
     <div class="nav-item" data-page="requests" onclick="goto('requests',this)"><i class="bi bi-table"></i>All Requests</div>
     <div class="nav-section">Setup</div>
     <div class="nav-item" data-page="vendors" onclick="goto('vendors',this)"><i class="bi bi-people"></i>Vendors</div>
+    <div class="nav-item" data-page="routes" onclick="goto('routes',this)"><i class="bi bi-signpost-split"></i>Routes</div>
     <div class="nav-item" data-page="users" id="nav-users" style="display:none" onclick="goto('users',this)"><i class="bi bi-person-badge"></i>Users</div>
     <div class="nav-item" data-page="userroles" id="nav-roles" style="display:none" onclick="goto('userroles',this)"><i class="bi bi-shield-person"></i>User Roles</div>
     <div class="nav-section">Account</div>
@@ -277,18 +278,34 @@ code{font-family:'DM Mono',monospace;}
             <div class="row g-3 mb-4">
               <div class="col-md-5 col-12"><label class="lbl">LR Numbers <span class="req-star">*</span> <small class="text-muted fw-normal">(comma-separated)</small></label><input type="text" class="form-control" id="f-lr" placeholder="D-B23453, D-B12345" oninput="debounceLRCheck()"/><div id="lr-tags" class="mt-2 d-flex flex-wrap gap-1"></div><div id="lr-chk" class="mt-1" style="font-size:11.5px"></div></div>
               <div class="col-md-3 col-6"><label class="lbl">Request Type <span class="req-star">*</span></label><select class="form-select" id="f-requestType" onchange="debounceLRCheck();showTypeHint()"><option value="Full">Full</option><option value="Advance">Advance</option><option value="POD">POD</option></select><div id="req-type-hint" class="mt-1 small text-muted"></div></div>
-              <div class="col-md-2 col-6"><label class="lbl">Load Type <span class="req-star">*</span></label><select class="form-select" id="f-loadType" required><option value="">Select…</option><option>Full Load</option><option>Part Load</option><option>Special Load</option></select></div>
+              <div class="col-md-2 col-6"><label class="lbl">Load Type <span class="req-star">*</span></label><select class="form-select" id="f-loadType" required><option value="">Select…</option></select></div>
             </div>
             <!-- VEHICLE -->
             <div class="fsec"><i class="bi bi-truck"></i>Vehicle Details</div>
             <div class="row g-3 mb-4">
-              <div class="col-md-6 col-12"><label class="lbl">Route <small class="text-muted fw-normal">(optional — auto-fills From/To, Vehicle Type &amp; Hire Amount)</small></label><select id="f-routeSelect" placeholder="Search route…"></select><small class="text-muted" id="route-basis-tag" style="font-size:11px;display:block;margin-top:2px"></small></div>
-              <div class="col-md-3 col-6"><label class="lbl">Vehicle Type</label><select id="f-vehicleType"><option value="">Select…</option><option>20 Feet</option><option>14 Feet</option><option>Bata Dost</option><option>Bada Dost</option><option>AL</option><option>Others</option></select></div>
+              <div class="col-md-3 col-12"><label class="lbl">Basis <span class="req-star">*</span></label>
+                <div class="btn-group w-100" role="group" id="basis-toggle">
+                  <button type="button" class="btn btn-outline-primary btn-sm basis-btn active" data-basis="Trip Basis" onclick="setBasis('Trip Basis')">Trip Basis</button>
+                  <button type="button" class="btn btn-outline-primary btn-sm basis-btn" data-basis="Weight Basis" onclick="setBasis('Weight Basis')">Weight Basis</button>
+                </div>
+                <small class="text-muted" style="font-size:10.5px">Choose how this trip is priced</small>
+              </div>
+              <div class="col-md-4 col-12" id="weight-first-wrap" style="display:none">
+                <label class="lbl">Weight (Kg) <span class="req-star">*</span> <small class="text-muted fw-normal">(enter first for Weight Basis — auto-converted to Tons)</small></label>
+                <input type="number" step="0.01" class="form-control" id="f-weight" placeholder="e.g. 2000" oninput="recalcRouteAmount()"/>
+                <small class="text-muted" style="font-size:10.5px" id="weight-ton-hint"></small>
+              </div>
+              <div class="col-md-5 col-12" id="route-select-wrap"><label class="lbl">Route <small class="text-muted fw-normal">(optional — auto-fills From/To, Vehicle Type, Load Type &amp; Hire Amount)</small></label><select id="f-routeSelect" placeholder="Search route…"></select>
+                <div id="route-desc-box" style="display:none;margin-top:6px;background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:8px;padding:8px 11px;font-size:11.5px;color:#1e40af">
+                  <div id="route-basis-tag" style="font-weight:700;margin-bottom:2px"></div>
+                  <div><strong>Desc:</strong> <span id="route-desc-text">—</span></div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6"><label class="lbl">Vehicle Type</label><select id="f-vehicleType"><option value="">Select…</option></select></div>
               <div class="col-md-3 col-6"><label class="lbl">Vehicle No <span class="req-star">*</span></label><input type="text" class="form-control" id="f-vehicleNo" oninput="this.value=this.value.toUpperCase()" required placeholder="TN09AB1234"/></div>
-              <div class="col-md-3 col-6"><label class="lbl">From <span class="req-star">*</span></label><input type="text" class="form-control" id="f-from" required/></div>
-              <div class="col-md-3 col-6"><label class="lbl">To <span class="req-star">*</span></label><input type="text" class="form-control" id="f-to" required/></div>
-              <div class="col-md-3 col-6"><label class="lbl">Weight (MT)</label><input type="number" step="0.01" class="form-control" id="f-weight" placeholder="0.00" oninput="recalcRouteAmount()"/></div>
-              <div class="col-md-9 col-12"><label class="lbl">Vehicle Document <small class="text-muted fw-normal">(PDF/JPG/PNG/WEBP, max 5MB)</small></label>
+              <div class="col-md-3 col-6"><label class="lbl">From <span class="req-star">*</span> <small class="text-muted fw-normal">(free text)</small></label><input type="text" class="form-control" id="f-from" required placeholder="Type origin…"/></div>
+              <div class="col-md-3 col-6"><label class="lbl">To <span class="req-star">*</span> <small class="text-muted fw-normal">(free text)</small></label><input type="text" class="form-control" id="f-to" required placeholder="Type destination…"/></div>
+              <div class="col-md-9 col-12"><label class="lbl">Pod Copy <small class="text-muted fw-normal">(PDF/JPG/PNG/WEBP, max 5MB)</small></label>
                 <div class="fz" id="fz-document" ondragover="dzOver(event,'fz-document')" ondragleave="dzLeave('fz-document')" ondrop="dzDrop(event,'fz-document','f-document')"><input type="file" id="f-document" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFile('f-document','fz-document','fp-document')"/><i class="bi bi-file-earmark-arrow-up fz-icon"></i><div class="fz-lbl">Click or drop document here</div><div class="fz-sub">PDF · JPG · JPEG · PNG · WEBP up to 5 MB</div></div>
                 <div class="f-err" id="fe-document"></div><div class="fp" id="fp-document"></div>
               </div>
@@ -298,12 +315,14 @@ code{font-family:'DM Mono',monospace;}
             <div class="row g-3 mb-4">
               <div class="col-md-3 col-6"><label class="lbl">Hire Amount (₹) <span class="req-star">*</span></label><input type="number" step="0.01" class="form-control" id="f-hireAmount" required oninput="calcPay()" placeholder="0.00"/></div>
               <div class="col-md-3 col-6"><label class="lbl">Halting Charges (₹)</label><input type="number" step="0.01" class="form-control" id="f-haltingCharges" value="0" oninput="calcPay()"/></div>
+              <div class="col-md-3 col-6"><label class="lbl">Exception Amount (₹) <small class="text-muted fw-normal">(extra, if any)</small></label><input type="number" step="0.01" class="form-control" id="f-exceptionAmount" value="0" oninput="calcPay();toggleExceptionReason()"/></div>
               <div class="col-md-3 col-6" id="payable-wrap" style="display:none"><label class="lbl">Payable Amount (₹)<span class="approver-only ms-1">Admin</span></label><input type="number" class="form-control" id="f-payable" readonly placeholder="Auto-calculated"/></div>
+              <div class="col-md-6 col-12" id="exception-reason-wrap" style="display:none"><label class="lbl">Exception Reason <small class="text-muted fw-normal">(why the extra amount)</small></label><input type="text" class="form-control" id="f-exceptionReason" placeholder="e.g. extra 1 tonne loaded"/></div>
             </div>
             <!-- WEIGHMENT -->
             <div class="fsec"><i class="bi bi-clipboard-data"></i>Weighment &amp; Remarks</div>
             <div class="row g-3 mb-4">
-              <div class="col-md-4 col-12"><label class="lbl">Weighment With Load <small class="text-muted fw-normal">(max 5MB)</small></label>
+              <div class="col-md-4 col-12"><label class="lbl">Weighment With Load <span class="req-star" id="wwl-star" style="display:none">*</span> <small class="text-muted fw-normal">(max 5MB<span id="wwl-required-note" style="display:none"> — required for Weight Basis</span>)</small></label>
                 <div class="fz" id="fz-weighmentWithLoad" ondragover="dzOver(event,'fz-weighmentWithLoad')" ondragleave="dzLeave('fz-weighmentWithLoad')" ondrop="dzDrop(event,'fz-weighmentWithLoad','f-weighmentWithLoad')"><input type="file" id="f-weighmentWithLoad" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFile('f-weighmentWithLoad','fz-weighmentWithLoad','fp-weighmentWithLoad')"/><i class="bi bi-cloud-upload fz-icon"></i><div class="fz-lbl">Upload weighment slip</div><div class="fz-sub">PDF · JPG · PNG · WEBP ≤ 5 MB</div></div>
                 <div class="f-err" id="fe-weighmentWithLoad"></div><div class="fp" id="fp-weighmentWithLoad"></div>
               </div>
@@ -403,6 +422,70 @@ code{font-family:'DM Mono',monospace;}
       </div>
     </div>
 
+    <!-- ROUTES -->
+    <div id="page-routes" class="page">
+      <div class="info-alert"><i class="bi bi-info-circle-fill"></i><span>The <strong>Route</strong> dropdown on New Request pulls <strong>only</strong> from this table — add or edit routes here and they appear there immediately.</span></div>
+      <ul class="nav nav-tabs mb-3" id="route-tabs">
+        <li class="nav-item"><a class="nav-link active" href="#" onclick="switchRouteTab('list',this)" style="font-size:13px"><i class="bi bi-signpost-split me-1"></i>Route List</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="switchRouteTab('bulk',this)" style="font-size:13px"><i class="bi bi-file-earmark-excel me-1"></i>Bulk Upload</a></li>
+      </ul>
+
+      <!-- ROUTE LIST TAB -->
+      <div id="route-tab-list">
+        <div class="fbar">
+          <input type="text" class="form-control" id="route-srch" placeholder="🔍  Search route, load, vehicle type…" style="width:280px" oninput="filterRoutes()"/>
+          <select class="form-select" id="route-flt-basis" style="width:150px" onchange="filterRoutes()"><option value="All">All Basis</option><option>Trip Basis</option><option>Weight Basis</option></select>
+          <button class="btn btn-outline-secondary btn-sm" onclick="downloadRouteTemplate()"><i class="bi bi-download me-1"></i>Template</button>
+          <button class="btn btn-outline-success btn-sm" onclick="exportRoutes()"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export</button>
+          <button class="btn btn-primary btn-sm ms-auto" onclick="openRouteModal(null)"><i class="bi bi-plus me-1"></i>Add Route</button>
+        </div>
+        <div class="panel">
+          <div class="tbl-wrap">
+            <table class="dt">
+              <thead><tr><th>Route</th><th>From</th><th>To</th><th>Load</th><th>Basis</th><th>Vehicle Type</th><th>Rate</th><th>Min Tons</th><th>Desc</th><th>Active</th><th>Actions</th></tr></thead>
+              <tbody id="route-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROUTE BULK UPLOAD TAB -->
+      <div id="route-tab-bulk" style="display:none">
+        <div class="row mb-4">
+          <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get Excel template matching Hire_quotation.xlsx columns</span></div></div></div>
+          <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill Route Details</strong><br><span class="text-muted" style="font-size:12px">Route, Load, Based On, Vehicle Type, Cost, Remarks</span></div></div></div>
+          <div class="col-md-4"><div class="bs-step"><div class="bs-num">3</div><div><strong style="font-size:13px">Upload &amp; Save</strong><br><span class="text-muted" style="font-size:12px">Rows are validated before saving</span></div></div></div>
+        </div>
+        <div class="d-flex gap-2 mb-3">
+          <button class="btn btn-outline-secondary btn-sm" onclick="downloadRouteTemplate()"><i class="bi bi-download me-1"></i>Download Template</button>
+          <span class="text-muted small align-self-center">For Weight Basis rows, enter Cost as a plain number (e.g. 1800) — it's treated as ₹ per Ton.</span>
+        </div>
+        <div class="bulk-drop" id="route-bulk-drop" onclick="document.getElementById('route-bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleRouteBulkDrop(event)">
+          <i class="bi bi-cloud-upload"></i>
+          <div style="font-size:14px;font-weight:700;color:#374151">Drop Route Excel / CSV file here</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:5px">.xlsx · .xls · .csv supported</div>
+          <input type="file" id="route-bulk-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleRouteBulkSelect(event)"/>
+        </div>
+        <div id="route-bulk-result" style="display:none;margin-top:22px">
+          <div id="route-bulk-summary" class="d-flex align-items-center gap-3 mb-3 p-3" style="background:var(--light);border-radius:var(--r);border:1px solid var(--border)"></div>
+          <div class="panel mb-3">
+            <div class="panel-head"><h3>Preview</h3><span id="route-bulk-rowct" class="text-muted small"></span></div>
+            <div class="tbl-wrap" style="max-height:320px;overflow-y:auto">
+              <table class="dt" style="font-size:11px">
+                <thead><tr><th>Row</th><th>Route</th><th>Load</th><th>Basis</th><th>Vehicle Type</th><th>Rate</th><th>Issues</th></tr></thead>
+                <tbody id="route-bulk-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="d-flex gap-2 align-items-center flex-wrap">
+            <button class="btn btn-primary" id="route-bulk-submit-btn" onclick="submitRouteBulk()" disabled><i class="bi bi-upload me-2"></i>Save Valid Routes</button>
+            <button class="btn btn-outline-secondary" onclick="clearRouteBulk()"><i class="bi bi-x-circle me-1"></i>Clear</button>
+            <span id="route-bulk-msg" class="ms-2 small text-muted"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- USERS -->
     <div id="page-users" class="page">
       <div class="fbar"><span class="text-muted small fw-semibold">Manage login users</span><button class="btn btn-primary btn-sm ms-auto" onclick="openUserModal(null)"><i class="bi bi-plus me-1"></i>Add User</button></div>
@@ -469,6 +552,26 @@ code{font-family:'DM Mono',monospace;}
   <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveVendor()"><i class="bi bi-floppy me-1"></i>Save</button></div>
 </div></div></div>
 
+<!-- Route Modal -->
+<div class="modal fade" id="routeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title" id="routeModal-title">Add Route</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body">
+    <div class="row g-3">
+      <div class="col-md-6"><label class="lbl">From <span class="req-star">*</span></label><input type="text" class="form-control" id="rt-from" placeholder="e.g. PMAC"/></div>
+      <div class="col-md-6"><label class="lbl">To <span class="req-star">*</span></label><input type="text" class="form-control" id="rt-to" placeholder="e.g. TAFE - DBR"/></div>
+      <div class="col-md-4"><label class="lbl">Load <span class="req-star">*</span></label><input type="text" class="form-control" id="rt-load" placeholder="e.g. Casting"/></div>
+      <div class="col-md-4"><label class="lbl">Based On <span class="req-star">*</span></label><select class="form-select" id="rt-basis"><option value="Trip Basis">Trip Basis</option><option value="Weight Basis">Weight Basis</option></select></div>
+      <div class="col-md-4"><label class="lbl">Vehicle Type <span class="req-star">*</span></label><input type="text" class="form-control" id="rt-vehicle" placeholder="e.g. Closed"/></div>
+      <div class="col-md-6"><label class="lbl">Cost (₹) <span class="req-star">*</span> <small class="text-muted fw-normal" id="rt-cost-hint">(flat amount for Trip Basis)</small></label><input type="number" step="0.01" class="form-control" id="rt-rate" placeholder="e.g. 18000" oninput="rtBasisHint()"/></div>
+      <div class="col-md-6"><label class="lbl">Min Load (Tons) <small class="text-muted fw-normal">(optional)</small></label><input type="number" step="0.01" class="form-control" id="rt-minload" placeholder="e.g. 9"/></div>
+      <div class="col-12"><label class="lbl">Desc <small class="text-muted fw-normal">(shown to users, was Excel "Remarks")</small></label><textarea class="form-control" id="rt-desc" rows="2" placeholder="e.g. Upto 10 Tons (Minimum of 9 to be loaded & Ensured before payment"></textarea></div>
+      <div class="col-md-6"><label class="lbl">Active</label><select class="form-select" id="rt-active"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+      <input type="hidden" id="rt-id"/>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveRoute()"><i class="bi bi-floppy me-1"></i>Save</button></div>
+</div></div></div>
+
 <!-- User Modal -->
 <div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="userModal-title">Add User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="lbl">Full Name <span class="req-star">*</span></label><input type="text" class="form-control" id="u-name"/></div><div class="col-md-6"><label class="lbl">Email <span class="req-star">*</span></label><input type="email" class="form-control" id="u-email"/></div><div class="col-md-6"><label class="lbl">Department</label><input type="text" class="form-control" id="u-dept" placeholder="e.g. Logistics"/></div><div class="col-md-6"><label class="lbl">Mobile</label><input type="tel" class="form-control" id="u-mobile"/></div><div class="col-md-6"><label class="lbl">Role <span class="req-star">*</span></label><select class="form-select" id="u-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Approver">Approver</option></select></div><div class="col-md-6"><label class="lbl">Status <span class="req-star">*</span></label><select class="form-select" id="u-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div><div class="col-12"><label class="lbl">Password <span class="req-star">*</span></label><input type="password" class="form-control" id="u-pass" placeholder="Set login password"/></div><input type="hidden" id="u-id"/></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveUser()"><i class="bi bi-floppy me-1"></i>Save</button></div></div></div></div>
 
@@ -494,18 +597,35 @@ let CU=null, REQ_DATA=[], VEND_DATA=[], USER_DATA=[], EDIT_ID=null;
 let LR_TIMER=null;
 let tsVendor=null, tsRequester=null, tsVehicle=null, tsRoute=null;
 let ROUTES_DATA=[], selectedRoute=null;
+let currentBasis='Trip Basis'; // 'Trip Basis' | 'Weight Basis'
 
 const {createClient}=supabase;
 const sb=IS_DEMO?null:createClient(SUPA_URL,SUPA_KEY);
 
 /* ==============================================
+   DEMO ROUTES (mirrors routes_migration.sql seed —
+   used only when IS_DEMO / Supabase unreachable so the
+   New Request form has real data to work with offline)
+   ============================================== */
+function getDemoRoutes(){
+  return [
+    {id:1,route_name:'TAFE -SBM To TAFE - DBR',from_location:'TAFE -SBM',to_location:'TAFE - DBR',load_category:'Casting',basis:'Trip Basis',vehicle_type:'Closed',rate:18000,min_load_tons:9,desc_note:'Upto 10 Tons (Minimum of 9 to be loaded & Ensured before payment'},
+    {id:2,route_name:'TAFE - TGD To TAFE - DBR',from_location:'TAFE - TGD',to_location:'TAFE - DBR',load_category:'Casting',basis:'Trip Basis',vehicle_type:'Closed',rate:18000,min_load_tons:9,desc_note:'Upto 10 Tons (Minimum of 9 to be loaded & Ensured before payment'},
+    {id:3,route_name:'PMAC To TAFE - DBR',from_location:'PMAC',to_location:'TAFE - DBR',load_category:'Casting',basis:'Trip Basis',vehicle_type:'Closed',rate:18000,min_load_tons:9,desc_note:'Upto 10 Tons (Minimum of 9 to be loaded & Ensured before payment'},
+    {id:4,route_name:'EPD To TAFE - DBR',from_location:'EPD',to_location:'TAFE - DBR',load_category:'Collections',basis:'Trip Basis',vehicle_type:'Closed',rate:14000,min_load_tons:9,desc_note:'Upto 10 Tons (Minimum of 9 to be loaded & Ensured before payment'},
+    {id:5,route_name:'Simpson - ASP To TAFE - DBR',from_location:'Simpson - ASP',to_location:'TAFE - DBR',load_category:'Engine',basis:'Trip Basis',vehicle_type:'Open',rate:19000,min_load_tons:null,desc_note:'Vehicle Basis (30 Engines)'},
+    {id:6,route_name:'Simpson - SBM To TAFE - DBR',from_location:'Simpson - SBM',to_location:'TAFE - DBR',load_category:'Engine',basis:'Trip Basis',vehicle_type:'Open',rate:18000,min_load_tons:null,desc_note:'Vehicle Basis (30 Engines)'},
+    {id:37,route_name:'Chennai WH To TAFE - DBR',from_location:'Chennai WH',to_location:'TAFE - DBR',load_category:'Collections',basis:'Weight Basis',vehicle_type:'Open',rate:1550,min_load_tons:null,desc_note:'Per Ton'},
+    {id:38,route_name:'Kross To TAFE - DBR',from_location:'Kross',to_location:'TAFE - DBR',load_category:'Collections',basis:'Weight Basis',vehicle_type:'Open',rate:1550,min_load_tons:null,desc_note:'Per Ton'},
+    {id:39,route_name:'Chennai WH To TAFE - MDU',from_location:'Chennai WH',to_location:'TAFE - MDU',load_category:'Collections',basis:'Weight Basis',vehicle_type:'Open',rate:1700,min_load_tons:null,desc_note:'Per Ton'},
+    {id:40,route_name:'PMAC To TAFE - MDU',from_location:'PMAC',to_location:'TAFE - MDU',load_category:'Casting',basis:'Weight Basis',vehicle_type:'Open',rate:1800,min_load_tons:9,desc_note:'Upto 10 Tons (Minimum of 9 to be loaded & Ensured before payment'},
+    {id:41,route_name:'Kross To TAFE - MDU',from_location:'Kross',to_location:'TAFE - MDU',load_category:'Collections',basis:'Weight Basis',vehicle_type:'Open',rate:1700,min_load_tons:null,desc_note:'Per Ton'},
+  ];
+}
+
+/* ==============================================
    PERMISSIONS HELPER
    ============================================== */
-// Can a user edit/delete a request?
-// Rules:
-//   Approver: full CRUD on all
-//   Finance: can edit paid_amount, reference_id, status only
-//   User: CRUD on OWN requests only within 2 hours of submitted_at
 function canEditRequest(r) {
   if (!r) return false;
   if (CU.role === 'Approver') return true;
@@ -598,7 +718,7 @@ async function bootApp(){
   if(IS_DEMO){cb.style.background='#fef3c7';cb.style.color='#92400e';cb.innerHTML='<i class="bi bi-lightning-fill"></i> Demo Mode';}
   else{cb.style.background='#d1fae5';cb.style.color='#065f46';cb.innerHTML='<i class="bi bi-circle-fill" style="font-size:8px"></i> Live Database';}
   await Promise.all([loadVendorData(),loadUserData()]);
-  initFormDropdowns();setupNewReqForm();buildRequestsTableHeader();loadDashboard();
+  await initFormDropdowns();setupNewReqForm();buildRequestsTableHeader();loadDashboard();
 }
 
 /* ==============================================
@@ -609,9 +729,9 @@ function goto(page,nav){
   if(nav)nav.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   el('page-'+page).classList.add('active');
-  const titles={dashboard:'Dashboard',newreq:'New Hire Request',requests:'All Requests',vendors:'Vendors',users:'Users',userroles:'User Roles'};
+  const titles={dashboard:'Dashboard',newreq:'New Hire Request',requests:'All Requests',vendors:'Vendors',routes:'Routes',users:'Users',userroles:'User Roles'};
   el('page-title').textContent=titles[page]||page;closeSidebar();
-  if(page==='requests')loadRequests();if(page==='vendors'){loadVendors();switchVendTab('list',document.querySelector('#vend-tabs .nav-link'));}if(page==='users')loadUsersPage();
+  if(page==='requests')loadRequests();if(page==='vendors'){loadVendors();switchVendTab('list',document.querySelector('#vend-tabs .nav-link'));}if(page==='routes'){loadRoutesPage();switchRouteTab('list',document.querySelector('#route-tabs .nav-link'));}if(page==='users')loadUsersPage();
   if(page==='userroles')loadRolesPage();if(page==='dashboard')loadDashboard();if(page==='newreq')_refreshSubmittedAt();
 }
 function openSidebar(){el('sidebar').classList.add('open');el('mob-ov').classList.add('show');}
@@ -620,11 +740,45 @@ function closeSidebar(){el('sidebar').classList.remove('open');el('mob-ov').clas
 /* ==============================================
    FORM DROPDOWNS
    ============================================== */
-function initFormDropdowns(){
-  if(!tsVehicle){tsVehicle=new TomSelect('#f-vehicleType',{allowEmptyOption:true,create:false,searchField:['text'],plugins:['dropdown_input']});}
+async function initFormDropdowns(){
+  await loadRoutes();               // pull the routes table (seeded from Hire_quotation.xlsx)
+  rebuildLoadTypeOptions();         // Load Type <select> built from routes.load_category
+  rebuildVehicleTypeTS();           // Vehicle Type built from routes.vehicle_type
   rebuildVendorTS();
-  loadRoutes().then(rebuildRouteTS);
+  rebuildRouteTS();                 // Route <select> filtered by currentBasis
+  setBasis('Trip Basis');
 }
+
+/* ---- Load routes table (from Supabase, seeded via routes_migration.sql) ---- */
+async function loadRoutes(){
+  if(IS_DEMO){ROUTES_DATA=getDemoRoutes();return;}
+  try{
+    const{data,error}=await sb.from('routes').select('*').eq('is_active',true).order('route_name');
+    if(error)throw error;
+    ROUTES_DATA=(data&&data.length)?data:getDemoRoutes();
+  }catch(e){console.warn('Route load failed, using fallback list:',e.message);ROUTES_DATA=getDemoRoutes();}
+}
+
+/* ---- Load Type dropdown, sourced from distinct routes.load_category ---- */
+function rebuildLoadTypeOptions(){
+  const sel=el('f-loadType');if(!sel)return;
+  const cur=sel.value;
+  const cats=[...new Set(ROUTES_DATA.map(r=>r.load_category).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">Select…</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join('');
+  if(cats.includes(cur))sel.value=cur;
+}
+
+/* ---- Vehicle Type dropdown (Tom Select), sourced from distinct routes.vehicle_type ---- */
+function rebuildVehicleTypeTS(){
+  const types=[...new Set(ROUTES_DATA.map(r=>r.vehicle_type).filter(Boolean))].sort();
+  if(tsVehicle){tsVehicle.destroy();tsVehicle=null;}
+  tsVehicle=new TomSelect('#f-vehicleType',{
+    allowEmptyOption:true,create:true,createOnBlur:true,searchField:['text'],plugins:['dropdown_input'],
+    options:[{value:'',text:'— Select vehicle type —'},...types.map(t=>({value:t,text:t}))],
+    items:['']
+  });
+}
+
 function rebuildVendorTS(){
   if(tsVendor){tsVendor.destroy();tsVendor=null;}
   tsVendor=new TomSelect('#f-vendorSelect',{
@@ -656,51 +810,110 @@ function rebuildRequesterTS(){
 function fillRequesterInfo(id){const infoEl=el('requester-info');if(!id){infoEl.className='ri-card';return;}const u=USER_DATA.find(x=>String(x.id)===String(id));if(!u)return;el('rinfo-dept').textContent=u.department||'—';el('rinfo-mobile').textContent=u.mobile||'—';el('rinfo-email').textContent=u.email||'—';infoEl.className='ri-card show';}
 function fillVendor(id){if(!id)return;const v=VEND_DATA.find(x=>String(x.id)===String(id));if(!v)return;gset('f-transport',v.name||'');gset('f-accountNo',v.acct||'');gset('f-ifscCode',v.ifsc_code||'');}
 
-async function loadRoutes(){
-  if(IS_DEMO){ROUTES_DATA=[];return;}
-  try{const{data,error}=await sb.from('routes').select('*').eq('is_active',true).order('route_name');if(error)throw error;ROUTES_DATA=data||[];}catch(e){console.warn('Route load:',e.message);}
+/* ==============================================
+   BASIS TOGGLE  (Trip Basis  <->  Weight Basis)
+   ============================================== */
+function setBasis(basis){
+  currentBasis=basis;
+  document.querySelectorAll('.basis-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.basis===basis);
+    b.classList.toggle('btn-primary',b.dataset.basis===basis);
+    b.classList.toggle('btn-outline-primary',b.dataset.basis!==basis);
+  });
+  // Weight Basis => user fills Weight FIRST, then the route rate is multiplied by it
+  el('weight-first-wrap').style.display = (basis==='Weight Basis') ? 'block' : 'none';
+  if(basis==='Weight Basis'){
+    el('f-weight').setAttribute('required','required');
+  }else{
+    el('f-weight').removeAttribute('required');
+  }
+  // Weighment With Load becomes compulsory on Weight Basis trips
+  el('wwl-star').style.display = (basis==='Weight Basis') ? 'inline' : 'none';
+  el('wwl-required-note').style.display = (basis==='Weight Basis') ? 'inline' : 'none';
+  gset('f-weight','');
+  el('weight-ton-hint').textContent='';
+  // Clear any previously selected route since it may not match the new basis
+  if(tsRoute){tsRoute.clear();tsRoute.setValue('');}
+  selectedRoute=null;
+  el('route-desc-box').style.display='none';
+  if(el('f-hireAmount')){el('f-hireAmount').readOnly=false;}
+  rebuildRouteTS();
 }
+
+/* ---- Route dropdown, filtered to the currently selected basis ---- */
 function rebuildRouteTS(){
   if(tsRoute){tsRoute.destroy();tsRoute=null;}
+  const filtered=ROUTES_DATA.filter(r=>r.basis===currentBasis);
   tsRoute=new TomSelect('#f-routeSelect',{
-    placeholder:'Search route…',allowEmptyOption:true,create:false,
+    placeholder: currentBasis==='Weight Basis' ? 'Search weight-basis route (₹/Ton)…' : 'Search trip-basis route…',
+    allowEmptyOption:true,create:false,
     searchField:['text'],
-    render:{option(d){return `<div style="padding:6px 10px"><div style="font-weight:600;font-size:12.5px">${d.text}</div>${d.data_remarks?`<div style="font-size:10.5px;color:var(--muted)">${d.data_remarks}</div>`:''}</div>`;}},
+    render:{option(d){return `<div style="padding:6px 10px"><div style="font-weight:600;font-size:12.5px">${d.text}</div>${d.data_desc?`<div style="font-size:10.5px;color:var(--muted)">${d.data_desc}</div>`:''}</div>`;}},
     onChange(val){fillRoute(val);},
     options:[
-      {value:'',text:'— Custom / other route —',data_remarks:''},
-      ...ROUTES_DATA.map(r=>({value:String(r.id),text:`${r.route_name} · ${r.load_category} · ₹${r.rate}${r.basis==='Weight Basis'?'/Ton':''}`,data_remarks:r.remarks||''}))
+      {value:'',text:'— Custom / other route —',data_desc:''},
+      ...filtered.map(r=>({
+        value:String(r.id),
+        text:`${r.route_name} · ${r.load_category} · ₹${fmtN(r.rate)}${r.basis==='Weight Basis'?'/Ton':''}`,
+        data_desc:r.desc_note||''
+      }))
     ],
     items:['']
   });
 }
+
 function fillRoute(id){
-  const tag=el('route-basis-tag');
-  if(!id){selectedRoute=null;if(tag)tag.textContent='';if(el('f-hireAmount'))el('f-hireAmount').readOnly=false;return;}
+  const box=el('route-desc-box'), tag=el('route-basis-tag'), descTxt=el('route-desc-text');
+  if(!id){
+    selectedRoute=null;box.style.display='none';
+    if(el('f-hireAmount'))el('f-hireAmount').readOnly=false;
+    return;
+  }
   selectedRoute=ROUTES_DATA.find(r=>String(r.id)===String(id));
   if(!selectedRoute)return;
+
   gset('f-from',selectedRoute.from_location);
   gset('f-to',selectedRoute.to_location);
-  gset('f-remarks',selectedRoute.remarks||'');
-  const vtMap={'20 feet':'20 Feet','Bada dost':'Bada Dost'};
-  if(tsVehicle)tsVehicle.setValue(vtMap[selectedRoute.vehicle_type]||'Others');
-  if(tag)tag.textContent=selectedRoute.basis==='Weight Basis'?`Weight Basis — ₹${selectedRoute.rate}/Ton`:`Trip Basis — flat ₹${selectedRoute.rate}`;
+
+  // Auto-fill Load Type & Vehicle Type straight from the routes table
+  if(el('f-loadType')&&selectedRoute.load_category)gset('f-loadType',selectedRoute.load_category);
+  if(tsVehicle&&selectedRoute.vehicle_type)tsVehicle.setValue(selectedRoute.vehicle_type);
+
+  tag.textContent = selectedRoute.basis==='Weight Basis'
+    ? `Weight Basis — ₹${fmtN(selectedRoute.rate)}/Ton`
+    : `Trip Basis — flat ₹${fmtN(selectedRoute.rate)}`;
+  descTxt.textContent = selectedRoute.desc_note || '—';
+  box.style.display='block';
+
   recalcRouteAmount();
+
+  if(selectedRoute.basis==='Weight Basis' && !parseFloat(gv('f-weight'))){
+    toast('Enter the Weight (Kg) to calculate the Hire Amount for this route','warn');
+    el('f-weight').focus();
+  }
 }
+
 function recalcRouteAmount(){
   if(!selectedRoute)return;
   if(selectedRoute.basis==='Trip Basis'){
     gset('f-hireAmount',selectedRoute.rate);
     if(el('f-hireAmount'))el('f-hireAmount').readOnly=false;
   }else{
-    const w=parseFloat(gv('f-weight'))||0;
-    gset('f-hireAmount', w>0?Math.round(selectedRoute.rate*w):'');
+    const kg=parseFloat(gv('f-weight'))||0;
+    const tons=kg/1000;
+    gset('f-hireAmount', tons>0?Math.round(selectedRoute.rate*tons):'');
+    el('weight-ton-hint').textContent = kg>0 ? `= ${tons.toFixed(3)} Ton × ₹${fmtN(selectedRoute.rate)}/Ton` : '';
     if(el('f-hireAmount'))el('f-hireAmount').readOnly=true;
-    if(selectedRoute.min_load_tons&&w>0&&w<selectedRoute.min_load_tons){
+    if(selectedRoute.min_load_tons&&tons>0&&tons<selectedRoute.min_load_tons){
       toast(`This route requires a minimum of ${selectedRoute.min_load_tons} tons before payment`,'warn');
     }
   }
   calcPay();
+}
+
+function toggleExceptionReason(){
+  const amt=parseFloat(gv('f-exceptionAmount'))||0;
+  el('exception-reason-wrap').style.display = amt!==0 ? 'block' : 'none';
 }
 
 function setupNewReqForm(){
@@ -711,7 +924,12 @@ function setupNewReqForm(){
   else{el('requester-dropdown-wrap').style.display='none';el('requester-static-wrap').style.display='block';el('req-auto-notice').style.display='flex';el('req-auto-name').textContent=CU.name;el('f-requester-static').value=CU.name;gset('f-requester-id-hidden',String(CU.id));}
 }
 function _refreshSubmittedAt(){const now=new Date();gset('f-submittedAt',now.toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}));}
-function calcPay(){gset('f-payable',(parseFloat(gv('f-hireAmount'))||0)+(parseFloat(gv('f-haltingCharges'))||0));}
+function calcPay(){
+  const hire=parseFloat(gv('f-hireAmount'))||0;
+  const halt=parseFloat(gv('f-haltingCharges'))||0;
+  const exc=parseFloat(gv('f-exceptionAmount'))||0;
+  gset('f-payable',hire+halt+exc);
+}
 function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance: 50% upfront — LR reusable for POD.',POD:'POD: Requires a prior Advance on same LR.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';}
 
 /* ==============================================
@@ -757,6 +975,8 @@ async function submitReq(evt){
   else{requesterId=CU.id;requesterName=CU.name;}
   const vendorId=tsVendor?tsVendor.getValue():'';if(!vendorId)return toast('Please select a vendor','error');
   const loadType=gv('f-loadType');if(!loadType)return toast('Please select a Load Type','error');
+  if(currentBasis==='Weight Basis' && !(parseFloat(gv('f-weight'))>0))return toast('Please enter the Weight (Kg) for a Weight Basis trip','error');
+  if(currentBasis==='Weight Basis' && !el('f-weighmentWithLoad').files[0])return toast('Weighment With Load slip is compulsory for Weight Basis trips','error');
   const lrStr=gv('f-lr').trim();if(!lrStr)return toast('Please enter LR numbers','error');
   const lrList=parseLR(lrStr);const seen=new Set(),intraDups=[];
   lrList.forEach(lr=>{const k=lr.toUpperCase();if(seen.has(k))intraDups.push(lr);else seen.add(k);});
@@ -764,9 +984,23 @@ async function submitReq(evt){
   const reqType=gv('f-requestType');const checks=await verifyLRList(lrList,reqType);const blocked=checks.filter(r=>!r.ok);
   if(blocked.length){toast('LR Check Failed: '+blocked.map(r=>r.lr).join(', '),'error');el('lr-chk').innerHTML=`<span style="color:var(--red)"><i class="bi bi-x-circle-fill me-1"></i>${blocked.map(r=>`${r.lr}: ${r.msg}`).join(' | ')}</span>`;return;}
   const[docFile,wwlFile,wwoFile]=await Promise.all([readBase64('f-document'),readBase64('f-weighmentWithLoad'),readBase64('f-weighmentWithoutLoad')]);
-  const hire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,payable=hire+halt;
+  const hire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,exc=parseFloat(gv('f-exceptionAmount'))||0,payable=hire+halt+exc;
   _refreshSubmittedAt();const submittedAt=new Date().toISOString();
-  const row={trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),lr_numbers:lrStr,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),from_loc:gv('f-from'),to_loc:gv('f-to'),hire_amount:hire,weight:gv('f-weight')||null,vehicle_document_file:docFile?.data||null,vehicle_document_name:docFile?.name||null,weighment_with_load_file:wwlFile?.data||null,weighment_with_load_name:wwlFile?.name||null,weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,remarks:gv('f-remarks'),halting_charges:halt,payable_amount:payable,balance_amount:payable,paid_amount:0,request_type:reqType,status:'Pending',submitted_by:CU.email};
+  const row={
+    trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,
+    transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),
+    lr_numbers:lrStr,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),
+    from_loc:gv('f-from'),to_loc:gv('f-to'),
+    basis:currentBasis,route_id:selectedRoute?selectedRoute.id:null,
+    hire_amount:hire,weight_kg:gv('f-weight')||null,weight_tons:gv('f-weight')?(parseFloat(gv('f-weight'))/1000):null,
+    vehicle_document_file:docFile?.data||null,vehicle_document_name:docFile?.name||null,
+    weighment_with_load_file:wwlFile?.data||null,weighment_with_load_name:wwlFile?.name||null,
+    weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,
+    remarks:gv('f-remarks'),halting_charges:halt,
+    exception_amount:exc,exception_reason:exc!==0?gv('f-exceptionReason'):null,
+    payable_amount:payable,balance_amount:payable,paid_amount:0,
+    request_type:reqType,status:'Pending',submitted_by:CU.email
+  };
   setBtnLoad('req-submit-btn',true,'Submitting…');
   if(IS_DEMO){row.id='HR-'+String(Date.now()).slice(-5);REQ_DATA.unshift(row);toast(`Request submitted! ID: ${row.id}`,'success');setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');resetForm();loadDashboard();return;}
   try{const{data,error}=await sb.from('hire_requests').insert(row).select().single();if(error)throw error;toast(`Request submitted! ID: ${data.id}`,'success');resetForm();loadDashboard();}catch(e){toast('Submit error: '+e.message,'error');}
@@ -774,14 +1008,20 @@ async function submitReq(evt){
 }
 
 function resetForm(){
-  document.getElementById('req-form').reset();gset('f-haltingCharges','0');gset('f-payable','');
+  document.getElementById('req-form').reset();gset('f-haltingCharges','0');gset('f-exceptionAmount','0');gset('f-payable','');
   el('lr-tags').innerHTML='';el('lr-chk').innerHTML='';el('req-type-hint').innerHTML='';el('requester-info').className='ri-card';
+  el('exception-reason-wrap').style.display='none';
   ['document','weighmentWithLoad','weighmentWithoutLoad'].forEach(k=>clearFile('f-'+k,'fz-'+k,'fp-'+k));
   if(tsVendor){tsVendor.clear();tsVendor.setValue('');}if(tsRequester){tsRequester.clear();tsRequester.setValue('');}if(tsVehicle){tsVehicle.clear();tsVehicle.setValue('');}
-  if(tsRoute){tsRoute.clear();tsRoute.setValue('');}selectedRoute=null;if(el('route-basis-tag'))el('route-basis-tag').textContent='';if(el('f-hireAmount'))el('f-hireAmount').readOnly=false;
+  setBasis('Trip Basis');
+  rebuildLoadTypeOptions();
   if(CU.role!=='Approver'){gset('f-requester-static',CU.name);gset('f-requester-id-hidden',String(CU.id));}
   _refreshSubmittedAt();
 }
+/* ==============================================
+   DEMO DATA (requests) — used only in IS_DEMO mode
+   ============================================== */
+function getDemoRequests(){ return REQ_DATA; }
 
 /* ==============================================
    DASHBOARD
@@ -790,753 +1030,500 @@ async function loadDashboard(){
   if(IS_DEMO){renderDashboard(getDemoRequests());return;}
   try{
     let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
-    // User sees only own requests
-    if(CU.role==='User')q=q.eq('submitted_by',CU.email);
-    const{data,error}=await q;if(error)throw error;renderDashboard(data||[]);
+    if(CU.role==='User')q=q.eq('submitted_by',CU.email); // Users see only their own requests
+    const{data,error}=await q;if(error)throw error;
+    REQ_DATA=data||[];
+    renderDashboard(REQ_DATA);
   }catch(e){toast('Dashboard error: '+e.message,'error');}
 }
+
 function renderDashboard(data){
   const total=data.length,pending=data.filter(r=>r.status==='Pending').length,approved=data.filter(r=>r.status==='Approved').length,paid=data.filter(r=>r.status==='Paid').length;
   const totalH=data.reduce((s,r)=>s+parseFloat(r.hire_amount||0),0),totalPd=data.reduce((s,r)=>s+parseFloat(r.paid_amount||0),0);
   const fmt=n=>'₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
-  el('stat-grid').innerHTML=`<div class="stat-card sc-blue"><div class="s-lbl">Total Requests</div><div class="s-val" style="color:var(--blue)">${total}</div><div class="s-sub">${CU.role==='User'?'Your requests':'All time'}</div></div><div class="stat-card sc-yellow"><div class="s-lbl">Pending</div><div class="s-val" style="color:var(--yellow)">${pending}</div><div class="s-sub">Awaiting action</div></div><div class="stat-card sc-green"><div class="s-lbl">Approved</div><div class="s-val" style="color:var(--green)">${approved}</div><div class="s-sub">Cleared</div></div><div class="stat-card sc-red"><div class="s-lbl">Paid</div><div class="s-val" style="color:var(--red)">${paid}</div><div class="s-sub">Disbursed</div></div><div class="stat-card sc-teal"><div class="s-lbl">Total Hire</div><div class="s-val" style="color:var(--navy);font-size:20px">${fmt(totalH)}</div><div class="s-sub">All requests</div></div><div class="stat-card sc-blue"><div class="s-lbl">Balance Due</div><div class="s-val" style="color:var(--teal);font-size:20px">${fmt(totalH-totalPd)}</div><div class="s-sub">Outstanding</div></div>`;
-  const tbody=el('dash-tbody'),recent=data.slice(0,8);
-  if(!recent.length){tbody.innerHTML=`<tr><td colspan="9"><div class="empty-st"><i class="bi bi-inbox"></i><p>No requests yet</p></div></td></tr>`;return;}
-  tbody.innerHTML=recent.map(r=>`<tr><td><code style="font-size:10.5px;color:var(--blue)">${r.id||'—'}</code></td><td>${r.trip_date||'—'}</td><td style="font-weight:600">${r.requester_name||'—'}</td><td>${fmtLR(r.lr_numbers||'')}</td><td>${lrStatusB(r.lr_status)}</td><td>${r.from_loc||''}→${r.to_loc||''}</td><td style="font-weight:700">₹${fmtN(r.hire_amount||0)}</td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td></tr>`).join('');
+
+  el('stat-grid').innerHTML=`
+    <div class="stat-card sc-blue"><div class="s-lbl">Total Requests</div><div class="s-val" style="color:var(--blue)">${total}</div><div class="s-sub">${CU.role==='User'?'Your requests':'All time'}</div></div>
+    <div class="stat-card sc-yellow"><div class="s-lbl">Pending</div><div class="s-val" style="color:var(--yellow)">${pending}</div><div class="s-sub">Awaiting approval</div></div>
+    <div class="stat-card sc-green"><div class="s-lbl">Approved</div><div class="s-val" style="color:var(--green)">${approved}</div><div class="s-sub">Ready for payment</div></div>
+    <div class="stat-card sc-teal"><div class="s-lbl">Paid</div><div class="s-val" style="color:var(--teal)">${paid}</div><div class="s-sub">Settled</div></div>
+    <div class="stat-card sc-blue"><div class="s-lbl">Total Hire Value</div><div class="s-val" style="color:var(--blue);font-size:20px">${fmt(totalH)}</div><div class="s-sub">Sum of hire amounts</div></div>
+    <div class="stat-card sc-green"><div class="s-lbl">Total Paid</div><div class="s-val" style="color:var(--green);font-size:20px">${fmt(totalPd)}</div><div class="s-sub">Amount disbursed</div></div>`;
+
+  const recent=data.slice(0,8);
+  el('dash-tbody').innerHTML=recent.length?recent.map(r=>`
+    <tr style="cursor:pointer" onclick="openReqModal('${r.id}')">
+      <td><code>${r.id}</code></td>
+      <td>${fmtDate(r.trip_date)}</td>
+      <td>${esc(r.requester_name||'')}</td>
+      <td>${lrBadges(r.lr_numbers)}</td>
+      <td>${lrStatusBadge(r)}</td>
+      <td style="max-width:180px;white-space:normal">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td>
+      <td>₹${Number(r.hire_amount||0).toLocaleString('en-IN')}</td>
+      <td><span class="bt bt-${(r.request_type||'').toLowerCase()}">${esc(r.request_type||'')}</span></td>
+      <td>${statusBadge(r.status)}</td>
+    </tr>`).join(''):`<tr><td colspan="9"><div class="empty-st"><i class="bi bi-inbox"></i><p>No requests yet</p></div></td></tr>`;
 }
 
+function statusBadge(s){const m={Pending:'bs-pending',Approved:'bs-approved',Paid:'bs-paid',Rejected:'bs-rejected'};return `<span class="bs ${m[s]||'bs-pending'}">${esc(s||'')}</span>`;}
+function lrStatusBadge(r){const ok=r.lr_status!=='Not Available';return `<span class="bs ${ok?'bs-available':'bs-unavailable'}">${ok?'Available':'Not Available'}</span>`;}
+function lrBadges(lrStr){if(!lrStr)return '—';return parseLR(lrStr).map(lr=>`<span class="badge-lr">${esc(lr)}</span>`).join('');}
+function fmtDate(d){if(!d)return '—';const dt=new Date(d);return isNaN(dt)?d:dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+
 /* ==============================================
-   ALL REQUESTS TABLE HEADER
+   ALL REQUESTS TABLE
    ============================================== */
 function buildRequestsTableHeader(){
-  const isApprover=CU.role==='Approver',isFinance=CU.role==='Finance';
-  const cols=[
-    {h:'Ref ID'},{h:'Trip Date'},{h:'Requester'},{h:'Transport'},{h:'LR'},{h:'LR Status'},
-    {h:'Vehicle'},{h:'Route'},{h:'Load'},{h:'Hire ₹'},
-    ...(isApprover?[{h:'Payable ₹'}]:[]),
-    ...(isFinance||isApprover?[{h:'Paid ₹'}]:[]),
-    {h:'Balance ₹'},{h:'Ref No'},{h:'Type'},{h:'Status'},{h:'Actions'}
-  ];
-  el('req-thead').innerHTML='<tr>'+cols.map(c=>`<th>${c.h}</th>`).join('')+'</tr>';
+  el('req-thead').innerHTML=`<tr>
+    <th>Ref ID</th><th>Trip Date</th><th>Requester</th><th>Transport</th><th>LR Numbers</th><th>LR Status</th>
+    <th>Route</th><th>Basis</th><th>Hire ₹</th><th>Halting ₹</th><th>Exception ₹</th><th>Payable ₹</th>
+    <th>Type</th><th>Status</th><th>Actions</th>
+  </tr>`;
 }
 
-/* ==============================================
-   SMART FILTER
-   ============================================== */
-function smartFilter(data,srch,status,type,lrSt){
-  let out=data;
-  if(status!=='All')out=out.filter(r=>r.status===status);
-  if(type!=='All')out=out.filter(r=>r.request_type===type);
-  if(lrSt!=='All')out=out.filter(r=>r.lr_status===lrSt);
-  if(!srch)return out;
-  const tokens=srch.toLowerCase().trim().split(/\s+/).filter(Boolean);
-  return out.filter(r=>{
-    const parts=[r.id,r.trip_date,r.requester_name,r.transport,r.vehicle_no,r.from_loc,r.to_loc,r.load_type,r.vehicle_type,r.status,r.request_type,r.reference_id,r.submitted_by,r.remarks,r.account_no,r.ifsc_code,r.lr_status,String(r.hire_amount||''),String(r.paid_amount||''),String(r.balance_amount||'')].map(v=>String(v||'').toLowerCase()).join(' ');
-    const lrFlat=String(r.lr_numbers||'').toLowerCase(),lrParts=lrFlat.split(',').map(s=>s.trim());
-    return tokens.every(token=>parts.split(' ').some(w=>w.includes(token))||lrFlat.includes(token)||lrParts.some(lr=>lr.includes(token)));
-  });
-}
-
-/* ==============================================
-   LOAD REQUESTS
-   ============================================== */
 async function loadRequests(){
-  const srch=gv('srch').toLowerCase().trim(),status=gv('flt-status'),type=gv('flt-type'),lrSt=gv('flt-lrstatus');
-  if(IS_DEMO){
-    let all=getDemoRequests();
-    if(CU.role==='User')all=all.filter(r=>r.submitted_by===CU.email);
-    REQ_DATA=all;renderRequests(smartFilter(REQ_DATA,srch,status,type,lrSt));return;
+  let data=REQ_DATA;
+  if(!IS_DEMO){
+    try{
+      let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
+      if(CU.role==='User')q=q.eq('submitted_by',CU.email);
+      const{data:d,error}=await q;if(error)throw error;data=d||[];REQ_DATA=data;
+    }catch(e){toast('Load requests error: '+e.message,'error');return;}
   }
-  try{
-    let q=sb.from('hire_requests').select('*').order('created_at',{ascending:false});
-    if(CU.role==='User')q=q.eq('submitted_by',CU.email);
-    const{data,error}=await q;if(error)throw error;REQ_DATA=data||[];renderRequests(smartFilter(REQ_DATA,srch,status,type,lrSt));
-  }catch(e){toast('Error: '+e.message,'error');}
-}
-
-/* ==============================================
-   RENDER REQUESTS
-   ============================================== */
-function renderRequests(data){
-  const tbody=el('req-tbody'),isApprover=CU.role==='Approver',isFinance=CU.role==='Finance';
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="20"><div class="empty-st"><i class="bi bi-inbox"></i><p>No matching requests</p></div></td></tr>`;return;}
-  tbody.innerHTML=data.map(r=>{
-    const bal=parseFloat(r.balance_amount||0),safeId=esc(r.id||'');
-    const canEdit=canEditRequest(r), canDel=canDeleteRequest(r);
-    let cols=`<td><code style="font-size:10px;color:var(--blue)">${safeId}</code></td><td style="white-space:nowrap">${r.trip_date||'—'}</td><td style="font-weight:600">${esc(r.requester_name||'—')}</td><td>${esc(r.transport||'—')}</td><td>${fmtLR(r.lr_numbers||'')}</td><td>${lrStatusB(r.lr_status)}</td><td style="font-weight:600">${esc(r.vehicle_no||'—')}</td><td style="white-space:nowrap">${esc(r.from_loc||'')}→${esc(r.to_loc||'')}</td><td>${esc(r.load_type||'—')}</td><td>₹${fmtN(r.hire_amount||0)}</td>`;
-    if(isApprover)cols+=`<td>₹${fmtN(r.payable_amount||0)}</td>`;
-    if(isFinance||isApprover)cols+=`<td>₹${fmtN(r.paid_amount||0)}</td>`;
-    cols+=`<td style="font-weight:700;color:${bal>0?'var(--red)':'var(--green)'}">₹${fmtN(bal)}</td><td><small>${esc(r.reference_id||'—')}</small></td><td>${typeB(r.request_type)}</td><td>${statusB(r.status)}</td>`;
-    cols+=`<td style="white-space:nowrap">
-      <button class="bsi view-btn me-1" data-id="${safeId}" title="View/Edit" ${canEdit?'':''}>
-        <i class="bi bi-eye"></i>
-      </button>
-      ${canDel?`<button class="bsi del del-btn" data-id="${safeId}" title="Delete"><i class="bi bi-trash"></i></button>`:''}
-    </td>`;
-    return`<tr>${cols}</tr>`;
-  }).join('');
-  tbody.querySelectorAll('.view-btn').forEach(btn=>{btn.addEventListener('click',()=>viewReq(btn.dataset.id));});
-  tbody.querySelectorAll('.del-btn').forEach(btn=>{btn.addEventListener('click',()=>deleteReqById(btn.dataset.id));});
-}
-
-/* ==============================================
-   VIEW / EDIT REQUEST MODAL
-   ============================================== */
-function viewReq(id){
-  let r=REQ_DATA.find(x=>x.id===id);if(!r&&IS_DEMO)r=getDemoRequests().find(x=>x.id===id);
-  if(!r){toast('Record not found. Refresh the table.','warn');return;}
-  EDIT_ID=id;
-
-  const isApprover=CU.role==='Approver';
-  const isFinance=CU.role==='Finance';
-  const isUser=CU.role==='User';
-  const canSave=canEditRequest(r);
-  const canDel=canDeleteRequest(r);
-
-  el('reqModal-title').textContent=`Request: ${id}`;
-  el('reqModal-save').style.display=canSave?'inline-flex':'none';
-  el('reqModal-delete').style.display=canDel?'inline-flex':'none';
-
-  // Timer display for User role
-  const timerWrap=el('reqModal-timer-wrap');
-  timerWrap.innerHTML='';
-  if(isUser){
-    const remaining=editWindowRemaining(r);
-    const expired=remaining<=0;
-    const timerEl=document.createElement('span');
-    timerEl.className=`edit-timer${expired?' expired':''}`;
-    timerEl.id='modal-edit-timer';
-    timerEl.innerHTML=`<i class="bi bi-clock me-1"></i>${expired?'Edit window expired':fmtTimeRemaining(remaining)}`;
-    timerWrap.appendChild(timerEl);
-    if(!expired&&remaining>0){
-      const iv=setInterval(()=>{
-        const rem=editWindowRemaining(r);
-        const tel=document.getElementById('modal-edit-timer');
-        if(!tel){clearInterval(iv);return;}
-        if(rem<=0){tel.textContent='Edit window expired';tel.className='edit-timer expired';el('reqModal-save').style.display='none';el('reqModal-delete').style.display='none';clearInterval(iv);}
-        else{tel.innerHTML=`<i class="bi bi-clock me-1"></i>${fmtTimeRemaining(rem)}`;}
-      },1000);
+  const srch=(gv('srch')||'').toLowerCase();
+  const fStatus=gv('flt-status'),fType=gv('flt-type'),fLr=gv('flt-lrstatus');
+  const filtered=data.filter(r=>{
+    if(fStatus!=='All'&&r.status!==fStatus)return false;
+    if(fType!=='All'&&r.request_type!==fType)return false;
+    if(fLr!=='All'){const isAvail=r.lr_status!=='Not Available';if(fLr==='Available'&&!isAvail)return false;if(fLr==='Not Available'&&isAvail)return false;}
+    if(srch){
+      const hay=[r.id,r.lr_numbers,r.requester_name,r.from_loc,r.to_loc,r.transport,r.lr_status].filter(Boolean).join(' ').toLowerCase();
+      if(!hay.includes(srch))return false;
     }
-  }
+    return true;
+  });
+  el('req-tbody').innerHTML=filtered.length?filtered.map(r=>`
+    <tr>
+      <td><code>${r.id}</code></td>
+      <td>${fmtDate(r.trip_date)}</td>
+      <td>${esc(r.requester_name||'')}</td>
+      <td>${esc(r.transport||'')}</td>
+      <td>${lrBadges(r.lr_numbers)}</td>
+      <td>${lrStatusBadge(r)}</td>
+      <td style="max-width:180px;white-space:normal">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td>
+      <td>${esc(r.basis||'')}</td>
+      <td>₹${Number(r.hire_amount||0).toLocaleString('en-IN')}</td>
+      <td>₹${Number(r.halting_charges||0).toLocaleString('en-IN')}</td>
+      <td>₹${Number(r.exception_amount||0).toLocaleString('en-IN')}</td>
+      <td><strong>₹${Number(r.payable_amount||0).toLocaleString('en-IN')}</strong></td>
+      <td><span class="bt bt-${(r.request_type||'').toLowerCase()}">${esc(r.request_type||'')}</span></td>
+      <td>${statusBadge(r.status)}</td>
+      <td><button class="bsi" onclick="openReqModal('${r.id}')" title="View / Edit"><i class="bi bi-eye"></i></button></td>
+    </tr>`).join(''):`<tr><td colspan="15"><div class="empty-st"><i class="bi bi-inbox"></i><p>No matching requests</p></div></td></tr>`;
+}
 
-  // Field helpers
-  // ro = read-only; ed = editable input; sel = select
-  const ro=(v,t='text')=>`<input type="${t}" class="form-control form-control-sm" value="${esc(String(v??''))}" readonly/>`;
-  const ed=(v,eid,t='text')=>`<input type="${t}" class="form-control form-control-sm" id="e-${eid}" value="${esc(String(v??''))}"/>`;
-  const fld=(label,eid,val,editable=false,t='text')=>`<div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">${label}</label>${editable?ed(val,eid,t):ro(val,t)}</div>`;
+function exportCSV(){
+  if(!REQ_DATA.length)return toast('Nothing to export','warn');
+  const cols=['id','trip_date','requester_name','transport','lr_numbers','from_loc','to_loc','basis','hire_amount','halting_charges','exception_amount','payable_amount','request_type','status'];
+  const rows=[cols.join(',')].concat(REQ_DATA.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(',')));
+  const blob=new Blob([rows.join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hire_requests.csv';a.click();
+}
 
-  // Status options
-  const statusOpts=['Pending','Approved','Paid','Rejected'].map(o=>`<option ${r.status===o?'selected':''}>${o}</option>`).join('');
-  const loadOpts=['Full Load','Part Load','Special Load'].map(o=>`<option ${(r.load_type||'')==o?'selected':''}>${o}</option>`).join('');
-  const lrStatusOpts=['Available','Not Available'].map(o=>`<option ${(r.lr_status||'')==o?'selected':''}>${o}</option>`).join('');
-
-  // Determine which fields each role can edit
-  // Approver: trip_date, requester_name, transport, vehicle_no, from/to, load_type, hire_amount, halting_charges, payable_amount, lr_status, remarks
-  // Finance:  paid_amount, reference_id, status ONLY
-  // User (own, within 2h): lr_status, payable_amount(no), remarks
-
-  const approverCanEdit = isApprover && canSave;
-  const financeCanEdit  = isFinance  && canSave;
-  const userCanEdit     = isUser     && canSave;
-
-  // lr_status: User, Approver can edit; Finance cannot
-  const lrStatusEdit = (approverCanEdit || userCanEdit);
-  // payable_amount: Approver only
-  const payableEdit  = approverCanEdit;
-  // paid_amount, reference_id, status: Finance + Approver
-  const finFieldEdit = financeCanEdit || approverCanEdit;
-  // general fields: Approver + User(own+2h)
-  const generalEdit  = approverCanEdit || userCanEdit;
-
-  let body=`<div class="row">
-    ${fld('Trip Date','trip_date',r.trip_date,approverCanEdit)}
-    ${fld('Submitted At','submitted_at',r.submitted_at||r.created_at||'')}
-    ${fld('Requester','requester_name',r.requester_name,approverCanEdit)}
-    ${fld('Transport','transport',r.transport,approverCanEdit)}
-    ${fld('LR Numbers','lr_numbers',r.lr_numbers)}
-    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Request Type</label>${ro(r.request_type)}</div>
-    ${fld('Vehicle No','vehicle_no',r.vehicle_no,approverCanEdit)}
-    ${fld('From','from_loc',r.from_loc,approverCanEdit)}
-    ${fld('To','to_loc',r.to_loc,approverCanEdit)}
-    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">Load Type</label>
-      ${approverCanEdit?`<select class="form-select form-select-sm" id="e-load_type"><option value="">—</option>${loadOpts}</select>`:ro(r.load_type)}
-    </div>
-    <!-- LR STATUS -->
-    <div class="col-md-3 mb-2"><label class="lbl" style="font-size:11px">LR Status</label>
-      ${lrStatusEdit?`<select class="form-select form-select-sm" id="e-lr_status"><option value="">—</option>${lrStatusOpts}</select>`:ro(r.lr_status||'—')}
-    </div>
-    ${fld('Vehicle Type','vehicle_type',r.vehicle_type)}
-    ${fld('Account No','account_no',r.account_no)}
-    ${fld('IFSC','ifsc_code',r.ifsc_code)}
-    ${fld('Hire Amount','hire_amount',r.hire_amount,approverCanEdit,'number')}
-    ${fld('Halting','halting_charges',r.halting_charges||0,approverCanEdit,'number')}
-    ${fld('Weight','weight',r.weight)}`;
-
-  // Payable — Approver only
-  if(isApprover){body+=fld('Payable Amount','payable_amount',r.payable_amount,payableEdit,'number');}
-
-  // Paid Amount, Ref ID, Status — Finance + Approver
-  body+=`
-    <div class="col-md-3 mb-2">
-      <label class="lbl" style="font-size:11px">Paid Amount (₹)${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
-      ${finFieldEdit?`<input type="number" class="form-control form-control-sm" id="e-paid_amount" value="${esc(String(r.paid_amount??'0'))}"/>`:ro(r.paid_amount||0,'number')}
-    </div>
-    ${fld('Balance','balance_amount',r.balance_amount)}
-    <div class="col-md-3 mb-2">
-      <label class="lbl" style="font-size:11px">Ref ID${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
-      ${finFieldEdit?`<input type="text" class="form-control form-control-sm" id="e-reference_id" value="${esc(r.reference_id||'')}"/>`:ro(r.reference_id||'—')}
-    </div>
-    <div class="col-md-3 mb-2">
-      <label class="lbl" style="font-size:11px">Status${(isFinance||isApprover)?'<span class="finance-only ms-1">Finance</span>':''}</label>
-      ${finFieldEdit?`<select class="form-select form-select-sm" id="e-status">${statusOpts}</select>`:`<span class="bs ${r.status==='Pending'?'bs-pending':r.status==='Approved'?'bs-approved':r.status==='Paid'?'bs-paid':'bs-rejected'}">${r.status||'Pending'}</span>`}
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12 mb-2"><label class="lbl" style="font-size:11px">Remarks</label>
-      ${(generalEdit)?`<textarea class="form-control form-control-sm" id="e-remarks" rows="2">${esc(r.remarks||'')}</textarea>`:ro(r.remarks||'')}
-    </div>
-  </div>
-  ${r.vehicle_document_name?`<div class="mb-2"><div style="display:flex;align-items:center;gap:6px;background:var(--light);padding:7px 12px;border-radius:7px;border:1px solid var(--border);font-size:12px"><i class="bi bi-file-earmark text-primary"></i>${esc(r.vehicle_document_name)}</div></div>`:''}
-  <small class="text-muted">Submitted by: ${esc(r.submitted_by||'—')} · ${r.submitted_at||r.created_at?new Date(r.submitted_at||r.created_at).toLocaleString('en-IN'):'—'}</small>`;
-
-  el('reqModal-body').innerHTML=body;
+/* ---- Request view / edit modal ---- */
+function openReqModal(id){
+  const r=REQ_DATA.find(x=>String(x.id)===String(id));if(!r)return;
+  EDIT_ID=id;
+  el('reqModal-title').textContent=`Request ${r.id}`;
+  const canEdit=canEditRequest(r), canDel=canDeleteRequest(r);
+  el('reqModal-timer-wrap').innerHTML = (CU.role==='User'&&r.status==='Pending')
+    ? `<span class="edit-timer ${withinEditWindow(r)?'':'expired'}"><i class="bi bi-clock-history"></i> ${fmtTimeRemaining(editWindowRemaining(r))}</span>` : '';
+  el('reqModal-body').innerHTML=`
+    <div class="row g-3">
+      <div class="col-md-4"><label class="lbl">Trip Date</label><input class="form-control" value="${fmtDate(r.trip_date)}" readonly></div>
+      <div class="col-md-4"><label class="lbl">Requester</label><input class="form-control" value="${esc(r.requester_name||'')}" readonly></div>
+      <div class="col-md-4"><label class="lbl">Transport</label><input class="form-control" value="${esc(r.transport||'')}" readonly></div>
+      <div class="col-md-4"><label class="lbl">Route</label><input class="form-control" value="${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}" readonly></div>
+      <div class="col-md-4"><label class="lbl">Basis</label><input class="form-control" value="${esc(r.basis||'')}" readonly></div>
+      <div class="col-md-4"><label class="lbl">LR Numbers</label><input class="form-control" value="${esc(r.lr_numbers||'')}" readonly></div>
+      <div class="col-md-3"><label class="lbl">Hire Amount</label><input class="form-control" id="edit-hireAmount" value="${r.hire_amount||0}" ${canEdit?'':'readonly'}></div>
+      <div class="col-md-3"><label class="lbl">Halting Charges</label><input class="form-control" id="edit-haltingCharges" value="${r.halting_charges||0}" ${canEdit?'':'readonly'}></div>
+      <div class="col-md-3"><label class="lbl">Exception Amount</label><input class="form-control" id="edit-exceptionAmount" value="${r.exception_amount||0}" ${canEdit?'':'readonly'}></div>
+      <div class="col-md-3"><label class="lbl">Payable Amount</label><input class="form-control" value="${r.payable_amount||0}" readonly></div>
+      <div class="col-md-6"><label class="lbl">Exception Reason</label><input class="form-control" id="edit-exceptionReason" value="${esc(r.exception_reason||'')}" ${canEdit?'':'readonly'}></div>
+      <div class="col-md-6"><label class="lbl">Remarks</label><input class="form-control" id="edit-remarks" value="${esc(r.remarks||'')}" ${canEdit?'':'readonly'}></div>
+      <div class="col-md-4"><label class="lbl">Status</label>
+        ${CU.role==='Approver'?`<select class="form-select" id="edit-status"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Approved'?'selected':''}>Approved</option><option ${r.status==='Paid'?'selected':''}>Paid</option><option ${r.status==='Rejected'?'selected':''}>Rejected</option></select>`
+        :`<input class="form-control" value="${esc(r.status||'')}" readonly>`}
+      </div>
+    </div>`;
+  el('reqModal-save').style.display=canEdit?'inline-block':'none';
+  el('reqModal-delete').style.display=canDel?'inline-block':'none';
   new bootstrap.Modal(el('reqModal')).show();
 }
 
 async function saveReqEdit(){
-  if(!EDIT_ID)return;
-  let r=REQ_DATA.find(x=>x.id===EDIT_ID);
-  if(!r&&IS_DEMO)r=getDemoRequests().find(x=>x.id===EDIT_ID);
-  if(!canEditRequest(r))return toast('Edit permission denied','error');
-
-  const isApprover=CU.role==='Approver', isFinance=CU.role==='Finance', isUser=CU.role==='User';
-  const ge=id=>{const e=document.getElementById('e-'+id);return e?e.value:undefined;};
-  const patch={};
-
-  // Fields each role can patch
-  if(isApprover){
-    ['trip_date','requester_name','transport','vehicle_no','from_loc','to_loc','load_type','hire_amount','halting_charges','weight','payable_amount','lr_status'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=v;});
-    const pr=ge('remarks');if(pr!==undefined)patch.remarks=pr;
-  }
-  if(isFinance||isApprover){
-    ['paid_amount','reference_id','status'].forEach(k=>{const v=ge(k);if(v!==undefined)patch[k]=v;});
-  }
-  if(isUser){
-    // User can only edit lr_status and remarks within 2h
-    const ls=ge('lr_status');if(ls!==undefined)patch.lr_status=ls;
-    const rm=ge('remarks');if(rm!==undefined)patch.remarks=rm;
-  }
-
-  // Recalculate balance if payable or paid changed
-  if(patch.payable_amount!==undefined||patch.paid_amount!==undefined){
-    const pay=parseFloat(patch.payable_amount??r.payable_amount??0);
-    const paid=parseFloat(patch.paid_amount??r.paid_amount??0);
-    patch.balance_amount=pay-paid;
-  }
-
-  if(IS_DEMO){
-    const idx=REQ_DATA.findIndex(x=>x.id===EDIT_ID);if(idx>=0)Object.assign(REQ_DATA[idx],patch);
-    toast('Updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();return;
-  }
-  setBtnLoad('reqModal-save',true,'Saving…');
-  try{
-    const{error}=await sb.from('hire_requests').update(patch).eq('id',EDIT_ID);
-    if(error)throw error;
-    toast('Request updated','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();
-  }catch(e){toast('Update failed: '+e.message,'error');}
-  setBtnLoad('reqModal-save',false,'<i class="bi bi-floppy me-1"></i>Save Changes');
+  const r=REQ_DATA.find(x=>String(x.id)===String(EDIT_ID));if(!r)return;
+  const hire=parseFloat(gv('edit-hireAmount'))||0,halt=parseFloat(gv('edit-haltingCharges'))||0,exc=parseFloat(gv('edit-exceptionAmount'))||0;
+  const patch={hire_amount:hire,halting_charges:halt,exception_amount:exc,exception_reason:gv('edit-exceptionReason'),remarks:gv('edit-remarks'),payable_amount:hire+halt+exc};
+  if(CU.role==='Approver'&&el('edit-status'))patch.status=gv('edit-status');
+  if(IS_DEMO){Object.assign(r,patch);toast('Request updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadDashboard();return;}
+  try{const{error}=await sb.from('hire_requests').update(patch).eq('id',EDIT_ID);if(error)throw error;toast('Request updated','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();}catch(e){toast('Update error: '+e.message,'error');}
 }
 
 async function deleteReq(){
-  if(!EDIT_ID)return;
-  if(!confirm(`Delete request ${EDIT_ID}? This cannot be undone.`))return;
-  await deleteReqById(EDIT_ID, true);
-}
-
-async function deleteReqById(id, fromModal=false){
-  const r=REQ_DATA.find(x=>x.id===id)||(IS_DEMO?getDemoRequests().find(x=>x.id===id):null);
-  if(!canDeleteRequest(r)){toast('Delete permission denied','error');return;}
-  if(!fromModal&&!confirm(`Delete request ${id}?`))return;
-  if(IS_DEMO){
-    REQ_DATA=REQ_DATA.filter(x=>x.id!==id);
-    if(fromModal)bootstrap.Modal.getInstance(el('reqModal'))?.hide();
-    toast('Deleted (demo)','info');loadRequests();loadDashboard();return;
-  }
-  try{
-    const{error}=await sb.from('hire_requests').delete().eq('id',id);
-    if(error)throw error;
-    if(fromModal)bootstrap.Modal.getInstance(el('reqModal'))?.hide();
-    toast('Request deleted','info');loadRequests();loadDashboard();
-  }catch(e){toast('Delete failed: '+e.message,'error');}
+  if(!confirm('Delete this request? This cannot be undone.'))return;
+  if(IS_DEMO){REQ_DATA=REQ_DATA.filter(x=>String(x.id)!==String(EDIT_ID));toast('Deleted (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadDashboard();return;}
+  try{const{error}=await sb.from('hire_requests').delete().eq('id',EDIT_ID);if(error)throw error;toast('Request deleted','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();}catch(e){toast('Delete error: '+e.message,'error');}
 }
 
 /* ==============================================
-   VENDORS — with auto Vendor ID (VND-001)
+   VENDORS
    ============================================== */
-
-// Generate next vendor code from existing data
-function nextVendorCode() {
-  const nums = VEND_DATA
-    .map(v => v.vendor_code || '')
-    .filter(c => /^VND-\d+$/.test(c))
-    .map(c => parseInt(c.replace('VND-', ''), 10));
-  const max = nums.length ? Math.max(...nums) : 0;
-  return 'VND-' + String(max + 1).padStart(3, '0');
-}
-
-function vendorIdBadge(code) {
-  if (!code) return '<span style="color:var(--muted);font-size:11px">—</span>';
-  return `<span style="display:inline-flex;align-items:center;gap:5px;background:#eff3ff;color:var(--blue);font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px;border:1px solid #c7d2fe;font-family:'DM Mono',monospace;letter-spacing:.5px"><i class="bi bi-tag-fill" style="font-size:10px"></i>${esc(code)}</span>`;
-}
-
-function copyVendorId() {
-  const code = gv('v-vendor-code') || el('vendModal-id-display')?.textContent;
-  if (!code || code === 'Auto-generated on save') return;
-  navigator.clipboard.writeText(code).then(() => {
-    const btn = el('vendModal-copy-btn');
-    if (btn) { btn.innerHTML = '<i class="bi bi-check me-1"></i>Copied!'; setTimeout(() => { btn.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy'; }, 1800); }
-  });
-}
-
 async function loadVendorData(){
-  if(IS_DEMO){
-    VEND_DATA=[
-      {id:1,vendor_code:'VND-001',name:'Chennai Transports',bank:'SBI',acct:'123456789',ifsc_code:'SBIN0001234',mobile:'9876543210'},
-      {id:2,vendor_code:'VND-002',name:'Fast Cargo',bank:'HDFC',acct:'987654321',ifsc_code:'HDFC0001234',mobile:'9123456780'},
-    ];
-    return;
-  }
-  try{const{data,error}=await sb.from('hire_vendors').select('*').order('vendor_code');if(error)throw error;VEND_DATA=data||[];}catch(e){console.warn('Vendor load:',e.message);}
+  if(IS_DEMO){VEND_DATA=[{id:1,vendor_code:'VND-001',name:'Sri Balaji Transport',bank:'HDFC Bank',acct:'50100123456',ifsc_code:'HDFC0001234',mobile:'9876500001'}];return;}
+  try{const{data,error}=await sb.from('vendors').select('*').order('name');if(error)throw error;VEND_DATA=data||[];}catch(e){toast('Vendor load error: '+e.message,'error');}
 }
-
-async function loadVendors(){
-  if(IS_DEMO){renderVendors(VEND_DATA);return;}
-  try{
-    const{data,error}=await sb.from('hire_vendors').select('*').order('vendor_code');
-    if(error)throw error;VEND_DATA=data||[];rebuildVendorTS();renderVendors(VEND_DATA);
-  }catch(e){toast('Error: '+e.message,'error');}
-}
-
+async function loadVendors(){await loadVendorData();filterVendors();}
 function filterVendors(){
-  const q=gv('vend-srch').toLowerCase().trim();
-  if(!q){renderVendors(VEND_DATA);return;}
-  const filtered=VEND_DATA.filter(v=>
-    (v.vendor_code||'').toLowerCase().includes(q)||
-    (v.name||'').toLowerCase().includes(q)||
-    (v.bank||'').toLowerCase().includes(q)||
-    (v.acct||'').toLowerCase().includes(q)||
-    (v.ifsc_code||'').toLowerCase().includes(q)||
-    (v.mobile||'').toLowerCase().includes(q)
-  );
-  renderVendors(filtered);
+  const q=(gv('vend-srch')||'').toLowerCase();
+  const list=VEND_DATA.filter(v=>!q||[v.name,v.vendor_code,v.ifsc_code].filter(Boolean).join(' ').toLowerCase().includes(q));
+  el('vend-tbody').innerHTML=list.length?list.map(v=>`
+    <tr>
+      <td><code>${esc(v.vendor_code||'')}</code></td><td>${esc(v.name||'')}</td><td>${esc(v.bank||'')}</td>
+      <td>${esc(v.acct||'')}</td><td>${esc(v.ifsc_code||'')}</td><td>${esc(v.mobile||'')}</td>
+      <td><button class="bsi" onclick="openVendorModal('${v.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+          <button class="bsi del" onclick="deleteVendor('${v.id}')" title="Delete"><i class="bi bi-trash"></i></button></td>
+    </tr>`).join(''):`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-people"></i><p>No vendors found</p></div></td></tr>`;
 }
-
-function renderVendors(data){
-  const tbody=el('vend-tbody'),canDel=CU.role==='Approver';
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-people"></i><p>No vendors yet</p></div></td></tr>`;return;}
-  tbody.innerHTML=data.map(v=>`<tr>
-    <td>${vendorIdBadge(v.vendor_code)}</td>
-    <td style="font-weight:600">${esc(v.name)}</td>
-    <td>${esc(v.bank)}</td>
-    <td><code>${esc(v.acct)}</code></td>
-    <td>${esc(v.ifsc_code||'')}</td>
-    <td>${esc(v.mobile)}</td>
-    <td style="white-space:nowrap">
-      <span class="bsi" onclick="openVendorModal(${v.id})" title="Edit"><i class="bi bi-pencil"></i></span>
-      <span class="bsi ms-1" onclick="copyCodeToClipboard('${esc(v.vendor_code||'')}')" title="Copy Vendor ID"><i class="bi bi-clipboard"></i></span>
-      ${canDel?`<span class="bsi del ms-1" onclick="delVendor(${v.id})" title="Delete"><i class="bi bi-trash"></i></span>`:''}
-    </td>
-  </tr>`).join('');
+function switchVendTab(tab,link){
+  document.querySelectorAll('#vend-tabs .nav-link').forEach(a=>a.classList.remove('active'));
+  if(link)link.classList.add('active');
+  el('vend-tab-list').style.display=tab==='list'?'block':'none';
+  el('vend-tab-bulk').style.display=tab==='bulk'?'block':'none';
 }
-
-function copyCodeToClipboard(code) {
-  if (!code) return;
-  navigator.clipboard.writeText(code).then(() => toast(`Vendor ID <strong>${code}</strong> copied!`, 'success'));
-}
-
 function openVendorModal(id){
-  const v = id ? VEND_DATA.find(x=>x.id==id) : null;
-  el('vendModal-title').textContent = v ? 'Edit Vendor' : 'Add Vendor';
-  gset('v-name', v?.name||''); gset('v-bank', v?.bank||''); gset('v-acct', v?.acct||'');
-  gset('v-ifsc', v?.ifsc_code||''); gset('v-mobile', v?.mobile||'');
-  gset('v-id', v?.id??''); gset('v-vendor-code', v?.vendor_code||'');
-
-  const idDisplay = el('vendModal-id-display');
-  const copyBtn = el('vendModal-copy-btn');
-  if(v && v.vendor_code){
-    idDisplay.textContent = v.vendor_code;
-    idDisplay.style.color = 'var(--blue)';
-    if(copyBtn) copyBtn.style.display = 'inline-flex';
-  } else {
-    idDisplay.textContent = 'Auto-generated on save';
-    idDisplay.style.color = 'var(--muted)';
-    if(copyBtn) copyBtn.style.display = 'none';
-  }
+  const v=id?VEND_DATA.find(x=>String(x.id)===String(id)):null;
+  el('vendModal-title').textContent=v?'Edit Vendor':'Add Vendor';
+  gset('v-name',v?.name||'');gset('v-bank',v?.bank||'');gset('v-acct',v?.acct||'');gset('v-ifsc',v?.ifsc_code||'');gset('v-mobile',v?.mobile||'');
+  gset('v-id',v?.id||'');gset('v-vendor-code',v?.vendor_code||'');
+  const idRow=el('vendModal-id-row');
+  if(v){idRow.style.display='flex';el('vendModal-id-display').textContent=v.vendor_code||'—';el('vendModal-copy-btn').style.display='inline-block';}
+  else{idRow.style.display='flex';el('vendModal-id-display').textContent='Auto-generated on save';el('vendModal-copy-btn').style.display='none';}
   new bootstrap.Modal(el('vendModal')).show();
 }
-
+function copyVendorId(){navigator.clipboard.writeText(gv('v-vendor-code'));toast('Vendor ID copied','info');}
+async function nextVendorCode(){
+  const nums=VEND_DATA.map(v=>parseInt((v.vendor_code||'').replace('VND-',''))||0);
+  const next=(nums.length?Math.max(...nums):0)+1;
+  return 'VND-'+String(next).padStart(3,'0');
+}
 async function saveVendor(){
-  const d={name:gv('v-name'),bank:gv('v-bank'),acct:gv('v-acct'),ifsc_code:gv('v-ifsc'),mobile:gv('v-mobile')};
-  if(!d.name||!d.bank||!d.acct||!d.ifsc_code||!d.mobile) return toast('All fields required','error');
   const id=gv('v-id');
-
+  const name=gv('v-name').trim(),bank=gv('v-bank').trim(),acct=gv('v-acct').trim(),ifsc=gv('v-ifsc').trim(),mobile=gv('v-mobile').trim();
+  if(!name||!bank||!acct||!ifsc||!mobile)return toast('All vendor fields are required','error');
+  const row={name,bank,acct,ifsc_code:ifsc,mobile};
   if(IS_DEMO){
-    if(id){
-      const i=VEND_DATA.findIndex(x=>x.id==id);
-      if(i>=0) Object.assign(VEND_DATA[i],d);
-      toast('Vendor updated (demo)','success');
-    } else {
-      const newCode = nextVendorCode();
-      VEND_DATA.push({...d, id:Date.now(), vendor_code:newCode});
-      toast(`Vendor saved! ID: <strong>${newCode}</strong>`,'success');
-      // Update display
-      el('vendModal-id-display').textContent = newCode;
-      el('vendModal-id-display').style.color = 'var(--blue)';
-      if(el('vendModal-copy-btn')) el('vendModal-copy-btn').style.display='inline-flex';
-      gset('v-vendor-code', newCode);
-    }
-    bootstrap.Modal.getInstance(el('vendModal')).hide();
-    loadVendors(); rebuildVendorTS(); return;
+    if(id){Object.assign(VEND_DATA.find(x=>String(x.id)===String(id)),row);}
+    else{row.id=Date.now();row.vendor_code=await nextVendorCode();VEND_DATA.push(row);}
+    toast('Vendor saved (demo)','success');bootstrap.Modal.getInstance(el('vendModal')).hide();filterVendors();rebuildVendorTS();return;
   }
   try{
-    let row = {...d};
-    if(!id) {
-      // New vendor — generate code
-      row.vendor_code = nextVendorCode();
-    }
-    const q = id ? sb.from('hire_vendors').update(row).eq('id',id) : sb.from('hire_vendors').insert(row).select().single();
-    const {data:saved, error} = await q;
-    if(error) throw error;
-    const savedCode = saved?.vendor_code || row.vendor_code;
-    if(!id && savedCode) {
-      toast(`Vendor saved! ID: <strong>${savedCode}</strong>`,'success');
-    } else {
-      toast('Vendor updated','success');
-    }
-    bootstrap.Modal.getInstance(el('vendModal')).hide();
-    await loadVendorData(); loadVendors(); rebuildVendorTS();
-  }catch(e){toast('Error: '+e.message,'error');}
+    if(id){const{error}=await sb.from('vendors').update(row).eq('id',id);if(error)throw error;}
+    else{row.vendor_code=await nextVendorCode();const{error}=await sb.from('vendors').insert(row);if(error)throw error;}
+    toast('Vendor saved','success');bootstrap.Modal.getInstance(el('vendModal')).hide();await loadVendors();rebuildVendorTS();
+  }catch(e){toast('Save error: '+e.message,'error');}
 }
-
-async function delVendor(id){
-  if(!confirm('Delete this vendor?')) return;
-  if(IS_DEMO){VEND_DATA=VEND_DATA.filter(x=>x.id!=id);renderVendors(VEND_DATA);rebuildVendorTS();toast('Deleted (demo)','info');return;}
-  try{const{error}=await sb.from('hire_vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','info');await loadVendorData();loadVendors();rebuildVendorTS();}catch(e){toast('Error: '+e.message,'error');}
+async function deleteVendor(id){
+  if(!confirm('Delete this vendor?'))return;
+  if(IS_DEMO){VEND_DATA=VEND_DATA.filter(x=>String(x.id)!==String(id));filterVendors();return;}
+  try{const{error}=await sb.from('vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','success');await loadVendors();rebuildVendorTS();}catch(e){toast('Delete error: '+e.message,'error');}
 }
-
+function downloadVendorTemplate(){
+  const ws=XLSX.utils.aoa_to_sheet([['Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'],['Example Transport Co','HDFC Bank','50100123456','HDFC0001234','9876500000']]);
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Vendors');XLSX.writeFile(wb,'vendor_template.xlsx');
+}
 function exportVendors(){
-  const data = VEND_DATA;
-  if(!data.length) return toast('No vendors to export','info');
-  const headers = ['Vendor ID','Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'];
-  const rows = [
-    headers,
-    ...data.map(v=>[
-      v.vendor_code||'', v.name||'', v.bank||'',
-      v.acct||'',        v.ifsc_code||'', v.mobile||''
-    ])
-  ];
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols'] = [10, 24, 18, 18, 14, 14].map(wch=>({wch}));
-  // Style header row bold (basic xlsx styling)
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for(let C=range.s.c; C<=range.e.c; C++){
-    const addr = XLSX.utils.encode_cell({r:0, c:C});
-    if(!ws[addr]) continue;
-    ws[addr].s = { font:{bold:true}, fill:{fgColor:{rgb:'EEF3FF'}} };
-  }
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Vendors');
-  XLSX.writeFile(wb, `vendors-export-${new Date().toISOString().slice(0,10)}.xlsx`);
-  toast(`Exported ${data.length} vendor(s)`,'success');
+  const ws=XLSX.utils.json_to_sheet(VEND_DATA.map(v=>({VendorID:v.vendor_code,Name:v.name,Bank:v.bank,AccountNo:v.acct,IFSC:v.ifsc_code,Mobile:v.mobile})));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Vendors');XLSX.writeFile(wb,'vendors_export.xlsx');
 }
-
-// Vendor tab switcher
-function switchVendTab(tab, link) {
-  document.querySelectorAll('#vend-tabs .nav-link').forEach(l=>l.classList.remove('active'));
-  link.classList.add('active');
-  el('vend-tab-list').style.display = tab==='list' ? 'block' : 'none';
-  el('vend-tab-bulk').style.display = tab==='bulk' ? 'block' : 'none';
+let VEND_BULK_ROWS=[];
+function handleVendBulkDrop(e){e.preventDefault();e.currentTarget.classList.remove('drag');if(e.dataTransfer.files[0])parseVendBulkFile(e.dataTransfer.files[0]);}
+function handleVendBulkSelect(e){if(e.target.files[0])parseVendBulkFile(e.target.files[0]);}
+function parseVendBulkFile(file){
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    const wb=XLSX.read(ev.target.result,{type:'binary'});
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+    VEND_BULK_ROWS=rows.map((r,i)=>{
+      const name=r['Account Holder Name']||'',bank=r['Bank Name']||'',acct=String(r['Account Number']||''),ifsc=r['IFSC Code']||'',mobile=String(r['Mobile']||'');
+      const issues=[];
+      if(!name)issues.push('Missing name');if(!bank)issues.push('Missing bank');if(!acct)issues.push('Missing account no');if(!ifsc)issues.push('Missing IFSC');if(!mobile)issues.push('Missing mobile');
+      const dup=VEND_DATA.some(v=>v.acct===acct);if(dup)issues.push('Duplicate account no');
+      return{row:i+2,name,bank,acct,ifsc,mobile,issues,valid:issues.length===0};
+    });
+    renderVendBulkPreview();
+  };
+  reader.readAsBinaryString(file);
 }
+function renderVendBulkPreview(){
+  el('vend-bulk-result').style.display='block';
+  const valid=VEND_BULK_ROWS.filter(r=>r.valid).length;
+  el('vend-bulk-summary').innerHTML=`<i class="bi bi-info-circle-fill text-primary"></i><span>${VEND_BULK_ROWS.length} rows parsed — <strong>${valid} valid</strong>, ${VEND_BULK_ROWS.length-valid} with issues.</span>`;
+  el('vend-bulk-rowct').textContent=`${VEND_BULK_ROWS.length} rows`;
+  el('vend-bulk-tbody').innerHTML=VEND_BULK_ROWS.map(r=>`<tr><td>${r.row}</td><td>${esc(r.name)}</td><td>${esc(r.bank)}</td><td>${esc(r.acct)}</td><td>${esc(r.ifsc)}</td><td>${esc(r.mobile)}</td><td>${r.issues.length?`<span class="vr-err">${r.issues.join(', ')}</span>`:`<span class="vr-ok">OK</span>`}</td></tr>`).join('');
+  el('vend-bulk-submit-btn').disabled=valid===0;
+}
+async function submitVendBulk(){
+  const valid=VEND_BULK_ROWS.filter(r=>r.valid);
+  if(!valid.length)return;
+  setBtnLoad('vend-bulk-submit-btn',true,'Saving…');
+  const rows=valid.map(r=>({name:r.name,bank:r.bank,acct:r.acct,ifsc_code:r.ifsc,mobile:r.mobile}));
+  if(IS_DEMO){for(const row of rows){row.id=Date.now()+Math.random();row.vendor_code=await nextVendorCode();VEND_DATA.push(row);}toast(`${rows.length} vendors saved (demo)`,'success');clearVendBulk();filterVendors();rebuildVendorTS();setBtnLoad('vend-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Vendors');return;}
+  try{
+    for(const row of rows)row.vendor_code=await nextVendorCode();
+    const{error}=await sb.from('vendors').insert(rows);if(error)throw error;
+    toast(`${rows.length} vendors saved`,'success');clearVendBulk();await loadVendors();rebuildVendorTS();
+  }catch(e){toast('Bulk save error: '+e.message,'error');}
+  setBtnLoad('vend-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Vendors');
+}
+function clearVendBulk(){VEND_BULK_ROWS=[];el('vend-bulk-result').style.display='none';el('vend-bulk-file').value='';el('vend-bulk-submit-btn').disabled=true;el('vend-bulk-msg').textContent='';}
 
 /* ==============================================
-   VENDOR BULK UPLOAD
+   ROUTES  (Setup > Routes — same table the New
+   Request "Route" dropdown reads from)
    ============================================== */
-let VEND_BULK_ROWS = [];
-
-function downloadVendorTemplate(){
-  const headers = ['Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'];
-  const ws = XLSX.utils.aoa_to_sheet([
-    headers,
-    ['Chennai Transports','State Bank of India','123456789012','SBIN0001234','9876543210'],
-    ['Fast Cargo Pvt Ltd','HDFC Bank','987654321098','HDFC0001234','9123456780'],
-    ['Mumbai Freight','ICICI Bank','112233445566','ICIC0001234','9000112233'],
-  ]);
-  ws['!cols'] = headers.map(()=>({wch:22}));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Vendors');
-  XLSX.writeFile(wb, 'vendor-upload-template.xlsx');
-  toast('Vendor template downloaded','success');
-}
-
-function handleVendBulkDrop(e){
-  e.preventDefault(); el('vend-bulk-drop').classList.remove('drag');
-  const f=e.dataTransfer.files[0]; if(f) processVendBulkFile(f);
-}
-function handleVendBulkSelect(e){
-  const f=e.target.files[0]; if(f) processVendBulkFile(f);
-}
-
-function processVendBulkFile(file){
-  const ext=file.name.split('.').pop().toLowerCase();
-  if(!['xlsx','xls','csv'].includes(ext)) return toast('Upload .xlsx, .xls, or .csv','error');
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const wb=XLSX.read(e.target.result,{type:'binary'});
-      const ws=wb.Sheets[wb.SheetNames[0]];
-      const raw=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
-      if(!raw.length) return toast('File is empty','error');
-      parseVendBulkRows(raw);
-    }catch(err){toast('Parse error: '+err.message,'error');}
-  };
-  r.readAsBinaryString(file);
-}
-
-function parseVendBulkRows(raw){
-  const VEND_HEADER_MAP={
-    'account holder name':'name','account holder':'name','name':'name','vendor name':'name',
-    'bank name':'bank','bank':'bank',
-    'account number':'acct','account no':'acct','acct':'acct','account':'acct',
-    'ifsc code':'ifsc_code','ifsc':'ifsc_code',
-    'mobile':'mobile','mobile number':'mobile','phone':'mobile',
-  };
-
-  const mapped = raw.map((row, idx)=>{
-    const out = {_rowNum:idx+2, _errors:[]};
-    Object.entries(row).forEach(([k,v])=>{
-      const canon = VEND_HEADER_MAP[k.toLowerCase().trim()];
-      if(canon) out[canon] = String(v||'').trim();
-    });
-    if(out.ifsc_code) out.ifsc_code = out.ifsc_code.toUpperCase();
-    // Validate required
-    if(!out.name)      out._errors.push('Account Holder Name required');
-    if(!out.bank)      out._errors.push('Bank Name required');
-    if(!out.acct)      out._errors.push('Account Number required');
-    if(!out.ifsc_code) out._errors.push('IFSC Code required');
-    if(!out.mobile)    out._errors.push('Mobile required');
-    // Duplicate account check within file
-    return out;
+async function loadRoutesPage(){await loadRoutes();filterRoutes();}
+function filterRoutes(){
+  const q=(gv('route-srch')||'').toLowerCase(),basisF=gv('route-flt-basis');
+  const list=ROUTES_DATA.filter(r=>{
+    if(basisF!=='All'&&r.basis!==basisF)return false;
+    if(q&&![r.route_name,r.from_location,r.to_location,r.load_category,r.vehicle_type].filter(Boolean).join(' ').toLowerCase().includes(q))return false;
+    return true;
   });
-
-  // Flag intra-file duplicate account numbers
-  const acctMap = {};
-  mapped.forEach(r=>{ if(!r.acct) return; const k=r.acct; if(!acctMap[k]) acctMap[k]=[]; acctMap[k].push(r._rowNum); });
-  const fileAcctDups = Object.entries(acctMap).filter(([,rows])=>rows.length>1);
-
-  // Flag duplicates against existing VEND_DATA
-  mapped.forEach(r=>{
-    if(!r.acct) return;
-    const existsInDB = VEND_DATA.some(v=>v.acct===r.acct);
-    const intradup = fileAcctDups.some(([k])=>k===r.acct);
-    if(existsInDB) r._errors.push(`Account No ${r.acct} already exists`);
-    if(intradup)   r._errors.push(`Duplicate account No in rows: ${acctMap[r.acct].join(', ')}`);
-  });
-
-  VEND_BULK_ROWS = mapped;
-  const valid   = mapped.filter(r=>r._errors.length===0);
-  const invalid = mapped.filter(r=>r._errors.length>0);
-
-  el('vend-bulk-summary').innerHTML=`
-    <div><span style="font-size:22px;font-weight:800;color:var(--blue)">${mapped.length}</span><div style="font-size:11px;color:var(--muted)">Total Rows</div></div>
-    <div style="width:1px;background:var(--border)"></div>
-    <div><span style="font-size:22px;font-weight:800;color:var(--green)">${valid.length}</span><div style="font-size:11px;color:var(--muted)">Valid</div></div>
-    <div style="width:1px;background:var(--border)"></div>
-    <div><span style="font-size:22px;font-weight:800;color:var(--red)">${invalid.length}</span><div style="font-size:11px;color:var(--muted)">Errors</div></div>
-    <div style="margin-left:auto;font-size:12px;color:${valid.length>0?'var(--green)':'var(--muted)'}">
-      <i class="bi ${valid.length>0?'bi-check-circle-fill':'bi-exclamation-circle-fill'} me-1"></i>
-      ${valid.length>0?`${valid.length} vendor(s) ready`:'No valid rows'}
-    </div>`;
-
-  el('vend-bulk-rowct').textContent = `${mapped.length} rows`;
-  el('vend-bulk-tbody').innerHTML = mapped.map(r=>{
-    const hasErr = r._errors.length>0;
-    return `<tr style="${hasErr?'background:#fff5f5':''}">
-      <td>${r._rowNum}</td>
-      <td style="font-weight:600">${esc(r.name||'')}</td>
-      <td>${esc(r.bank||'')}</td>
-      <td><code>${esc(r.acct||'')}</code></td>
-      <td>${esc(r.ifsc_code||'')}</td>
-      <td>${esc(r.mobile||'')}</td>
-      <td>${hasErr
-        ? `<span style="color:var(--red);font-size:11px">${r._errors.join(', ')}</span>`
-        : '<span style="color:var(--green)"><i class="bi bi-check-circle-fill"></i> Ready</span>'
-      }</td>
-    </tr>`;
-  }).join('');
-
-  el('vend-bulk-result').style.display = 'block';
-  el('vend-bulk-submit-btn').disabled = valid.length===0;
-  el('vend-bulk-msg').textContent = valid.length ? `${valid.length} vendor(s) will be saved with auto-generated IDs` : 'No valid rows';
+  el('route-tbody').innerHTML=list.length?list.map(r=>`
+    <tr>
+      <td>${esc(r.route_name||`${r.from_location} To ${r.to_location}`)}</td>
+      <td>${esc(r.from_location||'')}</td><td>${esc(r.to_location||'')}</td>
+      <td>${esc(r.load_category||'')}</td><td>${esc(r.basis||'')}</td><td>${esc(r.vehicle_type||'')}</td>
+      <td>₹${fmtN(r.rate)}${r.basis==='Weight Basis'?'/Ton':''}</td>
+      <td>${r.min_load_tons??'—'}</td>
+      <td style="max-width:220px;white-space:normal;font-size:11px;color:var(--muted)">${esc(r.desc_note||'—')}</td>
+      <td>${r.is_active===false?'<span class="bs bs-unavailable">Inactive</span>':'<span class="bs bs-available">Active</span>'}</td>
+      <td><button class="bsi" onclick="openRouteModal('${r.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+          <button class="bsi del" onclick="deleteRoute('${r.id}')" title="Delete"><i class="bi bi-trash"></i></button></td>
+    </tr>`).join(''):`<tr><td colspan="11"><div class="empty-st"><i class="bi bi-signpost-split"></i><p>No routes found</p></div></td></tr>`;
 }
-
-async function submitVendBulk(){
-  const valid = VEND_BULK_ROWS.filter(r=>r._errors.length===0);
-  if(!valid.length) return toast('No valid rows','error');
-  setBtnLoad('vend-bulk-submit-btn', true, 'Saving…');
-
+function switchRouteTab(tab,link){
+  document.querySelectorAll('#route-tabs .nav-link').forEach(a=>a.classList.remove('active'));
+  if(link)link.classList.add('active');
+  el('route-tab-list').style.display=tab==='list'?'block':'none';
+  el('route-tab-bulk').style.display=tab==='bulk'?'block':'none';
+}
+/* Refresh routes + every dropdown that depends on them (New Request page) */
+async function refreshRoutesEverywhere(){
+  await loadRoutes();
+  rebuildLoadTypeOptions();rebuildVehicleTypeTS();rebuildRouteTS();
+  filterRoutes();
+}
+function rtBasisHint(){/* placeholder for future basis-specific rate hints */}
+function openRouteModal(id){
+  const r=id?ROUTES_DATA.find(x=>String(x.id)===String(id)):null;
+  el('routeModal-title').textContent=r?'Edit Route':'Add Route';
+  gset('rt-from',r?.from_location||'');gset('rt-to',r?.to_location||'');gset('rt-load',r?.load_category||'');
+  gset('rt-basis',r?.basis||'Trip Basis');gset('rt-vehicle',r?.vehicle_type||'');gset('rt-rate',r?.rate||'');
+  gset('rt-minload',r?.min_load_tons??'');gset('rt-desc',r?.desc_note||'');gset('rt-active',r?.is_active===false?'false':'true');
+  gset('rt-id',r?.id||'');
+  new bootstrap.Modal(el('routeModal')).show();
+}
+async function saveRoute(){
+  const from=gv('rt-from').trim(),to=gv('rt-to').trim(),load=gv('rt-load').trim(),basis=gv('rt-basis'),vehicle=gv('rt-vehicle').trim();
+  const rate=parseFloat(gv('rt-rate'));
+  if(!from||!to||!load||!vehicle||!(rate>0))return toast('From, To, Load, Vehicle Type and a valid Cost are required','error');
+  const id=gv('rt-id');
+  const row={
+    route_name:`${from} To ${to}`,from_location:from,to_location:to,load_category:load,basis,vehicle_type:vehicle,
+    rate,min_load_tons:gv('rt-minload')?parseFloat(gv('rt-minload')):null,desc_note:gv('rt-desc'),
+    is_active:gv('rt-active')==='true'
+  };
   if(IS_DEMO){
-    let startNum = VEND_DATA.filter(v=>/^VND-\d+$/.test(v.vendor_code||'')).length;
-    valid.forEach(r=>{
-      startNum++;
-      const code = 'VND-'+String(startNum).padStart(3,'0');
-      VEND_DATA.push({...r, id:Date.now()+startNum, vendor_code:code});
-    });
-    toast(`${valid.length} vendor(s) saved (demo)! IDs: ${valid.map((_,i)=>'VND-'+String(VEND_DATA.length-valid.length+i+1).padStart(3,'0')).join(', ')}`, 'success');
-    setBtnLoad('vend-bulk-submit-btn', false, '<i class="bi bi-upload me-2"></i>Save Valid Vendors');
-    clearVendBulk(); loadVendors(); rebuildVendorTS(); return;
+    if(id)Object.assign(ROUTES_DATA.find(x=>String(x.id)===String(id)),row);
+    else{row.id=Date.now();ROUTES_DATA.push(row);}
+    toast('Route saved (demo)','success');bootstrap.Modal.getInstance(el('routeModal')).hide();await refreshRoutesEverywhere();return;
   }
-
-  // Build rows with vendor_code pre-assigned
-  const rows = [];
-  let nextNum = VEND_DATA.filter(v=>/^VND-\d+$/.test(v.vendor_code||'')).map(v=>parseInt(v.vendor_code.replace('VND-',''),10)).reduce((a,b)=>Math.max(a,b), 0);
-  for(const r of valid){
-    nextNum++;
-    rows.push({
-      name: r.name, bank: r.bank, acct: r.acct,
-      ifsc_code: r.ifsc_code, mobile: r.mobile,
-      vendor_code: 'VND-'+String(nextNum).padStart(3,'0'),
-    });
-  }
-
   try{
-    const {error} = await sb.from('hire_vendors').insert(rows);
-    if(error) throw error;
-    toast(`${rows.length} vendor(s) saved! IDs: ${rows.map(r=>r.vendor_code).join(', ')}`, 'success');
-    clearVendBulk(); await loadVendorData(); loadVendors(); rebuildVendorTS();
-    switchVendTab('list', document.querySelector('#vend-tabs .nav-link'));
-  }catch(e){toast('Upload error: '+e.message,'error');}
-  setBtnLoad('vend-bulk-submit-btn', false, '<i class="bi bi-upload me-2"></i>Save Valid Vendors');
+    if(id){const{error}=await sb.from('routes').update(row).eq('id',id);if(error)throw error;}
+    else{const{error}=await sb.from('routes').insert(row);if(error)throw error;}
+    toast('Route saved','success');bootstrap.Modal.getInstance(el('routeModal')).hide();await refreshRoutesEverywhere();
+  }catch(e){toast('Save error: '+e.message,'error');}
 }
-
-function clearVendBulk(){
-  VEND_BULK_ROWS=[];
-  el('vend-bulk-result').style.display='none';
-  el('vend-bulk-file').value='';
+async function deleteRoute(id){
+  if(!confirm('Delete this route? It will disappear from the New Request Route dropdown.'))return;
+  if(IS_DEMO){ROUTES_DATA=ROUTES_DATA.filter(x=>String(x.id)!==String(id));toast('Route deleted (demo)','success');await refreshRoutesEverywhere();return;}
+  try{const{error}=await sb.from('routes').delete().eq('id',id);if(error)throw error;toast('Route deleted','success');await refreshRoutesEverywhere();}catch(e){toast('Delete error: '+e.message,'error');}
 }
+function downloadRouteTemplate(){
+  const ws=XLSX.utils.aoa_to_sheet([['Route','Load','Based On','Vehicle Type','Cost','Remarks'],['Example Origin To Example Destination','Casting','Trip Basis','Closed',18000,'Upto 10 Tons (Minimum of 9 to be loaded)'],['Example WH To Example MDU','Collections','Weight Basis','Open',1700,'Per Ton']]);
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Routes');XLSX.writeFile(wb,'route_template.xlsx');
+}
+function exportRoutes(){
+  const ws=XLSX.utils.json_to_sheet(ROUTES_DATA.map(r=>({Route:r.route_name,Load:r.load_category,'Based On':r.basis,'Vehicle Type':r.vehicle_type,Cost:r.rate,'Min Load Tons':r.min_load_tons,Remarks:r.desc_note})));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Routes');XLSX.writeFile(wb,'routes_export.xlsx');
+}
+let ROUTE_BULK_ROWS=[];
+function handleRouteBulkDrop(e){e.preventDefault();e.currentTarget.classList.remove('drag');if(e.dataTransfer.files[0])parseRouteBulkFile(e.dataTransfer.files[0]);}
+function handleRouteBulkSelect(e){if(e.target.files[0])parseRouteBulkFile(e.target.files[0]);}
+function parseRouteBulkFile(file){
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    const wb=XLSX.read(ev.target.result,{type:'binary'});
+    const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+    ROUTE_BULK_ROWS=rows.map((r,i)=>{
+      const routeName=String(r['Route']||'').replace(/\u00a0/g,' ').trim();
+      const load=String(r['Load']||'').trim();
+      const basis=String(r['Based On']||'').trim();
+      const vehicle=String(r['Vehicle Type']||'').trim();
+      let costRaw=r['Cost'];let rate=null;
+      if(typeof costRaw==='string'){const m=costRaw.match(/[\d.]+/);rate=m?parseFloat(m[0]):null;}else if(typeof costRaw==='number')rate=costRaw;
+      const remarks=String(r['Remarks']||'').replace(/\u00a0/g,' ').trim();
+      const parts=routeName.split(/\bTo\b/i);const from=parts[0]?.trim()||'',to=parts[1]?.trim()||'';
+      const minM=remarks.match(/Minimum of (\d+)/i);const minLoad=minM?parseInt(minM[1]):null;
+      const issues=[];
+      if(!routeName)issues.push('Missing route');if(!load)issues.push('Missing load');
+      if(!['Trip Basis','Weight Basis'].includes(basis))issues.push('Based On must be "Trip Basis" or "Weight Basis"');
+      if(!vehicle)issues.push('Missing vehicle type');if(!(rate>0))issues.push('Invalid/missing cost');
+      return{row:i+2,route_name:routeName,from_location:from,to_location:to,load_category:load,basis,vehicle_type:vehicle,rate,min_load_tons:minLoad,desc_note:remarks,issues,valid:issues.length===0};
+    });
+    renderRouteBulkPreview();
+  };
+  reader.readAsBinaryString(file);
+}
+function renderRouteBulkPreview(){
+  el('route-bulk-result').style.display='block';
+  const valid=ROUTE_BULK_ROWS.filter(r=>r.valid).length;
+  el('route-bulk-summary').innerHTML=`<i class="bi bi-info-circle-fill text-primary"></i><span>${ROUTE_BULK_ROWS.length} rows parsed — <strong>${valid} valid</strong>, ${ROUTE_BULK_ROWS.length-valid} with issues.</span>`;
+  el('route-bulk-rowct').textContent=`${ROUTE_BULK_ROWS.length} rows`;
+  el('route-bulk-tbody').innerHTML=ROUTE_BULK_ROWS.map(r=>`<tr><td>${r.row}</td><td>${esc(r.route_name)}</td><td>${esc(r.load_category)}</td><td>${esc(r.basis)}</td><td>${esc(r.vehicle_type)}</td><td>${r.rate??''}</td><td>${r.issues.length?`<span class="vr-err">${r.issues.join(', ')}</span>`:`<span class="vr-ok">OK</span>`}</td></tr>`).join('');
+  el('route-bulk-submit-btn').disabled=valid===0;
+}
+async function submitRouteBulk(){
+  const valid=ROUTE_BULK_ROWS.filter(r=>r.valid);
+  if(!valid.length)return;
+  setBtnLoad('route-bulk-submit-btn',true,'Saving…');
+  const rows=valid.map(r=>({route_name:r.route_name,from_location:r.from_location,to_location:r.to_location,load_category:r.load_category,basis:r.basis,vehicle_type:r.vehicle_type,rate:r.rate,min_load_tons:r.min_load_tons,desc_note:r.desc_note,is_active:true}));
+  if(IS_DEMO){rows.forEach(row=>{row.id=Date.now()+Math.random();ROUTES_DATA.push(row);});toast(`${rows.length} routes saved (demo)`,'success');clearRouteBulk();await refreshRoutesEverywhere();setBtnLoad('route-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Routes');return;}
+  try{const{error}=await sb.from('routes').insert(rows);if(error)throw error;toast(`${rows.length} routes saved`,'success');clearRouteBulk();await refreshRoutesEverywhere();}catch(e){toast('Bulk save error: '+e.message,'error');}
+  setBtnLoad('route-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Routes');
+}
+function clearRouteBulk(){ROUTE_BULK_ROWS=[];el('route-bulk-result').style.display='none';el('route-bulk-file').value='';el('route-bulk-submit-btn').disabled=true;el('route-bulk-msg').textContent='';}
 
 /* ==============================================
    USERS
    ============================================== */
 async function loadUserData(){
-  if(IS_DEMO){USER_DATA=[{id:1,name:'Demo User',email:'user@hire.com',role:'User',department:'Logistics',mobile:'9876543210',status:'Active'},{id:2,name:'Finance User',email:'finance@hire.com',role:'Finance',department:'Accounts',mobile:'9123456780',status:'Active'},{id:3,name:'Admin User',email:'admin@hire.com',role:'Approver',department:'Management',mobile:'9000112233',status:'Active'}];return;}
-  try{const{data,error}=await sb.from('app_users').select('id,email,name,role,department,mobile,status').order('name');if(error)throw error;USER_DATA=data||[];}catch(e){console.warn('User load:',e.message);}
+  if(IS_DEMO){USER_DATA=[{id:1,name:'Demo User',email:'user@hire.com',department:'Logistics',mobile:'9876543210',role:'User',status:'Active'}];return;}
+  try{const{data,error}=await sb.from('app_users').select('*').order('name');if(error)throw error;USER_DATA=data||[];}catch(e){toast('User load error: '+e.message,'error');}
 }
-async function loadUsersPage(){
-  if(IS_DEMO){renderUsers(USER_DATA);return;}
-  try{const{data,error}=await sb.from('app_users').select('*').order('name');if(error)throw error;USER_DATA=data||[];renderUsers(USER_DATA);rebuildRequesterTS();}catch(e){toast('Error: '+e.message,'error');}
+async function loadUsersPage(){await loadUserData();renderUsersTable();}
+function renderUsersTable(){
+  el('user-tbody').innerHTML=USER_DATA.length?USER_DATA.map(u=>`
+    <tr><td>${esc(u.name||'')}</td><td>${esc(u.email||'')}</td><td>${esc(u.department||'')}</td><td>${esc(u.mobile||'')}</td>
+      <td><span class="role-pill rp-${(u.role||'user').toLowerCase()}">${esc(u.role||'')}</span></td>
+      <td><span class="bs ${u.status==='Active'?'bs-approved':'bs-rejected'}">${esc(u.status||'')}</span></td>
+      <td><button class="bsi" onclick="openUserModal('${u.id}')" title="Edit"><i class="bi bi-pencil"></i></button></td>
+    </tr>`).join(''):`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-person"></i><p>No users yet</p></div></td></tr>`;
 }
-function renderUsers(data){
-  const tbody=el('user-tbody');
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-person-badge"></i><p>No users yet</p></div></td></tr>`;return;}
-  tbody.innerHTML=data.map(u=>`<tr><td style="font-weight:600">${esc(u.name)}</td><td>${esc(u.email)}</td><td>${esc(u.department||'—')}</td><td>${esc(u.mobile||'—')}</td><td>${roleP(u.role)}</td><td><span class="bs ${u.status==='Active'?'bs-approved':'bs-rejected'}" style="font-size:10.5px">${u.status}</span></td><td><span class="bsi" onclick="openUserModal(${u.id})" title="Edit"><i class="bi bi-pencil"></i></span><span class="bsi del ms-1" onclick="delUser(${u.id})" title="Delete"><i class="bi bi-trash"></i></span></td></tr>`).join('');
+function openUserModal(id){
+  const u=id?USER_DATA.find(x=>String(x.id)===String(id)):null;
+  el('userModal-title').textContent=u?'Edit User':'Add User';
+  gset('u-name',u?.name||'');gset('u-email',u?.email||'');gset('u-dept',u?.department||'');gset('u-mobile',u?.mobile||'');
+  gset('u-role',u?.role||'User');gset('u-status',u?.status||'Active');gset('u-pass','');gset('u-id',u?.id||'');
+  new bootstrap.Modal(el('userModal')).show();
 }
-function openUserModal(id){const u=id?USER_DATA.find(x=>x.id==id):null;el('userModal-title').textContent=u?'Edit User':'Add User';gset('u-name',u?.name||'');gset('u-email',u?.email||'');gset('u-dept',u?.department||'');gset('u-mobile',u?.mobile||'');gset('u-role',u?.role||'User');gset('u-status',u?.status||'Active');gset('u-pass','');gset('u-id',u?.id??'');if(u)el('u-pass').placeholder='Leave blank to keep current';else el('u-pass').placeholder='Set login password';new bootstrap.Modal(el('userModal')).show();}
 async function saveUser(){
-  const d={name:gv('u-name').trim(),email:gv('u-email').trim().toLowerCase(),department:gv('u-dept').trim(),mobile:gv('u-mobile').trim(),role:gv('u-role'),status:gv('u-status')};
-  const pass=gv('u-pass'),id=gv('u-id');if(!d.name||!d.email)return toast('Name and email required','error');if(!id&&!pass)return toast('Password required for new user','error');if(pass)d.password=pass;
-  if(IS_DEMO){if(id){const i=USER_DATA.findIndex(x=>x.id==id);if(i>=0)Object.assign(USER_DATA[i],d);}else USER_DATA.push({...d,id:Date.now()});toast('User saved (demo)','success');bootstrap.Modal.getInstance(el('userModal')).hide();renderUsers(USER_DATA);rebuildRequesterTS();return;}
-  try{const q=id?sb.from('app_users').update(d).eq('id',id):sb.from('app_users').insert(d);const{error}=await q;if(error)throw error;toast('User saved','success');bootstrap.Modal.getInstance(el('userModal')).hide();await loadUserData();loadUsersPage();}catch(e){toast('Error: '+e.message,'error');}
-}
-async function delUser(id){if(!confirm('Delete this user?'))return;if(IS_DEMO){USER_DATA=USER_DATA.filter(x=>x.id!=id);renderUsers(USER_DATA);rebuildRequesterTS();toast('Deleted (demo)','info');return;}try{const{error}=await sb.from('app_users').delete().eq('id',id);if(error)throw error;toast('User deleted','info');await loadUserData();loadUsersPage();}catch(e){toast('Error: '+e.message,'error');}}
-async function loadRolesPage(){if(IS_DEMO){renderRoles(USER_DATA);return;}try{const{data,error}=await sb.from('app_users').select('id,email,name,role').order('name');if(error)throw error;renderRoles(data||[]);}catch(e){toast('Error: '+e.message,'error');}}
-function renderRoles(data){const tbody=el('role-tbody');if(!data.length){tbody.innerHTML=`<tr><td colspan="4"><div class="empty-st"><i class="bi bi-shield-person"></i><p>No users</p></div></td></tr>`;return;}tbody.innerHTML=data.map(u=>`<tr><td>${esc(u.email)}</td><td style="font-weight:600">${esc(u.name)}</td><td>${roleP(u.role)}</td><td><span class="bsi" onclick="openRoleModal(${u.id},'${esc(u.email)}','${esc(u.role)}')" title="Change Role"><i class="bi bi-pencil"></i></span></td></tr>`).join('');}
-function openRoleModal(id,email,role){gset('rm-id',id);gset('rm-role',role);el('rm-email-show').textContent=email;new bootstrap.Modal(el('roleModal')).show();}
-async function saveRole(){const id=gv('rm-id'),role=gv('rm-role');if(IS_DEMO){const i=USER_DATA.findIndex(x=>x.id==id);if(i>=0)USER_DATA[i].role=role;toast('Role updated (demo)','success');bootstrap.Modal.getInstance(el('roleModal')).hide();renderRoles(USER_DATA);return;}try{const{error}=await sb.from('app_users').update({role}).eq('id',id);if(error)throw error;toast('Role updated','success');bootstrap.Modal.getInstance(el('roleModal')).hide();await loadUserData();loadRolesPage();}catch(e){toast('Error: '+e.message,'error');}}
-
-/* ==============================================
-   CSV EXPORT
-   ============================================== */
-function exportCSV(){
-  if(!REQ_DATA.length)return toast('No data to export','info');
-  const h=['ID','Trip Date','Requester','Transport','Account No','IFSC','LR Numbers','LR Status','Load Type','Vehicle Type','Vehicle No','From','To','Hire Amount','Weight','Halting','Status','Payable','Paid','Balance','Ref ID','Remarks','Request Type','Submitted By'];
-  const k=['id','trip_date','requester_name','transport','account_no','ifsc_code','lr_numbers','lr_status','load_type','vehicle_type','vehicle_no','from_loc','to_loc','hire_amount','weight','halting_charges','status','payable_amount','paid_amount','balance_amount','reference_id','remarks','request_type','submitted_by'];
-  const rows=[h,...REQ_DATA.map(r=>k.map(key=>`"${String(r[key]||'').replace(/"/g,'""')}"`)  )];
-  const csv=rows.map(r=>r.join(',')).join('\n');const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`hire-requests-${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('CSV downloaded','success');
+  const id=gv('u-id');const name=gv('u-name').trim(),email=gv('u-email').trim().toLowerCase();
+  if(!name||!email)return toast('Name and email are required','error');
+  const row={name,email,department:gv('u-dept'),mobile:gv('u-mobile'),role:gv('u-role'),status:gv('u-status')};
+  const pass=gv('u-pass').trim();if(pass)row.password=pass;else if(!id)return toast('Password required for new user','error');
+  if(IS_DEMO){
+    if(id)Object.assign(USER_DATA.find(x=>String(x.id)===String(id)),row);
+    else{row.id=Date.now();USER_DATA.push(row);}
+    toast('User saved (demo)','success');bootstrap.Modal.getInstance(el('userModal')).hide();renderUsersTable();return;
+  }
+  try{
+    if(id){const{error}=await sb.from('app_users').update(row).eq('id',id);if(error)throw error;}
+    else{const{error}=await sb.from('app_users').insert(row);if(error)throw error;}
+    toast('User saved','success');bootstrap.Modal.getInstance(el('userModal')).hide();await loadUsersPage();
+  }catch(e){toast('Save error: '+e.message,'error');}
 }
 
 /* ==============================================
-   FILE HELPERS
+   USER ROLES
    ============================================== */
-function dzOver(e,id){e.preventDefault();el(id).classList.add('drag');}
-function dzLeave(id){el(id).classList.remove('drag');}
-function dzDrop(e,zoneId,inputId){e.preventDefault();dzLeave(zoneId);const file=e.dataTransfer.files[0];if(!file)return;const inp=el(inputId);const dt=new DataTransfer();dt.items.add(file);inp.files=dt.files;handleFile(inputId,zoneId,'fp-'+inputId.replace('f-',''));}
+async function loadRolesPage(){await loadUserData();renderRolesTable();}
+function renderRolesTable(){
+  el('role-tbody').innerHTML=USER_DATA.length?USER_DATA.map(u=>`
+    <tr><td>${esc(u.email||'')}</td><td>${esc(u.name||'')}</td>
+      <td><span class="role-pill rp-${(u.role||'user').toLowerCase()}">${esc(u.role||'')}</span></td>
+      <td><button class="bsi" onclick="openRoleModal('${u.id}')" title="Change Role"><i class="bi bi-shield-lock"></i></button></td>
+    </tr>`).join(''):`<tr><td colspan="4"><div class="empty-st"><i class="bi bi-shield-person"></i><p>No users yet</p></div></td></tr>`;
+}
+function openRoleModal(id){
+  const u=USER_DATA.find(x=>String(x.id)===String(id));if(!u)return;
+  el('rm-email-show').textContent=u.email;gset('rm-role',u.role||'User');gset('rm-id',u.id);
+  new bootstrap.Modal(el('roleModal')).show();
+}
+async function saveRole(){
+  const id=gv('rm-id'),role=gv('rm-role');
+  if(IS_DEMO){Object.assign(USER_DATA.find(x=>String(x.id)===String(id)),{role});toast('Role updated (demo)','success');bootstrap.Modal.getInstance(el('roleModal')).hide();renderRolesTable();return;}
+  try{const{error}=await sb.from('app_users').update({role}).eq('id',id);if(error)throw error;toast('Role updated','success');bootstrap.Modal.getInstance(el('roleModal')).hide();await loadRolesPage();}catch(e){toast('Update error: '+e.message,'error');}
+}
+
+/* ==============================================
+   FILE HANDLING (upload zones)
+   ============================================== */
+function dzOver(e,zoneId){e.preventDefault();el(zoneId).classList.add('drag');}
+function dzLeave(zoneId){el(zoneId).classList.remove('drag');}
+function dzDrop(e,zoneId,inputId){e.preventDefault();el(zoneId).classList.remove('drag');const f=e.dataTransfer.files[0];if(!f)return;const input=el(inputId);const dt=new DataTransfer();dt.items.add(f);input.files=dt.files;input.dispatchEvent(new Event('change'));}
 function handleFile(inputId,zoneId,previewId){
-  const inp=el(inputId),zone=el(zoneId),preEl=el(previewId);const errId='fe-'+inputId.replace('f-',''),errEl=el(errId);
-  if(!inp?.files[0])return;const file=inp.files[0],ext=file.name.split('.').pop().toLowerCase();
-  if(preEl){preEl.innerHTML='';preEl.className='fp';}if(errEl){errEl.style.display='none';errEl.textContent='';}
-  if(!OK_EXTS.includes(ext)){if(errEl){errEl.textContent=`Invalid format. Allowed: PDF, JPG, PNG, WEBP`;errEl.style.display='block';}inp.value='';return;}
-  if(file.size>MAX_FILE){if(errEl){errEl.textContent=`File too large. Max 5 MB`;errEl.style.display='block';}inp.value='';return;}
-  zone.classList.add('has-file');
-  if(preEl){const reader=new FileReader();reader.onload=ev=>{let inner=ext==='pdf'?`<div class="pdf-nm"><i class="bi bi-filetype-pdf"></i><span>${esc(file.name)}</span><small class="ms-auto text-muted">${(file.size/1024).toFixed(0)} KB</small></div>`:`<img src="${ev.target.result}" alt="preview"/>`;preEl.innerHTML=inner+`<button type="button" class="f-clr" onclick="clearFile('${inputId}','${zoneId}','${previewId}')">×</button>`;preEl.className='fp show';};reader.readAsDataURL(file);}
+  const input=el(inputId),file=input.files[0],errEl=el('fe-'+inputId.replace('f-',''))||el('fe-'+zoneId.replace('fz-',''));
+  const errId='fe-'+inputId.slice(2);const errBox=el(errId);
+  if(errBox)errBox.style.display='none';
+  if(!file)return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(!OK_EXTS.includes(ext)){if(errBox){errBox.textContent='Unsupported file type';errBox.style.display='block';}input.value='';return;}
+  if(file.size>MAX_FILE){if(errBox){errBox.textContent='File exceeds 5MB limit';errBox.style.display='block';}input.value='';return;}
+  el(zoneId).classList.add('has-file');
+  const prev=el(previewId);prev.classList.add('show');
+  if(['jpg','jpeg','png','webp'].includes(ext)){
+    const reader=new FileReader();reader.onload=ev=>{prev.innerHTML=`<img src="${ev.target.result}"><button type="button" class="f-clr" onclick="clearFile('${inputId}','${zoneId}','${previewId}')">×</button>`;};reader.readAsDataURL(file);
+  }else{
+    prev.innerHTML=`<div class="pdf-nm"><i class="bi bi-file-earmark-pdf-fill"></i>${esc(file.name)}</div><button type="button" class="f-clr" onclick="clearFile('${inputId}','${zoneId}','${previewId}')">×</button>`;
+  }
 }
-function clearFile(inputId,zoneId,previewId){const inp=el(inputId),zone=el(zoneId),pre=el(previewId);if(inp)inp.value='';if(zone)zone.classList.remove('has-file','drag');if(pre){pre.innerHTML='';pre.className='fp';}}
-function readBase64(inputId){return new Promise(resolve=>{const inp=el(inputId);if(!inp?.files[0]){resolve(null);return;}const r=new FileReader();r.onload=e=>resolve({data:e.target.result,name:inp.files[0].name});r.readAsDataURL(inp.files[0]);});}
+function clearFile(inputId,zoneId,previewId){el(inputId).value='';el(zoneId).classList.remove('has-file');const p=el(previewId);p.classList.remove('show');p.innerHTML='';}
+function readBase64(inputId){
+  const file=el(inputId).files[0];if(!file)return Promise.resolve(null);
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res({name:file.name,data:r.result});r.onerror=rej;r.readAsDataURL(file);});
+}
 
 /* ==============================================
-   DEMO DATA
+   GENERIC HELPERS
    ============================================== */
-function getDemoRequests(){return[
-  {id:'HR-001',trip_date:'2026-05-10',submitted_at:'2026-05-10T09:14:32Z',requester_name:'Demo User',transport:'Chennai Transports',lr_numbers:'D-B23453',lr_status:'Available',vehicle_no:'TN09AB1234',from_loc:'Chennai',to_loc:'Mumbai',load_type:'Full Load',hire_amount:45000,payable_amount:45000,paid_amount:45000,balance_amount:0,reference_id:'REF001',request_type:'Full',status:'Paid',halting_charges:0,submitted_by:'user@hire.com',requester_id:1},
-  {id:'HR-002',trip_date:'2026-05-11',submitted_at:'2026-05-11T11:02:17Z',requester_name:'Finance User',transport:'Fast Cargo',lr_numbers:'D-B23454,D-B23455',lr_status:'Not Available',vehicle_no:'MH12CD5678',from_loc:'Delhi',to_loc:'Pune',load_type:'Part Load',hire_amount:32000,payable_amount:32500,paid_amount:16000,balance_amount:16500,reference_id:'',request_type:'Advance',status:'Pending',halting_charges:500,submitted_by:'finance@hire.com',requester_id:2},
-  {id:'HR-003',trip_date:'2026-05-12',submitted_at:new Date(Date.now()-60*60*1000).toISOString(),requester_name:'Demo User',transport:'Chennai Transports',lr_numbers:'D-B23456',lr_status:'Available',vehicle_no:'KA04EF9999',from_loc:'Bengaluru',to_loc:'Hyderabad',load_type:'Special Load',hire_amount:28000,payable_amount:28000,paid_amount:0,balance_amount:28000,reference_id:'',request_type:'POD',status:'Approved',halting_charges:0,submitted_by:'user@hire.com',requester_id:1},
-];}
+function el(id){return document.getElementById(id);}
+function gv(id){const e=el(id);return e?e.value:'';}
+function gset(id,val){const e=el(id);if(e)e.value=val;}
+function hide(id){el(id).style.display='none';}
+function show(id){el(id).style.display='flex';}
+function esc(s){if(s===null||s===undefined)return '';return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmtN(n){return Number(n).toLocaleString('en-IN');}
+function setBtnLoad(id,loading,html){const b=el(id);if(!b)return;b.disabled=loading;if(loading)b.innerHTML=html+'<span class="spin spin-sm"></span>';else b.innerHTML=html;}
+function toast(msg,type='info'){
+  const icons={success:'bi-check-circle-fill',error:'bi-x-circle-fill',warn:'bi-exclamation-triangle-fill',info:'bi-info-circle-fill'};
+  const t=document.createElement('div');t.className=`toast-msg ${type}`;t.innerHTML=`<i class="bi ${icons[type]||icons.info}"></i><span>${esc(msg)}</span>`;
+  el('toast-wrap').appendChild(t);setTimeout(()=>t.remove(),4200);
+}
 
-/* ==============================================
-   UTILITIES
-   ============================================== */
-const el=id=>document.getElementById(id);
-const gv=id=>(el(id)||{}).value||'';
-const gset=(id,val)=>{const e=el(id);if(e)e.value=val;};
-const fmtN=n=>Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
-const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const hide=id=>{const e=el(id);if(e)e.style.display='none';};
-const show=id=>{const e=el(id);if(e)e.style.display='';};
-
-function fmtLR(lr){if(!lr)return'—';return lr.split(',').map(s=>s.trim()).filter(Boolean).map(l=>`<span class="badge-lr">${esc(l)}</span>`).join(' ');}
-function statusB(s){const cls={Pending:'bs-pending',Approved:'bs-approved',Paid:'bs-paid',Rejected:'bs-rejected'}[s]||'bs-pending';const ic={Pending:'bi-clock',Approved:'bi-check-circle-fill',Paid:'bi-currency-rupee',Rejected:'bi-x-circle'}[s]||'bi-clock';return`<span class="bs ${cls}"><i class="bi ${ic}"></i> ${s||'Pending'}</span>`;}
-function lrStatusB(s){if(!s||s==='')return`<span style="font-size:11px;color:var(--muted)">—</span>`;const cls=s==='Available'?'bs-available':'bs-unavailable';const ic=s==='Available'?'bi-check-circle-fill':'bi-x-circle-fill';return`<span class="bs ${cls}"><i class="bi ${ic}"></i> ${s}</span>`;}
-function typeB(t){const cls={Full:'bt-full',Advance:'bt-advance',POD:'bt-pod'}[t]||'bt-full';return`<span class="bt ${cls}">${t||'Full'}</span>`;}
-function roleP(r){const cls={User:'rp-user',Finance:'rp-finance',Approver:'rp-approver'}[r]||'rp-user';return`<span class="role-pill ${cls}">${r||'User'}</span>`;}
-function setBtnLoad(id,on,label){const e=el(id);if(!e)return;e.disabled=on;e.innerHTML=on?`<span class="spinner-border spinner-border-sm me-1"></span>${label}`:label;}
-function toast(msg,type='info'){const w=el('toast-wrap');const d=document.createElement('div');d.className=`toast-msg ${type}`;const ic={success:'bi-check-circle-fill',error:'bi-x-circle-fill',info:'bi-info-circle-fill',warn:'bi-exclamation-triangle-fill'};d.innerHTML=`<i class="bi ${ic[type]||'bi-info-circle-fill'}"></i><span>${msg}</span>`;w.appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300);},4200);}
-
-/*
-=======================================================
-  SQL: Add vendor_code column to hire_vendors
-  Run in Supabase SQL Editor if upgrading from v1
-=======================================================
-ALTER TABLE hire_vendors
-  ADD COLUMN IF NOT EXISTS vendor_code TEXT UNIQUE;
-
--- Backfill existing vendors with VND-XXX codes
-DO $$
-DECLARE
-  rec RECORD;
-  counter INT := 1;
-BEGIN
-  FOR rec IN SELECT id FROM hire_vendors ORDER BY id LOOP
-    UPDATE hire_vendors
-      SET vendor_code = 'VND-' || LPAD(counter::text, 3, '0')
-    WHERE id = rec.id AND vendor_code IS NULL;
-    counter := counter + 1;
-  END LOOP;
-END $$;
-=======================================================
-ALTER TABLE hire_requests
-  ADD COLUMN IF NOT EXISTS lr_status TEXT DEFAULT 'Available';
-=======================================================
-*/
 </script>
 </body>
 </html>
