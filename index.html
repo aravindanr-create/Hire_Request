@@ -1182,7 +1182,7 @@ async function deleteReq(){
    ============================================== */
 async function loadVendorData(){
   if(IS_DEMO){VEND_DATA=[{id:1,vendor_code:'VND-001',name:'Sri Balaji Transport',bank:'HDFC Bank',acct:'50100123456',ifsc_code:'HDFC0001234',mobile:'9876500001'}];return;}
-  try{const{data,error}=await sb.from('vendors').select('*').order('name');if(error)throw error;VEND_DATA=data||[];}catch(e){toast('Vendor load error: '+e.message,'error');}
+  try{const{data,error}=await sb.from('hire_vendors').select('*').order('name');if(error)throw error;VEND_DATA=data||[];}catch(e){toast('Vendor load error: '+e.message,'error');}
 }
 async function loadVendors(){await loadVendorData();filterVendors();}
 function filterVendors(){
@@ -1229,15 +1229,15 @@ async function saveVendor(){
     toast('Vendor saved (demo)','success');bootstrap.Modal.getInstance(el('vendModal')).hide();filterVendors();rebuildVendorTS();return;
   }
   try{
-    if(id){const{error}=await sb.from('vendors').update(row).eq('id',id);if(error)throw error;}
-    else{row.vendor_code=await nextVendorCode();const{error}=await sb.from('vendors').insert(row);if(error)throw error;}
+    if(id){const{error}=await sb.from('hire_vendors').update(row).eq('id',id);if(error)throw error;}
+    else{row.vendor_code=await nextVendorCode();const{error}=await sb.from('hire_vendors').insert(row);if(error)throw error;}
     toast('Vendor saved','success');bootstrap.Modal.getInstance(el('vendModal')).hide();await loadVendors();rebuildVendorTS();
   }catch(e){toast('Save error: '+e.message,'error');}
 }
 async function deleteVendor(id){
   if(!confirm('Delete this vendor?'))return;
   if(IS_DEMO){VEND_DATA=VEND_DATA.filter(x=>String(x.id)!==String(id));filterVendors();return;}
-  try{const{error}=await sb.from('vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','success');await loadVendors();rebuildVendorTS();}catch(e){toast('Delete error: '+e.message,'error');}
+  try{const{error}=await sb.from('hire_vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','success');await loadVendors();rebuildVendorTS();}catch(e){toast('Delete error: '+e.message,'error');}
 }
 function downloadVendorTemplate(){
   const ws=XLSX.utils.aoa_to_sheet([['Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'],['Example Transport Co','HDFC Bank','50100123456','HDFC0001234','9876500000']]);
@@ -1282,7 +1282,7 @@ async function submitVendBulk(){
   if(IS_DEMO){for(const row of rows){row.id=Date.now()+Math.random();row.vendor_code=await nextVendorCode();VEND_DATA.push(row);}toast(`${rows.length} vendors saved (demo)`,'success');clearVendBulk();filterVendors();rebuildVendorTS();setBtnLoad('vend-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Vendors');return;}
   try{
     for(const row of rows)row.vendor_code=await nextVendorCode();
-    const{error}=await sb.from('vendors').insert(rows);if(error)throw error;
+    const{error}=await sb.from('hire_vendors').insert(rows);if(error)throw error;
     toast(`${rows.length} vendors saved`,'success');clearVendBulk();await loadVendors();rebuildVendorTS();
   }catch(e){toast('Bulk save error: '+e.message,'error');}
   setBtnLoad('vend-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Vendors');
