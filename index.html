@@ -282,11 +282,12 @@ code{font-family:'DM Mono',monospace;}
             <!-- VEHICLE -->
             <div class="fsec"><i class="bi bi-truck"></i>Vehicle Details</div>
             <div class="row g-3 mb-4">
+              <div class="col-md-6 col-12"><label class="lbl">Route <small class="text-muted fw-normal">(optional — auto-fills From/To, Vehicle Type &amp; Hire Amount)</small></label><select id="f-routeSelect" placeholder="Search route…"></select><small class="text-muted" id="route-basis-tag" style="font-size:11px;display:block;margin-top:2px"></small></div>
               <div class="col-md-3 col-6"><label class="lbl">Vehicle Type</label><select id="f-vehicleType"><option value="">Select…</option><option>20 Feet</option><option>14 Feet</option><option>Bata Dost</option><option>Bada Dost</option><option>AL</option><option>Others</option></select></div>
               <div class="col-md-3 col-6"><label class="lbl">Vehicle No <span class="req-star">*</span></label><input type="text" class="form-control" id="f-vehicleNo" oninput="this.value=this.value.toUpperCase()" required placeholder="TN09AB1234"/></div>
               <div class="col-md-3 col-6"><label class="lbl">From <span class="req-star">*</span></label><input type="text" class="form-control" id="f-from" required/></div>
               <div class="col-md-3 col-6"><label class="lbl">To <span class="req-star">*</span></label><input type="text" class="form-control" id="f-to" required/></div>
-              <div class="col-md-3 col-6"><label class="lbl">Weight (MT)</label><input type="number" step="0.01" class="form-control" id="f-weight" placeholder="0.00"/></div>
+              <div class="col-md-3 col-6"><label class="lbl">Weight (MT)</label><input type="number" step="0.01" class="form-control" id="f-weight" placeholder="0.00" oninput="recalcRouteAmount()"/></div>
               <div class="col-md-9 col-12"><label class="lbl">Vehicle Document <small class="text-muted fw-normal">(PDF/JPG/PNG/WEBP, max 5MB)</small></label>
                 <div class="fz" id="fz-document" ondragover="dzOver(event,'fz-document')" ondragleave="dzLeave('fz-document')" ondrop="dzDrop(event,'fz-document','f-document')"><input type="file" id="f-document" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFile('f-document','fz-document','fp-document')"/><i class="bi bi-file-earmark-arrow-up fz-icon"></i><div class="fz-lbl">Click or drop document here</div><div class="fz-sub">PDF · JPG · JPEG · PNG · WEBP up to 5 MB</div></div>
                 <div class="f-err" id="fe-document"></div><div class="fp" id="fp-document"></div>
@@ -491,7 +492,8 @@ const EDIT_WINDOW_MS = 2 * 60 * 60 * 1000; // 2 hours in ms
    ============================================== */
 let CU=null, REQ_DATA=[], VEND_DATA=[], USER_DATA=[], EDIT_ID=null;
 let LR_TIMER=null;
-let tsVendor=null, tsRequester=null, tsVehicle=null;
+let tsVendor=null, tsRequester=null, tsVehicle=null, tsRoute=null;
+let ROUTES_DATA=[], selectedRoute=null;
 
 const {createClient}=supabase;
 const sb=IS_DEMO?null:createClient(SUPA_URL,SUPA_KEY);
@@ -621,6 +623,7 @@ function closeSidebar(){el('sidebar').classList.remove('open');el('mob-ov').clas
 function initFormDropdowns(){
   if(!tsVehicle){tsVehicle=new TomSelect('#f-vehicleType',{allowEmptyOption:true,create:false,searchField:['text'],plugins:['dropdown_input']});}
   rebuildVendorTS();
+  loadRoutes().then(rebuildRouteTS);
 }
 function rebuildVendorTS(){
   if(tsVendor){tsVendor.destroy();tsVendor=null;}
@@ -652,6 +655,53 @@ function rebuildRequesterTS(){
 }
 function fillRequesterInfo(id){const infoEl=el('requester-info');if(!id){infoEl.className='ri-card';return;}const u=USER_DATA.find(x=>String(x.id)===String(id));if(!u)return;el('rinfo-dept').textContent=u.department||'—';el('rinfo-mobile').textContent=u.mobile||'—';el('rinfo-email').textContent=u.email||'—';infoEl.className='ri-card show';}
 function fillVendor(id){if(!id)return;const v=VEND_DATA.find(x=>String(x.id)===String(id));if(!v)return;gset('f-transport',v.name||'');gset('f-accountNo',v.acct||'');gset('f-ifscCode',v.ifsc_code||'');}
+
+async function loadRoutes(){
+  if(IS_DEMO){ROUTES_DATA=[];return;}
+  try{const{data,error}=await sb.from('routes').select('*').eq('is_active',true).order('route_name');if(error)throw error;ROUTES_DATA=data||[];}catch(e){console.warn('Route load:',e.message);}
+}
+function rebuildRouteTS(){
+  if(tsRoute){tsRoute.destroy();tsRoute=null;}
+  tsRoute=new TomSelect('#f-routeSelect',{
+    placeholder:'Search route…',allowEmptyOption:true,create:false,
+    searchField:['text'],
+    render:{option(d){return `<div style="padding:6px 10px"><div style="font-weight:600;font-size:12.5px">${d.text}</div>${d.data_remarks?`<div style="font-size:10.5px;color:var(--muted)">${d.data_remarks}</div>`:''}</div>`;}},
+    onChange(val){fillRoute(val);},
+    options:[
+      {value:'',text:'— Custom / other route —',data_remarks:''},
+      ...ROUTES_DATA.map(r=>({value:String(r.id),text:`${r.route_name} · ${r.load_category} · ₹${r.rate}${r.basis==='Weight Basis'?'/Ton':''}`,data_remarks:r.remarks||''}))
+    ],
+    items:['']
+  });
+}
+function fillRoute(id){
+  const tag=el('route-basis-tag');
+  if(!id){selectedRoute=null;if(tag)tag.textContent='';if(el('f-hireAmount'))el('f-hireAmount').readOnly=false;return;}
+  selectedRoute=ROUTES_DATA.find(r=>String(r.id)===String(id));
+  if(!selectedRoute)return;
+  gset('f-from',selectedRoute.from_location);
+  gset('f-to',selectedRoute.to_location);
+  gset('f-remarks',selectedRoute.remarks||'');
+  const vtMap={'20 feet':'20 Feet','Bada dost':'Bada Dost'};
+  if(tsVehicle)tsVehicle.setValue(vtMap[selectedRoute.vehicle_type]||'Others');
+  if(tag)tag.textContent=selectedRoute.basis==='Weight Basis'?`Weight Basis — ₹${selectedRoute.rate}/Ton`:`Trip Basis — flat ₹${selectedRoute.rate}`;
+  recalcRouteAmount();
+}
+function recalcRouteAmount(){
+  if(!selectedRoute)return;
+  if(selectedRoute.basis==='Trip Basis'){
+    gset('f-hireAmount',selectedRoute.rate);
+    if(el('f-hireAmount'))el('f-hireAmount').readOnly=false;
+  }else{
+    const w=parseFloat(gv('f-weight'))||0;
+    gset('f-hireAmount', w>0?Math.round(selectedRoute.rate*w):'');
+    if(el('f-hireAmount'))el('f-hireAmount').readOnly=true;
+    if(selectedRoute.min_load_tons&&w>0&&w<selectedRoute.min_load_tons){
+      toast(`This route requires a minimum of ${selectedRoute.min_load_tons} tons before payment`,'warn');
+    }
+  }
+  calcPay();
+}
 
 function setupNewReqForm(){
   const isApprover=CU.role==='Approver';
@@ -728,6 +778,7 @@ function resetForm(){
   el('lr-tags').innerHTML='';el('lr-chk').innerHTML='';el('req-type-hint').innerHTML='';el('requester-info').className='ri-card';
   ['document','weighmentWithLoad','weighmentWithoutLoad'].forEach(k=>clearFile('f-'+k,'fz-'+k,'fp-'+k));
   if(tsVendor){tsVendor.clear();tsVendor.setValue('');}if(tsRequester){tsRequester.clear();tsRequester.setValue('');}if(tsVehicle){tsVehicle.clear();tsVehicle.setValue('');}
+  if(tsRoute){tsRoute.clear();tsRoute.setValue('');}selectedRoute=null;if(el('route-basis-tag'))el('route-basis-tag').textContent='';if(el('f-hireAmount'))el('f-hireAmount').readOnly=false;
   if(CU.role!=='Approver'){gset('f-requester-static',CU.name);gset('f-requester-id-hidden',String(CU.id));}
   _refreshSubmittedAt();
 }
