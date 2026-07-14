@@ -53,6 +53,7 @@ body{background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:h
 .sc-green::before{background:linear-gradient(90deg,#059669,#10b981);}
 .sc-red::before{background:linear-gradient(90deg,#dc2626,#ef4444);}
 .sc-teal::before{background:linear-gradient(90deg,#0892b0,#06b6d4);}
+.sc-purple::before{background:linear-gradient(90deg,#7c3aed,#a78bfa);}
 .stat-card .s-lbl{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;}
 .stat-card .s-val{font-size:28px;font-weight:800;letter-spacing:-1.5px;line-height:1;margin-bottom:3px;}
 .stat-card .s-sub{font-size:11px;color:var(--muted);}
@@ -73,6 +74,10 @@ table.dt tr:hover td{background:#f6f9ff;}
 .bs-pending{background:#fef3c7;color:#92400e;}.bs-approved{background:#d1fae5;color:#065f46;}
 .bs-paid{background:#dbeafe;color:#1e40af;}.bs-rejected{background:#fee2e2;color:#991b1b;}
 .bs-available{background:#d1fae5;color:#065f46;}.bs-unavailable{background:#fee2e2;color:#991b1b;}
+.bs-lr-avail{background:#d1fae5;color:#065f46;}.bs-lr-notavail{background:#fee2e2;color:#991b1b;}
+.bs-lr-notcreated{background:#fef3c7;color:#92400e;}.bs-lr-cancelled{background:#e5e7eb;color:#374151;}
+.req-id-link{font-family:'DM Mono',monospace;font-weight:700;color:var(--blue);text-decoration:none;cursor:pointer;}
+.req-id-link:hover{text-decoration:underline;}
 .bt{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.3px;}
 .bt-full{background:#e0e7ff;color:#3730a3;}.bt-advance{background:#fef3c7;color:#92400e;}.bt-pod{background:#d1fae5;color:#065f46;}
 .badge-lr{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:#f0f4fc;color:var(--muted);border:1px solid var(--border);margin:1px;font-family:'DM Mono',monospace;}
@@ -187,6 +192,7 @@ code{font-family:'DM Mono',monospace;}
 /* FINANCE LOCKED indicator */
 .finance-only{font-size:10px;font-weight:700;color:var(--yellow);background:#fef9c3;padding:1px 6px;border-radius:4px;margin-left:4px;border:1px solid #fde68a;}
 .approver-only{font-size:10px;font-weight:700;color:var(--blue);background:var(--blue-xs);padding:1px 6px;border-radius:4px;margin-left:4px;border:1px solid #c7d2fe;}
+.bs-exc-pending{background:#ffe4e6;color:#9f1239;}.bs-exc-approved{background:#d1fae5;color:#065f46;}.bs-exc-rejected{background:#fee2e2;color:#991b1b;}.bs-exc-none{background:#f1f5f9;color:#64748b;}
 </style>
 </head>
 <body>
@@ -218,6 +224,7 @@ code{font-family:'DM Mono',monospace;}
     <div class="nav-item active" data-page="dashboard" onclick="goto('dashboard',this)"><i class="bi bi-speedometer2"></i>Dashboard</div>
     <div class="nav-item" data-page="newreq" onclick="goto('newreq',this)"><i class="bi bi-plus-circle"></i>New Request</div>
     <div class="nav-item" data-page="requests" onclick="goto('requests',this)"><i class="bi bi-table"></i>All Requests</div>
+    <div class="nav-item" data-page="exceptions" id="nav-exceptions" style="display:none" onclick="goto('exceptions',this)"><i class="bi bi-exclamation-diamond"></i>Exception Approvals<span id="exc-nav-badge" style="display:none;margin-left:auto;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:10px"></span></div>
     <div class="nav-section">Setup</div>
     <div class="nav-item" data-page="vendors" onclick="goto('vendors',this)"><i class="bi bi-people"></i>Vendors</div>
     <div class="nav-item" data-page="routes" onclick="goto('routes',this)"><i class="bi bi-signpost-split"></i>Routes</div>
@@ -250,7 +257,7 @@ code{font-family:'DM Mono',monospace;}
       <div class="stat-grid" id="stat-grid"><div class="stat-card sc-blue"><div class="s-lbl">Loading…</div><div class="s-val" style="color:var(--blue)">…</div></div></div>
       <div class="panel">
         <div class="panel-head"><h3><i class="bi bi-clock-history text-primary"></i>Recent Requests</h3><button class="btn btn-outline-primary btn-sm" onclick="loadDashboard()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button></div>
-        <div class="tbl-wrap"><table class="dt"><thead><tr><th>Ref ID</th><th>Trip Date</th><th>Requester</th><th>LR Numbers</th><th>LR Status</th><th>Route</th><th>Hire ₹</th><th>Type</th><th>Status</th></tr></thead><tbody id="dash-tbody"></tbody></table></div>
+        <div class="tbl-wrap"><table class="dt"><thead><tr><th>Ref ID</th><th>Trip Date</th><th>Requester</th><th>LR Numbers</th><th>LR Status</th><th>Route</th><th>Hire ₹</th><th>Exception ₹</th><th>Type</th><th>Status</th></tr></thead><tbody id="dash-tbody"></tbody></table></div>
       </div>
     </div>
 
@@ -295,7 +302,7 @@ code{font-family:'DM Mono',monospace;}
                 <input type="number" step="0.01" class="form-control" id="f-weight" placeholder="e.g. 2000" oninput="recalcRouteAmount()"/>
                 <small class="text-muted" style="font-size:10.5px" id="weight-ton-hint"></small>
               </div>
-              <div class="col-md-5 col-12" id="route-select-wrap"><label class="lbl">Route <small class="text-muted fw-normal">(optional — auto-fills From/To, Vehicle Type, Load Type &amp; Hire Amount)</small></label><select id="f-routeSelect" placeholder="Search route…"></select>
+              <div class="col-md-5 col-12" id="route-select-wrap"><label class="lbl">Route <small class="text-muted fw-normal">(optional — auto-fills Vehicle Type, Load Type &amp; Hire Amount; From/To are always typed manually)</small></label><select id="f-routeSelect" placeholder="Search route…"></select>
                 <div id="route-desc-box" style="display:none;margin-top:6px;background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:8px;padding:8px 11px;font-size:11.5px;color:#1e40af">
                   <div id="route-basis-tag" style="font-weight:700;margin-bottom:2px"></div>
                   <div><strong>Desc:</strong> <span id="route-desc-text">—</span></div>
@@ -318,6 +325,11 @@ code{font-family:'DM Mono',monospace;}
               <div class="col-md-3 col-6"><label class="lbl">Exception Amount (₹) <small class="text-muted fw-normal">(extra, if any)</small></label><input type="number" step="0.01" class="form-control" id="f-exceptionAmount" value="0" oninput="calcPay();toggleExceptionReason()"/></div>
               <div class="col-md-3 col-6" id="payable-wrap" style="display:none"><label class="lbl">Payable Amount (₹)<span class="approver-only ms-1">Admin</span></label><input type="number" class="form-control" id="f-payable" readonly placeholder="Auto-calculated"/></div>
               <div class="col-md-6 col-12" id="exception-reason-wrap" style="display:none"><label class="lbl">Exception Reason <small class="text-muted fw-normal">(why the extra amount)</small></label><input type="text" class="form-control" id="f-exceptionReason" placeholder="e.g. extra 1 tonne loaded"/></div>
+              <div class="col-md-6 col-12" id="exception-screenshot-wrap" style="display:none"><label class="lbl">Boss Approval Screenshot <small class="text-muted fw-normal">(mail approval, JPG/PNG/PDF, max 5MB)</small></label>
+                <div class="fz" id="fz-exceptionScreenshot" ondragover="dzOver(event,'fz-exceptionScreenshot')" ondragleave="dzLeave('fz-exceptionScreenshot')" ondrop="dzDrop(event,'fz-exceptionScreenshot','f-exceptionScreenshot')"><input type="file" id="f-exceptionScreenshot" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFile('f-exceptionScreenshot','fz-exceptionScreenshot','fp-exceptionScreenshot')"/><i class="bi bi-envelope-check fz-icon"></i><div class="fz-lbl">Upload approval mail screenshot</div><div class="fz-sub">PDF · JPG · PNG · WEBP ≤ 5 MB — attach if you already have the boss's mail approval</div></div>
+                <div class="f-err" id="fe-exceptionScreenshot"></div><div class="fp" id="fp-exceptionScreenshot"></div>
+              </div>
+              <div class="col-12" id="exception-warn-wrap" style="display:none"><div class="warn-alert"><i class="bi bi-exclamation-triangle-fill"></i><span>This request has an Exception Amount, so it will be routed to a separate <strong>Exception Approval</strong> queue for the Approver before it can be paid. If you don't have the approval screenshot yet, you can attach it later from the request's detail view.</span></div></div>
             </div>
             <!-- WEIGHMENT -->
             <div class="fsec"><i class="bi bi-clipboard-data"></i>Weighment &amp; Remarks</div>
@@ -347,33 +359,39 @@ code{font-family:'DM Mono',monospace;}
         <input type="text" class="form-control" id="srch" placeholder="🔍  Search ID, LR, name, route, LR status…" style="width:260px" oninput="loadRequests()"/>
         <select class="form-select" id="flt-status" style="width:135px" onchange="loadRequests()"><option value="All">All Status</option><option>Pending</option><option>Approved</option><option>Paid</option><option>Rejected</option></select>
         <select class="form-select" id="flt-type" style="width:135px" onchange="loadRequests()"><option value="All">All Types</option><option>Full</option><option>Advance</option><option>POD</option></select>
-        <select class="form-select" id="flt-lrstatus" style="width:145px" onchange="loadRequests()"><option value="All">All LR Status</option><option>Available</option><option>Not Available</option></select>
+        <select class="form-select" id="flt-lrstatus" style="width:200px" onchange="loadRequests()"><option value="All">All LR Status</option><option value="Available in the Console">Available in the Console</option><option value="Not Available in the Console">Not Available in the Console</option><option value="LR Not Created">LR Not Created</option><option value="Cancelled LR">Cancelled LR</option></select>
         <button class="btn btn-outline-primary btn-sm" onclick="loadRequests()"><i class="bi bi-arrow-clockwise"></i></button>
         <button class="btn btn-outline-secondary btn-sm ms-auto" onclick="exportCSV()"><i class="bi bi-download me-1"></i>Export CSV</button>
       </div>
       <div class="panel"><div class="tbl-wrap"><table class="dt" id="req-table"><thead id="req-thead"></thead><tbody id="req-tbody"></tbody></table></div></div>
     </div>
 
+    <!-- EXCEPTION APPROVALS -->
+    <div id="page-exceptions" class="page">
+      <div class="info-alert"><i class="bi bi-info-circle-fill"></i><span>Requests with a non-zero <strong>Exception Amount</strong> land here first. Approve or reject the exception before the request can move to Paid.</span></div>
+      <div class="fbar">
+        <select class="form-select" id="exc-flt-status" style="width:170px" onchange="loadExceptions()"><option value="Pending">Pending Exceptions</option><option value="Approved">Approved Exceptions</option><option value="Rejected">Rejected Exceptions</option><option value="All">All Exceptions</option></select>
+        <button class="btn btn-outline-primary btn-sm" onclick="loadExceptions()"><i class="bi bi-arrow-clockwise"></i></button>
+      </div>
+      <div class="panel"><div class="tbl-wrap"><table class="dt">
+        <thead><tr><th>Ref ID</th><th>Trip Date</th><th>Requester</th><th>Route</th><th>Hire ₹</th><th>Exception ₹</th><th>Reason</th><th>Approval Screenshot</th><th>Exception Status</th><th>Actions</th></tr></thead>
+        <tbody id="exc-tbody"></tbody>
+      </table></div></div>
+    </div>
+
     <!-- VENDORS -->
     <div id="page-vendors" class="page">
-      <!-- Tabs -->
-      <ul class="nav nav-tabs mb-3" id="vend-tabs">
-        <li class="nav-item"><a class="nav-link active" href="#" onclick="switchVendTab('list',this)" style="font-size:13px"><i class="bi bi-people me-1"></i>Vendor List</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" onclick="switchVendTab('bulk',this)" style="font-size:13px"><i class="bi bi-file-earmark-excel me-1"></i>Bulk Upload</a></li>
-      </ul>
-
-      <!-- VENDOR LIST TAB -->
+      <!-- VENDOR LIST -->
       <div id="vend-tab-list">
         <div class="fbar">
           <input type="text" class="form-control" id="vend-srch" placeholder="🔍  Search name, Vendor ID, IFSC…" style="width:260px" oninput="filterVendors()"/>
-          <button class="btn btn-outline-secondary btn-sm" onclick="downloadVendorTemplate()"><i class="bi bi-download me-1"></i>Template</button>
           <button class="btn btn-outline-success btn-sm" onclick="exportVendors()"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export</button>
           <button class="btn btn-primary btn-sm ms-auto" onclick="openVendorModal(null)"><i class="bi bi-plus me-1"></i>Add Vendor</button>
         </div>
         <!-- Vendor ID info card -->
         <div style="background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:var(--r);padding:10px 16px;margin-bottom:14px;font-size:12px;color:#1e40af;display:flex;align-items:center;gap:10px">
           <i class="bi bi-info-circle-fill" style="font-size:15px;flex-shrink:0"></i>
-          <span>Each vendor is assigned a unique <strong>Vendor ID</strong> (format <code>VND-001</code>). Use this ID in the Bulk Upload template instead of filling transport/bank details manually.</span>
+          <span>Each vendor is assigned a unique <strong>Vendor ID</strong> (format <code>VND-001</code>).</span>
         </div>
         <div class="panel">
           <div class="tbl-wrap">
@@ -384,58 +402,15 @@ code{font-family:'DM Mono',monospace;}
           </div>
         </div>
       </div>
-
-      <!-- VENDOR BULK UPLOAD TAB -->
-      <div id="vend-tab-bulk" style="display:none">
-        <div class="row mb-4">
-          <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get Excel template for vendor bulk upload</span></div></div></div>
-          <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill Vendor Details</strong><br><span class="text-muted" style="font-size:12px">Name, Bank, Account No, IFSC, Mobile</span></div></div></div>
-          <div class="col-md-4"><div class="bs-step"><div class="bs-num">3</div><div><strong style="font-size:13px">Upload &amp; Save</strong><br><span class="text-muted" style="font-size:12px">Vendor IDs auto-generated on save</span></div></div></div>
-        </div>
-        <div class="d-flex gap-2 mb-3">
-          <button class="btn btn-outline-secondary btn-sm" onclick="downloadVendorTemplate()"><i class="bi bi-download me-1"></i>Download Template</button>
-          <span class="text-muted small align-self-center">Fill the template and upload below. Duplicate account numbers are detected automatically.</span>
-        </div>
-        <div class="bulk-drop" id="vend-bulk-drop" onclick="document.getElementById('vend-bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleVendBulkDrop(event)">
-          <i class="bi bi-cloud-upload"></i>
-          <div style="font-size:14px;font-weight:700;color:#374151">Drop Vendor Excel / CSV file here</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:5px">.xlsx · .xls · .csv supported</div>
-          <input type="file" id="vend-bulk-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleVendBulkSelect(event)"/>
-        </div>
-        <div id="vend-bulk-result" style="display:none;margin-top:22px">
-          <div id="vend-bulk-summary" class="d-flex align-items-center gap-3 mb-3 p-3" style="background:var(--light);border-radius:var(--r);border:1px solid var(--border)"></div>
-          <div class="panel mb-3">
-            <div class="panel-head"><h3>Preview</h3><span id="vend-bulk-rowct" class="text-muted small"></span></div>
-            <div class="tbl-wrap" style="max-height:320px;overflow-y:auto">
-              <table class="dt" style="font-size:11px">
-                <thead><tr><th>Row</th><th>Account Holder</th><th>Bank</th><th>Account No</th><th>IFSC</th><th>Mobile</th><th>Issues</th></tr></thead>
-                <tbody id="vend-bulk-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="d-flex gap-2 align-items-center flex-wrap">
-            <button class="btn btn-primary" id="vend-bulk-submit-btn" onclick="submitVendBulk()" disabled><i class="bi bi-upload me-2"></i>Save Valid Vendors</button>
-            <button class="btn btn-outline-secondary" onclick="clearVendBulk()"><i class="bi bi-x-circle me-1"></i>Clear</button>
-            <span id="vend-bulk-msg" class="ms-2 small text-muted"></span>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- ROUTES -->
     <div id="page-routes" class="page">
       <div class="info-alert"><i class="bi bi-info-circle-fill"></i><span>The <strong>Route</strong> dropdown on New Request pulls <strong>only</strong> from this table — add or edit routes here and they appear there immediately.</span></div>
-      <ul class="nav nav-tabs mb-3" id="route-tabs">
-        <li class="nav-item"><a class="nav-link active" href="#" onclick="switchRouteTab('list',this)" style="font-size:13px"><i class="bi bi-signpost-split me-1"></i>Route List</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" onclick="switchRouteTab('bulk',this)" style="font-size:13px"><i class="bi bi-file-earmark-excel me-1"></i>Bulk Upload</a></li>
-      </ul>
-
-      <!-- ROUTE LIST TAB -->
       <div id="route-tab-list">
         <div class="fbar">
           <input type="text" class="form-control" id="route-srch" placeholder="🔍  Search route, load, vehicle type…" style="width:280px" oninput="filterRoutes()"/>
           <select class="form-select" id="route-flt-basis" style="width:150px" onchange="filterRoutes()"><option value="All">All Basis</option><option>Trip Basis</option><option>Weight Basis</option></select>
-          <button class="btn btn-outline-secondary btn-sm" onclick="downloadRouteTemplate()"><i class="bi bi-download me-1"></i>Template</button>
           <button class="btn btn-outline-success btn-sm" onclick="exportRoutes()"><i class="bi bi-file-earmark-arrow-down me-1"></i>Export</button>
           <button class="btn btn-primary btn-sm ms-auto" onclick="openRouteModal(null)"><i class="bi bi-plus me-1"></i>Add Route</button>
         </div>
@@ -445,42 +420,6 @@ code{font-family:'DM Mono',monospace;}
               <thead><tr><th>Route</th><th>From</th><th>To</th><th>Load</th><th>Basis</th><th>Vehicle Type</th><th>Rate</th><th>Min Tons</th><th>Desc</th><th>Active</th><th>Actions</th></tr></thead>
               <tbody id="route-tbody"></tbody>
             </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ROUTE BULK UPLOAD TAB -->
-      <div id="route-tab-bulk" style="display:none">
-        <div class="row mb-4">
-          <div class="col-md-4"><div class="bs-step"><div class="bs-num">1</div><div><strong style="font-size:13px">Download Template</strong><br><span class="text-muted" style="font-size:12px">Get Excel template matching Hire_quotation.xlsx columns</span></div></div></div>
-          <div class="col-md-4"><div class="bs-step"><div class="bs-num">2</div><div><strong style="font-size:13px">Fill Route Details</strong><br><span class="text-muted" style="font-size:12px">Route, Load, Based On, Vehicle Type, Cost, Remarks</span></div></div></div>
-          <div class="col-md-4"><div class="bs-step"><div class="bs-num">3</div><div><strong style="font-size:13px">Upload &amp; Save</strong><br><span class="text-muted" style="font-size:12px">Rows are validated before saving</span></div></div></div>
-        </div>
-        <div class="d-flex gap-2 mb-3">
-          <button class="btn btn-outline-secondary btn-sm" onclick="downloadRouteTemplate()"><i class="bi bi-download me-1"></i>Download Template</button>
-          <span class="text-muted small align-self-center">For Weight Basis rows, enter Cost as a plain number (e.g. 1800) — it's treated as ₹ per Ton.</span>
-        </div>
-        <div class="bulk-drop" id="route-bulk-drop" onclick="document.getElementById('route-bulk-file').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleRouteBulkDrop(event)">
-          <i class="bi bi-cloud-upload"></i>
-          <div style="font-size:14px;font-weight:700;color:#374151">Drop Route Excel / CSV file here</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:5px">.xlsx · .xls · .csv supported</div>
-          <input type="file" id="route-bulk-file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleRouteBulkSelect(event)"/>
-        </div>
-        <div id="route-bulk-result" style="display:none;margin-top:22px">
-          <div id="route-bulk-summary" class="d-flex align-items-center gap-3 mb-3 p-3" style="background:var(--light);border-radius:var(--r);border:1px solid var(--border)"></div>
-          <div class="panel mb-3">
-            <div class="panel-head"><h3>Preview</h3><span id="route-bulk-rowct" class="text-muted small"></span></div>
-            <div class="tbl-wrap" style="max-height:320px;overflow-y:auto">
-              <table class="dt" style="font-size:11px">
-                <thead><tr><th>Row</th><th>Route</th><th>Load</th><th>Basis</th><th>Vehicle Type</th><th>Rate</th><th>Issues</th></tr></thead>
-                <tbody id="route-bulk-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="d-flex gap-2 align-items-center flex-wrap">
-            <button class="btn btn-primary" id="route-bulk-submit-btn" onclick="submitRouteBulk()" disabled><i class="bi bi-upload me-2"></i>Save Valid Routes</button>
-            <button class="btn btn-outline-secondary" onclick="clearRouteBulk()"><i class="bi bi-x-circle me-1"></i>Clear</button>
-            <span id="route-bulk-msg" class="ms-2 small text-muted"></span>
           </div>
         </div>
       </div>
@@ -627,9 +566,11 @@ function getDemoRoutes(){
    PERMISSIONS HELPER
    ============================================== */
 function canEditRequest(r) {
+  // Controls the general fields: Hire/Halting/Exception Amount, Exception Reason, Remarks.
+  // LR Status & Payable Amount are Approver-only, and Payment UTR & Request Status are
+  // Finance-only — those are gated separately in openReqModal()/saveReqEdit().
   if (!r) return false;
   if (CU.role === 'Approver') return true;
-  if (CU.role === 'Finance') return true; // finance edits specific fields
   if (CU.role === 'User') {
     const isOwn = String(r.requester_id) === String(CU.id) || r.submitted_by === CU.email;
     if (!isOwn) return false;
@@ -713,7 +654,7 @@ function doLogout(){localStorage.removeItem('hire_cu');CU=null;REQ_DATA=[];VEND_
 async function bootApp(){
   hide('loader');document.getElementById('app').style.display='flex';
   el('user-name').textContent=CU.name;el('user-role').textContent=CU.role;el('role-badge').textContent=CU.role.toUpperCase();el('user-av').textContent=CU.name.charAt(0).toUpperCase();
-  if(CU.role==='Approver'){el('nav-users').style.display='flex';el('nav-roles').style.display='flex';}
+  if(CU.role==='Approver'){el('nav-users').style.display='flex';el('nav-roles').style.display='flex';el('nav-exceptions').style.display='flex';}
   const cb=el('conn-badge');
   if(IS_DEMO){cb.style.background='#fef3c7';cb.style.color='#92400e';cb.innerHTML='<i class="bi bi-lightning-fill"></i> Demo Mode';}
   else{cb.style.background='#d1fae5';cb.style.color='#065f46';cb.innerHTML='<i class="bi bi-circle-fill" style="font-size:8px"></i> Live Database';}
@@ -729,10 +670,10 @@ function goto(page,nav){
   if(nav)nav.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   el('page-'+page).classList.add('active');
-  const titles={dashboard:'Dashboard',newreq:'New Hire Request',requests:'All Requests',vendors:'Vendors',routes:'Routes',users:'Users',userroles:'User Roles'};
+  const titles={dashboard:'Dashboard',newreq:'New Hire Request',requests:'All Requests',exceptions:'Exception Approvals',vendors:'Vendors',routes:'Routes',users:'Users',userroles:'User Roles'};
   el('page-title').textContent=titles[page]||page;closeSidebar();
-  if(page==='requests')loadRequests();if(page==='vendors'){loadVendors();switchVendTab('list',document.querySelector('#vend-tabs .nav-link'));}if(page==='routes'){loadRoutesPage();switchRouteTab('list',document.querySelector('#route-tabs .nav-link'));}if(page==='users')loadUsersPage();
-  if(page==='userroles')loadRolesPage();if(page==='dashboard')loadDashboard();if(page==='newreq')_refreshSubmittedAt();
+  if(page==='requests')loadRequests();if(page==='exceptions')loadExceptions();if(page==='vendors')loadVendors();if(page==='routes')loadRoutesPage();if(page==='users')loadUsersPage();
+  if(page==='userroles')loadRolesPage();if(page==='dashboard')loadDashboard();if(page==='newreq'){_refreshSubmittedAt();refreshRoutesEverywhere();}
 }
 function openSidebar(){el('sidebar').classList.add('open');el('mob-ov').classList.add('show');}
 function closeSidebar(){el('sidebar').classList.remove('open');el('mob-ov').classList.remove('show');}
@@ -755,8 +696,13 @@ async function loadRoutes(){
   try{
     const{data,error}=await sb.from('routes').select('*').eq('is_active',true).order('route_name');
     if(error)throw error;
-    ROUTES_DATA=(data&&data.length)?data:getDemoRoutes();
-  }catch(e){console.warn('Route load failed, using fallback list:',e.message);ROUTES_DATA=getDemoRoutes();}
+    ROUTES_DATA=data||[];
+    if(!ROUTES_DATA.length)toast('No active routes found — add routes or use Custom/other route','warn');
+  }catch(e){
+    console.warn('Route load failed:',e.message);
+    ROUTES_DATA=[];
+    toast('Could not load routes: '+e.message,'error');
+  }
 }
 
 /* ---- Load Type dropdown, sourced from distinct routes.load_category ---- */
@@ -872,8 +818,7 @@ function fillRoute(id){
   selectedRoute=ROUTES_DATA.find(r=>String(r.id)===String(id));
   if(!selectedRoute)return;
 
-  gset('f-from',selectedRoute.from_location);
-  gset('f-to',selectedRoute.to_location);
+  // From/To are always free text — never auto-filled from the route, user types them manually
 
   // Auto-fill Load Type & Vehicle Type straight from the routes table
   if(el('f-loadType')&&selectedRoute.load_category)gset('f-loadType',selectedRoute.load_category);
@@ -914,6 +859,8 @@ function recalcRouteAmount(){
 function toggleExceptionReason(){
   const amt=parseFloat(gv('f-exceptionAmount'))||0;
   el('exception-reason-wrap').style.display = amt!==0 ? 'block' : 'none';
+  el('exception-screenshot-wrap').style.display = amt!==0 ? 'block' : 'none';
+  el('exception-warn-wrap').style.display = amt!==0 ? 'block' : 'none';
 }
 
 function setupNewReqForm(){
@@ -970,6 +917,13 @@ async function verifyLRList(lrList,reqType){
    ============================================== */
 async function submitReq(evt){
   evt.preventDefault();
+  // Native "required" validation is disabled (form has novalidate), so check manually.
+  if(!gv('f-tripDate'))return toast('Please select the Trip Date','error');
+  if(!gv('f-transport').trim())return toast('Please enter/select the Transport Name','error');
+  if(!gv('f-vehicleNo').trim())return toast('Please enter the Vehicle No','error');
+  if(!gv('f-from').trim())return toast('Please enter the From location','error');
+  if(!gv('f-to').trim())return toast('Please enter the To location','error');
+  if(!(parseFloat(gv('f-hireAmount'))>0))return toast('Please enter a valid Hire Amount','error');
   let requesterId,requesterName;
   if(CU.role==='Approver'){requesterId=tsRequester?tsRequester.getValue():'';if(!requesterId)return toast('Please select a requester','error');const u=USER_DATA.find(x=>String(x.id)===String(requesterId));requesterName=u?u.name:'';}
   else{requesterId=CU.id;requesterName=CU.name;}
@@ -983,13 +937,15 @@ async function submitReq(evt){
   if(intraDups.length)return toast(`Duplicate LR(s): ${intraDups.join(', ')}`,'error');
   const reqType=gv('f-requestType');const checks=await verifyLRList(lrList,reqType);const blocked=checks.filter(r=>!r.ok);
   if(blocked.length){toast('LR Check Failed: '+blocked.map(r=>r.lr).join(', '),'error');el('lr-chk').innerHTML=`<span style="color:var(--red)"><i class="bi bi-x-circle-fill me-1"></i>${blocked.map(r=>`${r.lr}: ${r.msg}`).join(' | ')}</span>`;return;}
-  const[docFile,wwlFile,wwoFile]=await Promise.all([readBase64('f-document'),readBase64('f-weighmentWithLoad'),readBase64('f-weighmentWithoutLoad')]);
+  // Guard against a stale/deleted route being submitted (was previously only caught after a failed insert)
+  if(!(await validateSelectedRoute()))return;
+  const[docFile,wwlFile,wwoFile,excFile]=await Promise.all([readBase64('f-document'),readBase64('f-weighmentWithLoad'),readBase64('f-weighmentWithoutLoad'),readBase64('f-exceptionScreenshot')]);
   const hire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,exc=parseFloat(gv('f-exceptionAmount'))||0,payable=hire+halt+exc;
   _refreshSubmittedAt();const submittedAt=new Date().toISOString();
   const row={
-    trip_date:gv('f-tripDate'),submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,
+    trip_date:gv('f-tripDate')||null,submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,
     transport:gv('f-transport'),account_no:gv('f-accountNo'),ifsc_code:gv('f-ifscCode'),
-    lr_numbers:lrStr,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),
+    lr_numbers:lrStr,lr_status:null,load_type:loadType,vehicle_type:tsVehicle?tsVehicle.getValue():'',vehicle_no:gv('f-vehicleNo'),
     from_loc:gv('f-from'),to_loc:gv('f-to'),
     basis:currentBasis,route_id:selectedRoute?selectedRoute.id:null,
     hire_amount:hire,weight_kg:gv('f-weight')||null,weight_tons:gv('f-weight')?(parseFloat(gv('f-weight'))/1000):null,
@@ -998,20 +954,51 @@ async function submitReq(evt){
     weighment_without_load_file:wwoFile?.data||null,weighment_without_load_name:wwoFile?.name||null,
     remarks:gv('f-remarks'),halting_charges:halt,
     exception_amount:exc,exception_reason:exc!==0?gv('f-exceptionReason'):null,
-    payable_amount:payable,balance_amount:payable,paid_amount:0,
+    exception_status: exc!==0 ? 'Pending' : 'None',
+    exception_approval_file:excFile?.data||null,exception_approval_name:excFile?.name||null,
+    payable_amount:payable,balance_amount:payable,paid_amount:0,payment_utr:null,
     request_type:reqType,status:'Pending',submitted_by:CU.email
   };
   setBtnLoad('req-submit-btn',true,'Submitting…');
-  if(IS_DEMO){row.id='HR-'+String(Date.now()).slice(-5);REQ_DATA.unshift(row);toast(`Request submitted! ID: ${row.id}`,'success');setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');resetForm();loadDashboard();return;}
-  try{const{data,error}=await sb.from('hire_requests').insert(row).select().single();if(error)throw error;toast(`Request submitted! ID: ${data.id}`,'success');resetForm();loadDashboard();}catch(e){toast('Submit error: '+e.message,'error');}
+  if(IS_DEMO){row.id='HR-'+String(Date.now()).slice(-5);REQ_DATA.unshift(row);toast(`Request submitted! ID: ${row.id}`+(exc!==0?' — sent for Exception Approval':''),'success');setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');resetForm();loadDashboard();return;}
+  try{const{data,error}=await sb.from('hire_requests').insert(row).select().single();if(error)throw error;toast(`Request submitted! ID: ${data.id}`+(exc!==0?' — sent for Exception Approval':''),'success');resetForm();loadDashboard();}catch(e){
+    const isRouteFk = e.code==='23503' || (e.message&&/route/i.test(e.message)&&/foreign key|fkey|violat/i.test(e.message));
+    if(isRouteFk){
+      console.error('FK violation on route_id — selected route no longer exists in routes table. Attempted route_id:',row.route_id,'Full error:',e);
+      toast('Selected route is no longer valid — please reselect the route and resubmit','error');
+      if(tsRoute){tsRoute.clear();tsRoute.setValue('');}
+      selectedRoute=null;el('route-desc-box').style.display='none';
+      await loadRoutes();rebuildRouteTS();
+    }else{
+      toast('Submit error: '+e.message,'error');
+    }
+  }
   setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');
+}
+
+/* Verify the currently selected route still exists (and is active) right before submit,
+   so the user gets a clear warning immediately instead of a failed insert. */
+async function validateSelectedRoute(){
+  if(!selectedRoute||IS_DEMO)return true;
+  try{
+    const{data,error}=await sb.from('routes').select('id').eq('id',selectedRoute.id).eq('is_active',true).maybeSingle();
+    if(error)throw error;
+    if(!data){
+      toast('Selected route is no longer valid — please reselect the route and resubmit','error');
+      if(tsRoute){tsRoute.clear();tsRoute.setValue('');}
+      selectedRoute=null;el('route-desc-box').style.display='none';
+      await loadRoutes();rebuildRouteTS();
+      return false;
+    }
+    return true;
+  }catch(e){return true;} // don't block submission if the check itself fails — let the insert attempt proceed
 }
 
 function resetForm(){
   document.getElementById('req-form').reset();gset('f-haltingCharges','0');gset('f-exceptionAmount','0');gset('f-payable','');
   el('lr-tags').innerHTML='';el('lr-chk').innerHTML='';el('req-type-hint').innerHTML='';el('requester-info').className='ri-card';
-  el('exception-reason-wrap').style.display='none';
-  ['document','weighmentWithLoad','weighmentWithoutLoad'].forEach(k=>clearFile('f-'+k,'fz-'+k,'fp-'+k));
+  el('exception-reason-wrap').style.display='none';el('exception-screenshot-wrap').style.display='none';el('exception-warn-wrap').style.display='none';
+  ['document','weighmentWithLoad','weighmentWithoutLoad','exceptionScreenshot'].forEach(k=>clearFile('f-'+k,'fz-'+k,'fp-'+k));
   if(tsVendor){tsVendor.clear();tsVendor.setValue('');}if(tsRequester){tsRequester.clear();tsRequester.setValue('');}if(tsVehicle){tsVehicle.clear();tsVehicle.setValue('');}
   setBasis('Trip Basis');
   rebuildLoadTypeOptions();
@@ -1042,13 +1029,30 @@ function renderDashboard(data){
   const totalH=data.reduce((s,r)=>s+parseFloat(r.hire_amount||0),0),totalPd=data.reduce((s,r)=>s+parseFloat(r.paid_amount||0),0);
   const fmt=n=>'₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
 
+  // ---- Exception stats ----
+  const excRequests=data.filter(r=>parseFloat(r.exception_amount||0)!==0);
+  const excCount=excRequests.length;
+  const excPending=excRequests.filter(r=>(r.exception_status||'Pending')==='Pending').length;
+  const excTotalAmt=excRequests.reduce((s,r)=>s+parseFloat(r.exception_amount||0),0);
+  const excPct= total>0 ? ((excCount/total)*100).toFixed(1) : '0.0';
+
   el('stat-grid').innerHTML=`
     <div class="stat-card sc-blue"><div class="s-lbl">Total Requests</div><div class="s-val" style="color:var(--blue)">${total}</div><div class="s-sub">${CU.role==='User'?'Your requests':'All time'}</div></div>
     <div class="stat-card sc-yellow"><div class="s-lbl">Pending</div><div class="s-val" style="color:var(--yellow)">${pending}</div><div class="s-sub">Awaiting approval</div></div>
     <div class="stat-card sc-green"><div class="s-lbl">Approved</div><div class="s-val" style="color:var(--green)">${approved}</div><div class="s-sub">Ready for payment</div></div>
     <div class="stat-card sc-teal"><div class="s-lbl">Paid</div><div class="s-val" style="color:var(--teal)">${paid}</div><div class="s-sub">Settled</div></div>
     <div class="stat-card sc-blue"><div class="s-lbl">Total Hire Value</div><div class="s-val" style="color:var(--blue);font-size:20px">${fmt(totalH)}</div><div class="s-sub">Sum of hire amounts</div></div>
-    <div class="stat-card sc-green"><div class="s-lbl">Total Paid</div><div class="s-val" style="color:var(--green);font-size:20px">${fmt(totalPd)}</div><div class="s-sub">Amount disbursed</div></div>`;
+    <div class="stat-card sc-green"><div class="s-lbl">Total Paid</div><div class="s-val" style="color:var(--green);font-size:20px">${fmt(totalPd)}</div><div class="s-sub">Amount disbursed</div></div>
+    <div class="stat-card sc-red"><div class="s-lbl">Exception Requests</div><div class="s-val" style="color:var(--red)">${excCount}</div><div class="s-sub">${excPending} pending approval</div></div>
+    <div class="stat-card sc-purple"><div class="s-lbl">Exception % of Total</div><div class="s-val" style="color:var(--purple)">${excPct}%</div><div class="s-sub">${excCount} of ${total} requests</div></div>
+    <div class="stat-card sc-red"><div class="s-lbl">Exception Amount</div><div class="s-val" style="color:var(--red);font-size:20px">${fmt(excTotalAmt)}</div><div class="s-sub">Total exception value</div></div>`;
+
+  // update sidebar badge for pending exceptions (Approver only)
+  const badge=el('exc-nav-badge');
+  if(badge){
+    if(CU.role==='Approver' && excPending>0){badge.style.display='inline-block';badge.textContent=excPending;}
+    else{badge.style.display='none';}
+  }
 
   const recent=data.slice(0,8);
   el('dash-tbody').innerHTML=recent.length?recent.map(r=>`
@@ -1060,13 +1064,30 @@ function renderDashboard(data){
       <td>${lrStatusBadge(r)}</td>
       <td style="max-width:180px;white-space:normal">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td>
       <td>₹${Number(r.hire_amount||0).toLocaleString('en-IN')}</td>
+      <td>${parseFloat(r.exception_amount||0)!==0?`₹${Number(r.exception_amount).toLocaleString('en-IN')} ${excStatusBadge(r)}`:'—'}</td>
       <td><span class="bt bt-${(r.request_type||'').toLowerCase()}">${esc(r.request_type||'')}</span></td>
       <td>${statusBadge(r.status)}</td>
-    </tr>`).join(''):`<tr><td colspan="9"><div class="empty-st"><i class="bi bi-inbox"></i><p>No requests yet</p></div></td></tr>`;
+    </tr>`).join(''):`<tr><td colspan="10"><div class="empty-st"><i class="bi bi-inbox"></i><p>No requests yet</p></div></td></tr>`;
 }
 
 function statusBadge(s){const m={Pending:'bs-pending',Approved:'bs-approved',Paid:'bs-paid',Rejected:'bs-rejected'};return `<span class="bs ${m[s]||'bs-pending'}">${esc(s||'')}</span>`;}
-function lrStatusBadge(r){const ok=r.lr_status!=='Not Available';return `<span class="bs ${ok?'bs-available':'bs-unavailable'}">${ok?'Available':'Not Available'}</span>`;}
+function excStatusBadge(r){
+  const st=r.exception_status||(parseFloat(r.exception_amount||0)!==0?'Pending':'None');
+  const m={Pending:'bs-exc-pending',Approved:'bs-exc-approved',Rejected:'bs-exc-rejected',None:'bs-exc-none'};
+  return `<span class="bs ${m[st]||'bs-exc-pending'}" style="font-size:9.5px;padding:2px 7px">${esc(st)}</span>`;
+}
+const LR_STATUS_OPTIONS=['Available in the Console','Not Available in the Console','LR Not Created','Cancelled LR'];
+function lrStatusBadge(r){
+  const map={
+    'Available in the Console':'bs-lr-avail',
+    'Not Available in the Console':'bs-lr-notavail',
+    'LR Not Created':'bs-lr-notcreated',
+    'Cancelled LR':'bs-lr-cancelled'
+  };
+  const st=r.lr_status;
+  if(!st)return `<span class="bs bs-pending">Not Set</span>`;
+  return `<span class="bs ${map[st]||'bs-pending'}">${esc(st)}</span>`;
+}
 function lrBadges(lrStr){if(!lrStr)return '—';return parseLR(lrStr).map(lr=>`<span class="badge-lr">${esc(lr)}</span>`).join('');}
 function fmtDate(d){if(!d)return '—';const dt=new Date(d);return isNaN(dt)?d:dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 
@@ -1076,8 +1097,8 @@ function fmtDate(d){if(!d)return '—';const dt=new Date(d);return isNaN(dt)?d:d
 function buildRequestsTableHeader(){
   el('req-thead').innerHTML=`<tr>
     <th>Ref ID</th><th>Trip Date</th><th>Requester</th><th>Transport</th><th>LR Numbers</th><th>LR Status</th>
-    <th>Route</th><th>Basis</th><th>Hire ₹</th><th>Halting ₹</th><th>Exception ₹</th><th>Payable ₹</th>
-    <th>Type</th><th>Status</th><th>Actions</th>
+    <th>Route</th><th>Basis</th><th>Hire ₹</th><th>Halting ₹</th><th>Exception ₹</th><th>Exc. Status</th><th>Payable ₹</th>
+    <th>Payment UTR</th><th>Type</th><th>Status</th>
   </tr>`;
 }
 
@@ -1095,16 +1116,16 @@ async function loadRequests(){
   const filtered=data.filter(r=>{
     if(fStatus!=='All'&&r.status!==fStatus)return false;
     if(fType!=='All'&&r.request_type!==fType)return false;
-    if(fLr!=='All'){const isAvail=r.lr_status!=='Not Available';if(fLr==='Available'&&!isAvail)return false;if(fLr==='Not Available'&&isAvail)return false;}
+    if(fLr!=='All'&&(r.lr_status||'')!==fLr)return false;
     if(srch){
-      const hay=[r.id,r.lr_numbers,r.requester_name,r.from_loc,r.to_loc,r.transport,r.lr_status].filter(Boolean).join(' ').toLowerCase();
+      const hay=[r.id,r.lr_numbers,r.requester_name,r.from_loc,r.to_loc,r.transport,r.lr_status,r.payment_utr].filter(Boolean).join(' ').toLowerCase();
       if(!hay.includes(srch))return false;
     }
     return true;
   });
   el('req-tbody').innerHTML=filtered.length?filtered.map(r=>`
-    <tr>
-      <td><code>${r.id}</code></td>
+    <tr style="cursor:pointer" onclick="openReqModal('${r.id}')" title="Click to view / edit this request">
+      <td><a href="javascript:void(0)" class="req-id-link" onclick="event.stopPropagation();openReqModal('${r.id}')">${r.id}</a></td>
       <td>${fmtDate(r.trip_date)}</td>
       <td>${esc(r.requester_name||'')}</td>
       <td>${esc(r.transport||'')}</td>
@@ -1115,19 +1136,99 @@ async function loadRequests(){
       <td>₹${Number(r.hire_amount||0).toLocaleString('en-IN')}</td>
       <td>₹${Number(r.halting_charges||0).toLocaleString('en-IN')}</td>
       <td>₹${Number(r.exception_amount||0).toLocaleString('en-IN')}</td>
+      <td>${excStatusBadge(r)}</td>
       <td><strong>₹${Number(r.payable_amount||0).toLocaleString('en-IN')}</strong></td>
+      <td>${esc(r.payment_utr||'—')}</td>
       <td><span class="bt bt-${(r.request_type||'').toLowerCase()}">${esc(r.request_type||'')}</span></td>
       <td>${statusBadge(r.status)}</td>
-      <td><button class="bsi" onclick="openReqModal('${r.id}')" title="View / Edit"><i class="bi bi-eye"></i></button></td>
-    </tr>`).join(''):`<tr><td colspan="15"><div class="empty-st"><i class="bi bi-inbox"></i><p>No matching requests</p></div></td></tr>`;
+    </tr>`).join(''):`<tr><td colspan="16"><div class="empty-st"><i class="bi bi-inbox"></i><p>No matching requests</p></div></td></tr>`;
 }
 
 function exportCSV(){
   if(!REQ_DATA.length)return toast('Nothing to export','warn');
-  const cols=['id','trip_date','requester_name','transport','lr_numbers','from_loc','to_loc','basis','hire_amount','halting_charges','exception_amount','payable_amount','request_type','status'];
+  const cols=['id','trip_date','requester_name','transport','lr_numbers','lr_status','from_loc','to_loc','basis','hire_amount','halting_charges','exception_amount','exception_status','payable_amount','payment_utr','request_type','status'];
   const rows=[cols.join(',')].concat(REQ_DATA.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(',')));
   const blob=new Blob([rows.join('\n')],{type:'text/csv'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hire_requests.csv';a.click();
+}
+
+/* ==============================================
+   EXCEPTION APPROVALS
+   ============================================== */
+async function loadExceptions(){
+  let data=REQ_DATA;
+  if(!IS_DEMO){
+    try{
+      const{data:d,error}=await sb.from('hire_requests').select('*').order('created_at',{ascending:false});
+      if(error)throw error;data=d||[];REQ_DATA=data;
+    }catch(e){toast('Load exceptions error: '+e.message,'error');return;}
+  }
+  const fStatus=gv('exc-flt-status')||'Pending';
+  const excOnly=data.filter(r=>parseFloat(r.exception_amount||0)!==0);
+  const filtered=excOnly.filter(r=>{
+    const st=r.exception_status||'Pending';
+    if(fStatus==='All')return true;
+    return st===fStatus;
+  });
+  el('exc-tbody').innerHTML=filtered.length?filtered.map(r=>{
+    const st=r.exception_status||'Pending';
+    const canAct = CU.role==='Approver' && st==='Pending';
+    return `<tr>
+      <td><code>${r.id}</code></td>
+      <td>${fmtDate(r.trip_date)}</td>
+      <td>${esc(r.requester_name||'')}</td>
+      <td style="max-width:180px;white-space:normal">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td>
+      <td>₹${Number(r.hire_amount||0).toLocaleString('en-IN')}</td>
+      <td><strong style="color:var(--red)">₹${Number(r.exception_amount||0).toLocaleString('en-IN')}</strong></td>
+      <td style="max-width:200px;white-space:normal;font-size:11.5px">${esc(r.exception_reason||'—')}</td>
+      <td>${excScreenshotCell(r)}</td>
+      <td>${excStatusBadge(r)}</td>
+      <td>
+        ${canAct?`<button class="bsi" style="color:var(--green);border-color:#a7f3d0" onclick="decideException('${r.id}','Approved')" title="Approve"><i class="bi bi-check-lg"></i></button>
+        <button class="bsi del" onclick="decideException('${r.id}','Rejected')" title="Reject"><i class="bi bi-x-lg"></i></button>`
+        :`<button class="bsi" onclick="openReqModal('${r.id}')" title="View"><i class="bi bi-eye"></i></button>`}
+      </td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="10"><div class="empty-st"><i class="bi bi-check2-circle"></i><p>No exception requests in this filter</p></div></td></tr>`;
+}
+function excScreenshotCell(r){
+  if(!r.exception_approval_file)return `<span class="bs bs-rejected"><i class="bi bi-exclamation-triangle-fill"></i>None</span>`;
+  const isImg=/^data:image\//.test(r.exception_approval_file);
+  return `<a href="javascript:void(0)" onclick="viewExcScreenshot('${r.id}')" title="${esc(r.exception_approval_name||'View screenshot')}">
+    ${isImg?`<img src="${r.exception_approval_file}" style="width:44px;height:32px;object-fit:cover;border-radius:5px;border:1px solid var(--border)">`
+    :`<span class="bs bs-approved"><i class="bi bi-file-earmark-pdf-fill"></i>View</span>`}
+  </a>`;
+}
+function viewExcScreenshot(id){
+  const r=REQ_DATA.find(x=>String(x.id)===String(id));if(!r||!r.exception_approval_file)return;
+  const w=window.open('');
+  if(!w){toast('Please allow popups to view the screenshot','warn');return;}
+  const isImg=/^data:image\//.test(r.exception_approval_file);
+  w.document.write(isImg
+    ?`<title>${esc(r.exception_approval_name||'Approval Screenshot')}</title><body style="margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="${r.exception_approval_file}" style="max-width:100%;max-height:100vh"></body>`
+    :`<title>${esc(r.exception_approval_name||'Approval Document')}</title><body style="margin:0"><embed src="${r.exception_approval_file}" type="application/pdf" width="100%" height="100%" style="position:fixed;inset:0"></body>`);
+}
+
+async function decideException(id,decision){
+  if(CU.role!=='Approver')return toast('Only an Approver can decide on exceptions','error');
+  const r=REQ_DATA.find(x=>String(x.id)===String(id));
+  if(decision==='Approved' && !(r&&r.exception_approval_file)){
+    if(!confirm('No boss-approval screenshot is attached to this request yet. Approve anyway?'))return;
+  }else if(!confirm(`${decision==='Approved'?'Approve':'Reject'} this exception amount?`))return;
+  const patch={exception_status:decision};
+  if(r && decision==='Rejected'){
+    const hire=parseFloat(r.hire_amount||0),halt=parseFloat(r.halting_charges||0);
+    patch.payable_amount=hire+halt;
+    patch.balance_amount=hire+halt-parseFloat(r.paid_amount||0);
+  }
+  if(IS_DEMO){
+    if(r)Object.assign(r,patch);
+    toast(`Exception ${decision.toLowerCase()} (demo)`,'success');loadExceptions();loadDashboard();return;
+  }
+  try{
+    const{error}=await sb.from('hire_requests').update(patch).eq('id',id);if(error)throw error;
+    toast(`Exception ${decision.toLowerCase()}`,'success');await loadExceptions();loadDashboard();
+  }catch(e){toast('Update error: '+e.message,'error');}
 }
 
 /* ---- Request view / edit modal ---- */
@@ -1136,8 +1237,15 @@ function openReqModal(id){
   EDIT_ID=id;
   el('reqModal-title').textContent=`Request ${r.id}`;
   const canEdit=canEditRequest(r), canDel=canDeleteRequest(r);
+  const canEditLR=CU.role==='Approver';
+  const canEditPayable=CU.role==='Approver';
+  const canEditUTR=CU.role==='Finance';
+  const canEditStatus=CU.role==='Finance';
+  const canSaveAnything=canEdit||canEditLR||canEditPayable||canEditUTR||canEditStatus;
   el('reqModal-timer-wrap').innerHTML = (CU.role==='User'&&r.status==='Pending')
     ? `<span class="edit-timer ${withinEditWindow(r)?'':'expired'}"><i class="bi bi-clock-history"></i> ${fmtTimeRemaining(editWindowRemaining(r))}</span>` : '';
+  const hasExc=parseFloat(r.exception_amount||0)!==0;
+  const lrOptionsHtml=LR_STATUS_OPTIONS.map(o=>`<option value="${o}" ${r.lr_status===o?'selected':''}>${o}</option>`).join('');
   el('reqModal-body').innerHTML=`
     <div class="row g-3">
       <div class="col-md-4"><label class="lbl">Trip Date</label><input class="form-control" value="${fmtDate(r.trip_date)}" readonly></div>
@@ -1146,28 +1254,66 @@ function openReqModal(id){
       <div class="col-md-4"><label class="lbl">Route</label><input class="form-control" value="${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}" readonly></div>
       <div class="col-md-4"><label class="lbl">Basis</label><input class="form-control" value="${esc(r.basis||'')}" readonly></div>
       <div class="col-md-4"><label class="lbl">LR Numbers</label><input class="form-control" value="${esc(r.lr_numbers||'')}" readonly></div>
+      <div class="col-md-4"><label class="lbl">LR Status${canEditLR?' <span class="approver-only">Approver</span>':''}</label>
+        ${canEditLR?`<select class="form-select" id="edit-lrStatus"><option value="" ${!r.lr_status?'selected':''}>— Not set —</option>${lrOptionsHtml}</select>`
+        :`<div style="padding-top:6px">${lrStatusBadge(r)}</div>`}
+      </div>
       <div class="col-md-3"><label class="lbl">Hire Amount</label><input class="form-control" id="edit-hireAmount" value="${r.hire_amount||0}" ${canEdit?'':'readonly'}></div>
       <div class="col-md-3"><label class="lbl">Halting Charges</label><input class="form-control" id="edit-haltingCharges" value="${r.halting_charges||0}" ${canEdit?'':'readonly'}></div>
       <div class="col-md-3"><label class="lbl">Exception Amount</label><input class="form-control" id="edit-exceptionAmount" value="${r.exception_amount||0}" ${canEdit?'':'readonly'}></div>
-      <div class="col-md-3"><label class="lbl">Payable Amount</label><input class="form-control" value="${r.payable_amount||0}" readonly></div>
+      <div class="col-md-3"><label class="lbl">Payable Amount${canEditPayable?' <span class="approver-only">Approver</span>':''}</label><input class="form-control" id="edit-payable" value="${r.payable_amount||0}" ${canEditPayable?'':'readonly'}></div>
       <div class="col-md-6"><label class="lbl">Exception Reason</label><input class="form-control" id="edit-exceptionReason" value="${esc(r.exception_reason||'')}" ${canEdit?'':'readonly'}></div>
+      ${hasExc?`<div class="col-md-6"><label class="lbl">Exception Status</label><div style="padding-top:6px">${excStatusBadge(r)}</div></div>`:''}
+      ${hasExc?`<div class="col-md-6"><label class="lbl">Boss Approval Screenshot</label>
+        ${r.exception_approval_file?`<div class="mb-2">${excScreenshotCell(r)}</div>`:`<div class="text-muted small mb-2">Not attached yet</div>`}
+        ${canEdit?`<div class="fz" id="fz-editExcScreenshot" ondragover="dzOver(event,'fz-editExcScreenshot')" ondragleave="dzLeave('fz-editExcScreenshot')" ondrop="dzDrop(event,'fz-editExcScreenshot','edit-exceptionScreenshot')"><input type="file" id="edit-exceptionScreenshot" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFile('edit-exceptionScreenshot','fz-editExcScreenshot','fp-editExcScreenshot')"/><i class="bi bi-envelope-check fz-icon"></i><div class="fz-lbl">${r.exception_approval_file?'Replace with new screenshot':'Upload approval mail screenshot'}</div><div class="fz-sub">PDF · JPG · PNG · WEBP ≤ 5 MB</div></div>
+        <div class="f-err" id="fe-editExcScreenshot"></div><div class="fp" id="fp-editExcScreenshot"></div>`:''}
+      </div>`:''}
       <div class="col-md-6"><label class="lbl">Remarks</label><input class="form-control" id="edit-remarks" value="${esc(r.remarks||'')}" ${canEdit?'':'readonly'}></div>
-      <div class="col-md-4"><label class="lbl">Status</label>
-        ${CU.role==='Approver'?`<select class="form-select" id="edit-status"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Approved'?'selected':''}>Approved</option><option ${r.status==='Paid'?'selected':''}>Paid</option><option ${r.status==='Rejected'?'selected':''}>Rejected</option></select>`
+      <div class="col-md-4"><label class="lbl">Payment UTR Details${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
+        <input class="form-control" id="edit-utr" value="${esc(r.payment_utr||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'Enter UTR / transaction ref':'Not entered yet'}">
+      </div>
+      <div class="col-md-4"><label class="lbl">Status${canEditStatus?' <span class="finance-only">Finance</span>':''}</label>
+        ${canEditStatus?`<select class="form-select" id="edit-status"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Approved'?'selected':''}>Approved</option><option ${r.status==='Paid'?'selected':''}>Paid</option><option ${r.status==='Rejected'?'selected':''}>Rejected</option></select>`
         :`<input class="form-control" value="${esc(r.status||'')}" readonly>`}
       </div>
-    </div>`;
-  el('reqModal-save').style.display=canEdit?'inline-block':'none';
+    </div>
+    ${hasExc&&(r.exception_status||'Pending')==='Pending'?`<div class="warn-alert mt-3"><i class="bi bi-exclamation-triangle-fill"></i><span>This request has a pending Exception Amount. Go to <strong>Exception Approvals</strong> to approve or reject it before marking this request Paid.</span></div>`:''}`;
+  el('reqModal-save').style.display=canSaveAnything?'inline-block':'none';
   el('reqModal-delete').style.display=canDel?'inline-block':'none';
   new bootstrap.Modal(el('reqModal')).show();
 }
 
 async function saveReqEdit(){
   const r=REQ_DATA.find(x=>String(x.id)===String(EDIT_ID));if(!r)return;
-  const hire=parseFloat(gv('edit-hireAmount'))||0,halt=parseFloat(gv('edit-haltingCharges'))||0,exc=parseFloat(gv('edit-exceptionAmount'))||0;
-  const patch={hire_amount:hire,halting_charges:halt,exception_amount:exc,exception_reason:gv('edit-exceptionReason'),remarks:gv('edit-remarks'),payable_amount:hire+halt+exc};
-  if(CU.role==='Approver'&&el('edit-status'))patch.status=gv('edit-status');
-  if(IS_DEMO){Object.assign(r,patch);toast('Request updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadDashboard();return;}
+  const canEdit=canEditRequest(r);
+  const canEditLR=CU.role==='Approver';
+  const canEditPayable=CU.role==='Approver';
+  const canEditUTR=CU.role==='Finance';
+  const canEditStatus=CU.role==='Finance';
+  const patch={};
+  if(canEdit){
+    const hire=parseFloat(gv('edit-hireAmount'))||0,halt=parseFloat(gv('edit-haltingCharges'))||0,exc=parseFloat(gv('edit-exceptionAmount'))||0;
+    const prevExc=parseFloat(r.exception_amount||0);
+    Object.assign(patch,{hire_amount:hire,halting_charges:halt,exception_amount:exc,exception_reason:gv('edit-exceptionReason'),remarks:gv('edit-remarks')});
+    if(!canEditPayable)patch.payable_amount=hire+halt+exc; // auto-recompute unless the Approver is overriding it directly below
+    if(exc!==0 && prevExc===0){patch.exception_status='Pending';}
+    if(exc===0){patch.exception_status='None';}
+    if(el('edit-exceptionScreenshot')&&el('edit-exceptionScreenshot').files[0]){
+      const excFile=await readBase64('edit-exceptionScreenshot');
+      if(excFile){patch.exception_approval_file=excFile.data;patch.exception_approval_name=excFile.name;}
+    }
+  }
+  if(canEditLR&&el('edit-lrStatus'))patch.lr_status=gv('edit-lrStatus')||null;
+  if(canEditPayable&&el('edit-payable')){
+    const payable=parseFloat(gv('edit-payable'))||0;
+    patch.payable_amount=payable;
+    patch.balance_amount=payable-parseFloat(r.paid_amount||0);
+  }
+  if(canEditUTR&&el('edit-utr'))patch.payment_utr=gv('edit-utr');
+  if(canEditStatus&&el('edit-status'))patch.status=gv('edit-status');
+  if(!Object.keys(patch).length)return toast('Nothing to update','warn');
+  if(IS_DEMO){Object.assign(r,patch);toast('Request updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();return;}
   try{const{error}=await sb.from('hire_requests').update(patch).eq('id',EDIT_ID);if(error)throw error;toast('Request updated','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();}catch(e){toast('Update error: '+e.message,'error');}
 }
 
@@ -1195,12 +1341,6 @@ function filterVendors(){
       <td><button class="bsi" onclick="openVendorModal('${v.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
           <button class="bsi del" onclick="deleteVendor('${v.id}')" title="Delete"><i class="bi bi-trash"></i></button></td>
     </tr>`).join(''):`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-people"></i><p>No vendors found</p></div></td></tr>`;
-}
-function switchVendTab(tab,link){
-  document.querySelectorAll('#vend-tabs .nav-link').forEach(a=>a.classList.remove('active'));
-  if(link)link.classList.add('active');
-  el('vend-tab-list').style.display=tab==='list'?'block':'none';
-  el('vend-tab-bulk').style.display=tab==='bulk'?'block':'none';
 }
 function openVendorModal(id){
   const v=id?VEND_DATA.find(x=>String(x.id)===String(id)):null;
@@ -1239,55 +1379,10 @@ async function deleteVendor(id){
   if(IS_DEMO){VEND_DATA=VEND_DATA.filter(x=>String(x.id)!==String(id));filterVendors();return;}
   try{const{error}=await sb.from('hire_vendors').delete().eq('id',id);if(error)throw error;toast('Vendor deleted','success');await loadVendors();rebuildVendorTS();}catch(e){toast('Delete error: '+e.message,'error');}
 }
-function downloadVendorTemplate(){
-  const ws=XLSX.utils.aoa_to_sheet([['Account Holder Name','Bank Name','Account Number','IFSC Code','Mobile'],['Example Transport Co','HDFC Bank','50100123456','HDFC0001234','9876500000']]);
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Vendors');XLSX.writeFile(wb,'vendor_template.xlsx');
-}
 function exportVendors(){
   const ws=XLSX.utils.json_to_sheet(VEND_DATA.map(v=>({VendorID:v.vendor_code,Name:v.name,Bank:v.bank,AccountNo:v.acct,IFSC:v.ifsc_code,Mobile:v.mobile})));
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Vendors');XLSX.writeFile(wb,'vendors_export.xlsx');
 }
-let VEND_BULK_ROWS=[];
-function handleVendBulkDrop(e){e.preventDefault();e.currentTarget.classList.remove('drag');if(e.dataTransfer.files[0])parseVendBulkFile(e.dataTransfer.files[0]);}
-function handleVendBulkSelect(e){if(e.target.files[0])parseVendBulkFile(e.target.files[0]);}
-function parseVendBulkFile(file){
-  const reader=new FileReader();
-  reader.onload=(ev)=>{
-    const wb=XLSX.read(ev.target.result,{type:'binary'});
-    const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-    VEND_BULK_ROWS=rows.map((r,i)=>{
-      const name=r['Account Holder Name']||'',bank=r['Bank Name']||'',acct=String(r['Account Number']||''),ifsc=r['IFSC Code']||'',mobile=String(r['Mobile']||'');
-      const issues=[];
-      if(!name)issues.push('Missing name');if(!bank)issues.push('Missing bank');if(!acct)issues.push('Missing account no');if(!ifsc)issues.push('Missing IFSC');if(!mobile)issues.push('Missing mobile');
-      const dup=VEND_DATA.some(v=>v.acct===acct);if(dup)issues.push('Duplicate account no');
-      return{row:i+2,name,bank,acct,ifsc,mobile,issues,valid:issues.length===0};
-    });
-    renderVendBulkPreview();
-  };
-  reader.readAsBinaryString(file);
-}
-function renderVendBulkPreview(){
-  el('vend-bulk-result').style.display='block';
-  const valid=VEND_BULK_ROWS.filter(r=>r.valid).length;
-  el('vend-bulk-summary').innerHTML=`<i class="bi bi-info-circle-fill text-primary"></i><span>${VEND_BULK_ROWS.length} rows parsed — <strong>${valid} valid</strong>, ${VEND_BULK_ROWS.length-valid} with issues.</span>`;
-  el('vend-bulk-rowct').textContent=`${VEND_BULK_ROWS.length} rows`;
-  el('vend-bulk-tbody').innerHTML=VEND_BULK_ROWS.map(r=>`<tr><td>${r.row}</td><td>${esc(r.name)}</td><td>${esc(r.bank)}</td><td>${esc(r.acct)}</td><td>${esc(r.ifsc)}</td><td>${esc(r.mobile)}</td><td>${r.issues.length?`<span class="vr-err">${r.issues.join(', ')}</span>`:`<span class="vr-ok">OK</span>`}</td></tr>`).join('');
-  el('vend-bulk-submit-btn').disabled=valid===0;
-}
-async function submitVendBulk(){
-  const valid=VEND_BULK_ROWS.filter(r=>r.valid);
-  if(!valid.length)return;
-  setBtnLoad('vend-bulk-submit-btn',true,'Saving…');
-  const rows=valid.map(r=>({name:r.name,bank:r.bank,acct:r.acct,ifsc_code:r.ifsc,mobile:r.mobile}));
-  if(IS_DEMO){for(const row of rows){row.id=Date.now()+Math.random();row.vendor_code=await nextVendorCode();VEND_DATA.push(row);}toast(`${rows.length} vendors saved (demo)`,'success');clearVendBulk();filterVendors();rebuildVendorTS();setBtnLoad('vend-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Vendors');return;}
-  try{
-    for(const row of rows)row.vendor_code=await nextVendorCode();
-    const{error}=await sb.from('hire_vendors').insert(rows);if(error)throw error;
-    toast(`${rows.length} vendors saved`,'success');clearVendBulk();await loadVendors();rebuildVendorTS();
-  }catch(e){toast('Bulk save error: '+e.message,'error');}
-  setBtnLoad('vend-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Vendors');
-}
-function clearVendBulk(){VEND_BULK_ROWS=[];el('vend-bulk-result').style.display='none';el('vend-bulk-file').value='';el('vend-bulk-submit-btn').disabled=true;el('vend-bulk-msg').textContent='';}
 
 /* ==============================================
    ROUTES  (Setup > Routes — same table the New
@@ -1314,13 +1409,6 @@ function filterRoutes(){
           <button class="bsi del" onclick="deleteRoute('${r.id}')" title="Delete"><i class="bi bi-trash"></i></button></td>
     </tr>`).join(''):`<tr><td colspan="11"><div class="empty-st"><i class="bi bi-signpost-split"></i><p>No routes found</p></div></td></tr>`;
 }
-function switchRouteTab(tab,link){
-  document.querySelectorAll('#route-tabs .nav-link').forEach(a=>a.classList.remove('active'));
-  if(link)link.classList.add('active');
-  el('route-tab-list').style.display=tab==='list'?'block':'none';
-  el('route-tab-bulk').style.display=tab==='bulk'?'block':'none';
-}
-/* Refresh routes + every dropdown that depends on them (New Request page) */
 async function refreshRoutesEverywhere(){
   await loadRoutes();
   rebuildLoadTypeOptions();rebuildVehicleTypeTS();rebuildRouteTS();
@@ -1362,60 +1450,10 @@ async function deleteRoute(id){
   if(IS_DEMO){ROUTES_DATA=ROUTES_DATA.filter(x=>String(x.id)!==String(id));toast('Route deleted (demo)','success');await refreshRoutesEverywhere();return;}
   try{const{error}=await sb.from('routes').delete().eq('id',id);if(error)throw error;toast('Route deleted','success');await refreshRoutesEverywhere();}catch(e){toast('Delete error: '+e.message,'error');}
 }
-function downloadRouteTemplate(){
-  const ws=XLSX.utils.aoa_to_sheet([['Route','Load','Based On','Vehicle Type','Cost','Remarks'],['Example Origin To Example Destination','Casting','Trip Basis','Closed',18000,'Upto 10 Tons (Minimum of 9 to be loaded)'],['Example WH To Example MDU','Collections','Weight Basis','Open',1700,'Per Ton']]);
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Routes');XLSX.writeFile(wb,'route_template.xlsx');
-}
 function exportRoutes(){
   const ws=XLSX.utils.json_to_sheet(ROUTES_DATA.map(r=>({Route:r.route_name,Load:r.load_category,'Based On':r.basis,'Vehicle Type':r.vehicle_type,Cost:r.rate,'Min Load Tons':r.min_load_tons,Remarks:r.desc_note})));
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Routes');XLSX.writeFile(wb,'routes_export.xlsx');
 }
-let ROUTE_BULK_ROWS=[];
-function handleRouteBulkDrop(e){e.preventDefault();e.currentTarget.classList.remove('drag');if(e.dataTransfer.files[0])parseRouteBulkFile(e.dataTransfer.files[0]);}
-function handleRouteBulkSelect(e){if(e.target.files[0])parseRouteBulkFile(e.target.files[0]);}
-function parseRouteBulkFile(file){
-  const reader=new FileReader();
-  reader.onload=(ev)=>{
-    const wb=XLSX.read(ev.target.result,{type:'binary'});
-    const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-    ROUTE_BULK_ROWS=rows.map((r,i)=>{
-      const routeName=String(r['Route']||'').replace(/\u00a0/g,' ').trim();
-      const load=String(r['Load']||'').trim();
-      const basis=String(r['Based On']||'').trim();
-      const vehicle=String(r['Vehicle Type']||'').trim();
-      let costRaw=r['Cost'];let rate=null;
-      if(typeof costRaw==='string'){const m=costRaw.match(/[\d.]+/);rate=m?parseFloat(m[0]):null;}else if(typeof costRaw==='number')rate=costRaw;
-      const remarks=String(r['Remarks']||'').replace(/\u00a0/g,' ').trim();
-      const parts=routeName.split(/\bTo\b/i);const from=parts[0]?.trim()||'',to=parts[1]?.trim()||'';
-      const minM=remarks.match(/Minimum of (\d+)/i);const minLoad=minM?parseInt(minM[1]):null;
-      const issues=[];
-      if(!routeName)issues.push('Missing route');if(!load)issues.push('Missing load');
-      if(!['Trip Basis','Weight Basis'].includes(basis))issues.push('Based On must be "Trip Basis" or "Weight Basis"');
-      if(!vehicle)issues.push('Missing vehicle type');if(!(rate>0))issues.push('Invalid/missing cost');
-      return{row:i+2,route_name:routeName,from_location:from,to_location:to,load_category:load,basis,vehicle_type:vehicle,rate,min_load_tons:minLoad,desc_note:remarks,issues,valid:issues.length===0};
-    });
-    renderRouteBulkPreview();
-  };
-  reader.readAsBinaryString(file);
-}
-function renderRouteBulkPreview(){
-  el('route-bulk-result').style.display='block';
-  const valid=ROUTE_BULK_ROWS.filter(r=>r.valid).length;
-  el('route-bulk-summary').innerHTML=`<i class="bi bi-info-circle-fill text-primary"></i><span>${ROUTE_BULK_ROWS.length} rows parsed — <strong>${valid} valid</strong>, ${ROUTE_BULK_ROWS.length-valid} with issues.</span>`;
-  el('route-bulk-rowct').textContent=`${ROUTE_BULK_ROWS.length} rows`;
-  el('route-bulk-tbody').innerHTML=ROUTE_BULK_ROWS.map(r=>`<tr><td>${r.row}</td><td>${esc(r.route_name)}</td><td>${esc(r.load_category)}</td><td>${esc(r.basis)}</td><td>${esc(r.vehicle_type)}</td><td>${r.rate??''}</td><td>${r.issues.length?`<span class="vr-err">${r.issues.join(', ')}</span>`:`<span class="vr-ok">OK</span>`}</td></tr>`).join('');
-  el('route-bulk-submit-btn').disabled=valid===0;
-}
-async function submitRouteBulk(){
-  const valid=ROUTE_BULK_ROWS.filter(r=>r.valid);
-  if(!valid.length)return;
-  setBtnLoad('route-bulk-submit-btn',true,'Saving…');
-  const rows=valid.map(r=>({route_name:r.route_name,from_location:r.from_location,to_location:r.to_location,load_category:r.load_category,basis:r.basis,vehicle_type:r.vehicle_type,rate:r.rate,min_load_tons:r.min_load_tons,desc_note:r.desc_note,is_active:true}));
-  if(IS_DEMO){rows.forEach(row=>{row.id=Date.now()+Math.random();ROUTES_DATA.push(row);});toast(`${rows.length} routes saved (demo)`,'success');clearRouteBulk();await refreshRoutesEverywhere();setBtnLoad('route-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Routes');return;}
-  try{const{error}=await sb.from('routes').insert(rows);if(error)throw error;toast(`${rows.length} routes saved`,'success');clearRouteBulk();await refreshRoutesEverywhere();}catch(e){toast('Bulk save error: '+e.message,'error');}
-  setBtnLoad('route-bulk-submit-btn',false,'<i class="bi bi-upload me-2"></i>Save Valid Routes');
-}
-function clearRouteBulk(){ROUTE_BULK_ROWS=[];el('route-bulk-result').style.display='none';el('route-bulk-file').value='';el('route-bulk-submit-btn').disabled=true;el('route-bulk-msg').textContent='';}
 
 /* ==============================================
    USERS
