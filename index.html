@@ -324,6 +324,7 @@ code{font-family:'DM Mono',monospace;}
               <div class="col-md-3 col-6"><label class="lbl">Halting Charges (₹)</label><input type="number" step="0.01" class="form-control" id="f-haltingCharges" value="0" oninput="calcPay()"/></div>
               <div class="col-md-3 col-6"><label class="lbl">Exception Amount (₹) <small class="text-muted fw-normal">(extra, if any)</small></label><input type="number" step="0.01" class="form-control" id="f-exceptionAmount" value="0" oninput="calcPay();toggleExceptionReason()"/></div>
               <div class="col-md-3 col-6" id="payable-wrap" style="display:none"><label class="lbl">Payable Amount (₹)<span class="approver-only ms-1">Admin</span></label><input type="number" class="form-control" id="f-payable" readonly placeholder="Auto-calculated"/></div>
+              <div class="col-12" id="advance-split-hint" style="display:none"></div>
               <div class="col-md-6 col-12" id="exception-reason-wrap" style="display:none"><label class="lbl">Exception Reason <small class="text-muted fw-normal">(why the extra amount)</small></label><input type="text" class="form-control" id="f-exceptionReason" placeholder="e.g. extra 1 tonne loaded"/></div>
               <div class="col-md-6 col-12" id="exception-screenshot-wrap" style="display:none"><label class="lbl">Boss Approval Screenshot <small class="text-muted fw-normal">(mail approval, JPG/PNG/PDF, max 5MB)</small></label>
                 <div class="fz" id="fz-exceptionScreenshot" ondragover="dzOver(event,'fz-exceptionScreenshot')" ondragleave="dzLeave('fz-exceptionScreenshot')" ondrop="dzDrop(event,'fz-exceptionScreenshot','f-exceptionScreenshot')"><input type="file" id="f-exceptionScreenshot" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFile('f-exceptionScreenshot','fz-exceptionScreenshot','fp-exceptionScreenshot')"/><i class="bi bi-envelope-check fz-icon"></i><div class="fz-lbl">Upload approval mail screenshot</div><div class="fz-sub">PDF · JPG · PNG · WEBP ≤ 5 MB — attach if you already have the boss's mail approval</div></div>
@@ -528,6 +529,7 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 const MAX_FILE=5*1024*1024, OK_EXTS=['pdf','jpg','jpeg','png','webp'];
 const IS_DEMO=SUPA_URL.includes('YOUR_PROJECT');
 const EDIT_WINDOW_MS = 2 * 60 * 60 * 1000; // 2 hours in ms
+const POD_HOLD_AMOUNT = 1000; // fixed ₹ held back from Hire Amount as the POD leg of an Advance request
 
 /* ==============================================
    STATE
@@ -876,8 +878,17 @@ function calcPay(){
   const halt=parseFloat(gv('f-haltingCharges'))||0;
   const exc=parseFloat(gv('f-exceptionAmount'))||0;
   gset('f-payable',hire+halt+exc);
+  updateAdvanceSplitHint();
 }
-function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance now — once you have the POD copy, reopen this same request to log the POD amount & UTR. No separate POD request needed.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';}
+function updateAdvanceSplitHint(){
+  const hintEl=el('advance-split-hint');if(!hintEl)return;
+  if(gv('f-requestType')!=='Advance'){hintEl.style.display='none';hintEl.innerHTML='';return;}
+  const hire=parseFloat(gv('f-hireAmount'))||0;
+  const advanceNow=Math.max(0,hire-POD_HOLD_AMOUNT);
+  hintEl.style.display='block';
+  hintEl.innerHTML=`<div class="info-alert" style="margin-bottom:0"><i class="bi bi-info-circle-fill"></i><span>₹${fmtN(advanceNow)} will be saved as the Advance Amount, with a fixed ₹${fmtN(POD_HOLD_AMOUNT)} held back as the POD Amount.</span></div>`;
+}
+function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance now — a fixed ₹1,000 is held back as the POD amount. Once you have the POD copy, reopen this same request to log the POD UTR. No separate POD request needed.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';updateAdvanceSplitHint();}
 
 /* ==============================================
    LR CHECK
@@ -923,6 +934,7 @@ async function submitReq(evt){
   if(!gv('f-from').trim())return toast('Please enter the From location','error');
   if(!gv('f-to').trim())return toast('Please enter the To location','error');
   if(!(parseFloat(gv('f-hireAmount'))>0))return toast('Please enter a valid Hire Amount','error');
+  if(gv('f-requestType')==='Advance' && parseFloat(gv('f-hireAmount'))<=POD_HOLD_AMOUNT)return toast(`Hire Amount must be greater than ₹${fmtN(POD_HOLD_AMOUNT)} (the fixed POD amount) for an Advance request`,'error');
   let requesterId,requesterName;
   if(CU.role==='Approver'){requesterId=tsRequester?tsRequester.getValue():'';if(!requesterId)return toast('Please select a requester','error');const u=USER_DATA.find(x=>String(x.id)===String(requesterId));requesterName=u?u.name:'';}
   else{requesterId=CU.id;requesterName=CU.name;}
@@ -939,7 +951,10 @@ async function submitReq(evt){
   // Guard against a stale/deleted route being submitted (was previously only caught after a failed insert)
   if(!(await validateSelectedRoute()))return;
   const[docFile,wwlFile,wwoFile,excFile]=await Promise.all([readBase64('f-document'),readBase64('f-weighmentWithLoad'),readBase64('f-weighmentWithoutLoad'),readBase64('f-exceptionScreenshot')]);
-  const hire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,exc=parseFloat(gv('f-exceptionAmount'))||0,payable=hire+halt+exc;
+  const enteredHire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,exc=parseFloat(gv('f-exceptionAmount'))||0;
+  const podAmt=reqType==='Advance'?POD_HOLD_AMOUNT:0;
+  const hire=reqType==='Advance'?Math.max(0,enteredHire-podAmt):enteredHire;
+  const payable=enteredHire+halt+exc;
   _refreshSubmittedAt();const submittedAt=new Date().toISOString();
   const row={
     trip_date:gv('f-tripDate')||null,submitted_at:submittedAt,requester_id:parseInt(requesterId)||null,requester_name:requesterName,
@@ -956,7 +971,7 @@ async function submitReq(evt){
     exception_status: exc!==0 ? 'Pending' : 'None',
     exception_approval_file:excFile?.data||null,exception_approval_name:excFile?.name||null,
     payable_amount:payable,balance_amount:payable,paid_amount:0,payment_utr:null,
-    pod_amount:0,payment_utr_advance:null,payment_utr_pod:null,
+    pod_amount:podAmt,payment_utr_advance:null,payment_utr_pod:null,
     request_type:reqType,status:'Pending',submitted_by:CU.email
   };
   setBtnLoad('req-submit-btn',true,'Submitting…');
@@ -998,6 +1013,7 @@ function resetForm(){
   document.getElementById('req-form').reset();gset('f-haltingCharges','0');gset('f-exceptionAmount','0');gset('f-payable','');
   el('lr-tags').innerHTML='';el('lr-chk').innerHTML='';el('req-type-hint').innerHTML='';el('requester-info').className='ri-card';
   el('exception-reason-wrap').style.display='none';el('exception-screenshot-wrap').style.display='none';el('exception-warn-wrap').style.display='none';
+  el('advance-split-hint').style.display='none';el('advance-split-hint').innerHTML='';
   ['document','weighmentWithLoad','weighmentWithoutLoad','exceptionScreenshot'].forEach(k=>clearFile('f-'+k,'fz-'+k,'fp-'+k));
   if(tsVendor){tsVendor.clear();tsVendor.setValue('');}if(tsRequester){tsRequester.clear();tsRequester.setValue('');}if(tsVehicle){tsVehicle.clear();tsVehicle.setValue('');}
   setBasis('Trip Basis');
@@ -1225,9 +1241,9 @@ async function decideException(id,decision){
   }else if(!confirm(`${decision==='Approved'?'Approve':'Reject'} this exception amount?`))return;
   const patch={exception_status:decision};
   if(r && decision==='Rejected'){
-    const hire=parseFloat(r.hire_amount||0),halt=parseFloat(r.halting_charges||0);
-    patch.payable_amount=hire+halt;
-    patch.balance_amount=hire+halt-parseFloat(r.paid_amount||0);
+    const hire=parseFloat(r.hire_amount||0),halt=parseFloat(r.halting_charges||0),pod=parseFloat(r.pod_amount||0);
+    patch.payable_amount=hire+halt+pod;
+    patch.balance_amount=hire+halt+pod-parseFloat(r.paid_amount||0);
   }
   if(IS_DEMO){
     if(r)Object.assign(r,patch);
@@ -1240,6 +1256,23 @@ async function decideException(id,decision){
 }
 
 /* ---- Request view / edit modal ---- */
+function podSectionHtml(r,canEditUTR,canTriggerPod){
+  const podAmountField=`<div class="col-md-4"><label class="lbl">POD Amount (₹) <small class="text-muted fw-normal">(fixed)</small></label><input class="form-control" value="${r.pod_amount||0}" readonly></div>`;
+  if(r.pod_triggered_at){
+    return `${podAmountField}
+    <div class="col-md-4"><label class="lbl">Payment UTR — POD${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
+      <input class="form-control" id="edit-utrPod" value="${esc(r.payment_utr_pod||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'UTR once POD copy received':'Not entered yet'}">
+    </div>`;
+  }
+  if(canTriggerPod){
+    return `${podAmountField}
+    <div class="col-md-4"><label class="lbl">POD Request</label>
+      <button type="button" class="btn btn-outline-primary btn-sm" onclick="triggerPod('${r.id}')"><i class="bi bi-unlock-fill me-1"></i>Trigger POD Request</button>
+    </div>`;
+  }
+  return `${podAmountField}
+  <div class="col-md-4"><label class="lbl">POD Request</label><div class="text-muted small" style="padding-top:8px">Not triggered yet.</div></div>`;
+}
 function openReqModal(id){
   const r=REQ_DATA.find(x=>String(x.id)===String(id));if(!r)return;
   EDIT_ID=id;
@@ -1249,6 +1282,7 @@ function openReqModal(id){
   const canEditPayable=CU.role==='Approver';
   const canEditUTR=CU.role==='Finance';
   const canEditStatus=CU.role==='Finance';
+  const canTriggerPod=CU.role==='User'&&(String(r.requester_id)===String(CU.id)||r.submitted_by===CU.email);
   const canSaveAnything=canEdit||canEditLR||canEditPayable||canEditUTR||canEditStatus;
   el('reqModal-timer-wrap').innerHTML = (CU.role==='User'&&r.status==='Pending')
     ? `<span class="edit-timer ${withinEditWindow(r)?'':'expired'}"><i class="bi bi-clock-history"></i> ${fmtTimeRemaining(editWindowRemaining(r))}</span>` : '';
@@ -1279,16 +1313,11 @@ function openReqModal(id){
       </div>`:''}
       <div class="col-md-6"><label class="lbl">Remarks</label><input class="form-control" id="edit-remarks" value="${esc(r.remarks||'')}" ${canEdit?'':'readonly'}></div>
       ${r.request_type==='Advance'?`
-      <div class="col-12"><small class="text-muted" style="font-size:11px"><i class="bi bi-arrow-repeat me-1"></i>This Advance request doubles as the POD request — fill these in once the POD copy arrives.</small></div>
+      <div class="col-12"><small class="text-muted" style="font-size:11px"><i class="bi bi-arrow-repeat me-1"></i>This Advance request doubles as the POD request — ₹${fmtN(r.pod_amount||0)} held back as the fixed POD amount${r.pod_triggered_at?`, POD triggered ${fmtDate(r.pod_triggered_at)}`:''}.</small></div>
       <div class="col-md-4"><label class="lbl">Payment UTR — Advance${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
         <input class="form-control" id="edit-utrAdvance" value="${esc(r.payment_utr_advance||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'UTR for advance payment':'Not entered yet'}">
       </div>
-      <div class="col-md-4"><label class="lbl">POD Amount (₹)${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
-        <input class="form-control" id="edit-podAmount" value="${r.pod_amount||0}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'Amount paid at POD stage':'Not entered yet'}">
-      </div>
-      <div class="col-md-4"><label class="lbl">Payment UTR — POD${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
-        <input class="form-control" id="edit-utrPod" value="${esc(r.payment_utr_pod||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'UTR once POD copy received':'Not entered yet'}">
-      </div>`:`
+      ${podSectionHtml(r,canEditUTR,canTriggerPod)}`:`
       <div class="col-md-4"><label class="lbl">Payment UTR Details${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
         <input class="form-control" id="edit-utr" value="${esc(r.payment_utr||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'Enter UTR / transaction ref':'Not entered yet'}">
       </div>`}
@@ -1303,6 +1332,24 @@ function openReqModal(id){
   new bootstrap.Modal(el('reqModal')).show();
 }
 
+async function triggerPod(id){
+  if(!confirm('Trigger the POD request for this Advance request? This enables the POD Amount and POD UTR fields.'))return;
+  const patch={pod_triggered_at:new Date().toISOString(),pod_triggered_by:CU.email};
+  if(IS_DEMO){
+    const r=REQ_DATA.find(x=>String(x.id)===String(id));
+    if(r)Object.assign(r,patch);
+    toast('POD request triggered (demo)','success');
+    openReqModal(id);loadRequests();loadDashboard();
+    return;
+  }
+  try{
+    const{error}=await sb.from('hire_requests').update(patch).eq('id',id);if(error)throw error;
+    const r=REQ_DATA.find(x=>String(x.id)===String(id));if(r)Object.assign(r,patch);
+    toast('POD request triggered','success');
+    openReqModal(id);loadRequests();loadDashboard();
+  }catch(e){toast('Trigger error: '+e.message,'error');}
+}
+
 async function saveReqEdit(){
   const r=REQ_DATA.find(x=>String(x.id)===String(EDIT_ID));if(!r)return;
   const canEdit=canEditRequest(r);
@@ -1315,7 +1362,7 @@ async function saveReqEdit(){
     const hire=parseFloat(gv('edit-hireAmount'))||0,halt=parseFloat(gv('edit-haltingCharges'))||0,exc=parseFloat(gv('edit-exceptionAmount'))||0;
     const prevExc=parseFloat(r.exception_amount||0);
     Object.assign(patch,{hire_amount:hire,halting_charges:halt,exception_amount:exc,exception_reason:gv('edit-exceptionReason'),remarks:gv('edit-remarks')});
-    if(!canEditPayable)patch.payable_amount=hire+halt+exc; // auto-recompute unless the Approver is overriding it directly below
+    if(!canEditPayable)patch.payable_amount=hire+halt+exc+parseFloat(r.pod_amount||0); // auto-recompute unless the Approver is overriding it directly below; includes the fixed POD amount for Advance rows
     if(exc!==0 && prevExc===0){patch.exception_status='Pending';}
     if(exc===0){patch.exception_status='None';}
     if(el('edit-exceptionScreenshot')&&el('edit-exceptionScreenshot').files[0]){
@@ -1333,12 +1380,6 @@ async function saveReqEdit(){
     if(r.request_type==='Advance'){
       if(el('edit-utrAdvance'))patch.payment_utr_advance=gv('edit-utrAdvance');
       if(el('edit-utrPod'))patch.payment_utr_pod=gv('edit-utrPod');
-      if(el('edit-podAmount')){
-        const podAmt=parseFloat(gv('edit-podAmount'))||0;
-        const hire=parseFloat(r.hire_amount||0),halt=parseFloat(r.halting_charges||0),exc=parseFloat(r.exception_amount||0);
-        const payable=hire+halt+exc+podAmt;
-        Object.assign(patch,{pod_amount:podAmt,payable_amount:payable,balance_amount:payable-parseFloat(r.paid_amount||0)});
-      }
     }else if(el('edit-utr')){
       patch.payment_utr=gv('edit-utr');
     }
