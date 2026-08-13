@@ -284,7 +284,7 @@ code{font-family:'DM Mono',monospace;}
             <div class="fsec"><i class="bi bi-upc-scan"></i>LR Numbers &amp; Request Type</div>
             <div class="row g-3 mb-4">
               <div class="col-md-5 col-12"><label class="lbl">LR Numbers <span class="req-star">*</span> <small class="text-muted fw-normal">(comma-separated)</small></label><input type="text" class="form-control" id="f-lr" placeholder="D-B23453, D-B12345" oninput="debounceLRCheck()"/><div id="lr-tags" class="mt-2 d-flex flex-wrap gap-1"></div><div id="lr-chk" class="mt-1" style="font-size:11.5px"></div></div>
-              <div class="col-md-3 col-6"><label class="lbl">Request Type <span class="req-star">*</span></label><select class="form-select" id="f-requestType" onchange="debounceLRCheck();showTypeHint()"><option value="Full">Full</option><option value="Advance">Advance</option><option value="POD">POD</option></select><div id="req-type-hint" class="mt-1 small text-muted"></div></div>
+              <div class="col-md-3 col-6"><label class="lbl">Request Type <span class="req-star">*</span></label><select class="form-select" id="f-requestType" onchange="debounceLRCheck();showTypeHint()"><option value="Full">Full</option><option value="Advance">Advance</option></select><div id="req-type-hint" class="mt-1 small text-muted"></div></div>
               <div class="col-md-2 col-6"><label class="lbl">Load Type <span class="req-star">*</span></label><select class="form-select" id="f-loadType" required><option value="">Select…</option></select></div>
             </div>
             <!-- VEHICLE -->
@@ -877,7 +877,7 @@ function calcPay(){
   const exc=parseFloat(gv('f-exceptionAmount'))||0;
   gset('f-payable',hire+halt+exc);
 }
-function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance: 50% upfront — LR reusable for POD.',POD:'POD: Requires a prior Advance on same LR.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';}
+function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance now — once you have the POD copy, reopen this same request to log the POD amount & UTR. No separate POD request needed.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';}
 
 /* ==============================================
    LR CHECK
@@ -905,8 +905,7 @@ async function verifyLRList(lrList,reqType){
       const lrU=lr.toUpperCase().trim();
       const matches=(data||[]).filter(r=>r.lr_numbers&&r.lr_numbers.toUpperCase().split(',').map(s=>s.trim()).includes(lrU));
       if(reqType==='Full'){return matches.length?{lr,ok:false,msg:'LR already used'}:{lr,ok:true,msg:'Available'};}
-      if(reqType==='Advance'){if(matches.some(r=>r.request_type==='Full'))return{lr,ok:false,msg:'Already has Full request'};if(matches.some(r=>r.request_type==='Advance'))return{lr,ok:false,msg:'Advance already exists'};return{lr,ok:true,msg:'Available'};}
-      if(reqType==='POD'){if(!matches.some(r=>r.request_type==='Advance'))return{lr,ok:false,msg:'No prior Advance found'};if(matches.some(r=>r.request_type==='POD'))return{lr,ok:false,msg:'POD already exists'};return{lr,ok:true,msg:'Advance found — POD allowed'};}
+      if(reqType==='Advance'){if(matches.some(r=>r.request_type==='Full'))return{lr,ok:false,msg:'Already has Full request'};if(matches.some(r=>r.request_type==='Advance'))return{lr,ok:false,msg:'Advance already exists — reopen that request to add the POD amount & UTR'};return{lr,ok:true,msg:'Available'};}
       return{lr,ok:true,msg:'OK'};
     });
   }catch(e){return lrList.map(lr=>({lr,ok:false,warn:true,msg:'Check failed: '+e.message}));}
@@ -957,6 +956,7 @@ async function submitReq(evt){
     exception_status: exc!==0 ? 'Pending' : 'None',
     exception_approval_file:excFile?.data||null,exception_approval_name:excFile?.name||null,
     payable_amount:payable,balance_amount:payable,paid_amount:0,payment_utr:null,
+    pod_amount:0,payment_utr_advance:null,payment_utr_pod:null,
     request_type:reqType,status:'Pending',submitted_by:CU.email
   };
   setBtnLoad('req-submit-btn',true,'Submitting…');
@@ -1076,6 +1076,14 @@ function excStatusBadge(r){
   const m={Pending:'bs-exc-pending',Approved:'bs-exc-approved',Rejected:'bs-exc-rejected',None:'bs-exc-none'};
   return `<span class="bs ${m[st]||'bs-exc-pending'}" style="font-size:9.5px;padding:2px 7px">${esc(st)}</span>`;
 }
+function utrDisplay(r){
+  if(r.request_type==='Advance'){
+    const adv=r.payment_utr_advance,pod=r.payment_utr_pod;
+    if(!adv&&!pod)return '—';
+    return `Adv: ${esc(adv||'—')}${pod?` / POD: ${esc(pod)}`:''}`;
+  }
+  return esc(r.payment_utr||'—');
+}
 const LR_STATUS_OPTIONS=['Available in the Console','Not Available in the Console','LR Not Created','Cancelled LR'];
 function lrStatusBadge(r){
   const map={
@@ -1138,7 +1146,7 @@ async function loadRequests(){
       <td>₹${Number(r.exception_amount||0).toLocaleString('en-IN')}</td>
       <td>${excStatusBadge(r)}</td>
       <td><strong>₹${Number(r.payable_amount||0).toLocaleString('en-IN')}</strong></td>
-      <td>${esc(r.payment_utr||'—')}</td>
+      <td>${utrDisplay(r)}</td>
       <td><span class="bt bt-${(r.request_type||'').toLowerCase()}">${esc(r.request_type||'')}</span></td>
       <td>${statusBadge(r.status)}</td>
     </tr>`).join(''):`<tr><td colspan="16"><div class="empty-st"><i class="bi bi-inbox"></i><p>No matching requests</p></div></td></tr>`;
@@ -1146,7 +1154,7 @@ async function loadRequests(){
 
 function exportCSV(){
   if(!REQ_DATA.length)return toast('Nothing to export','warn');
-  const cols=['id','trip_date','requester_name','transport','lr_numbers','lr_status','from_loc','to_loc','basis','hire_amount','halting_charges','exception_amount','exception_status','payable_amount','payment_utr','request_type','status'];
+  const cols=['id','trip_date','requester_name','transport','lr_numbers','lr_status','from_loc','to_loc','basis','hire_amount','halting_charges','exception_amount','exception_status','pod_amount','payable_amount','payment_utr','payment_utr_advance','payment_utr_pod','request_type','status'];
   const rows=[cols.join(',')].concat(REQ_DATA.map(r=>cols.map(c=>`"${String(r[c]??'').replace(/"/g,'""')}"`).join(',')));
   const blob=new Blob([rows.join('\n')],{type:'text/csv'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hire_requests.csv';a.click();
@@ -1258,7 +1266,7 @@ function openReqModal(id){
         ${canEditLR?`<select class="form-select" id="edit-lrStatus"><option value="" ${!r.lr_status?'selected':''}>— Not set —</option>${lrOptionsHtml}</select>`
         :`<div style="padding-top:6px">${lrStatusBadge(r)}</div>`}
       </div>
-      <div class="col-md-3"><label class="lbl">Hire Amount</label><input class="form-control" id="edit-hireAmount" value="${r.hire_amount||0}" ${canEdit?'':'readonly'}></div>
+      <div class="col-md-3"><label class="lbl">${r.request_type==='Advance'?'Advance Amount (₹)':'Hire Amount'}</label><input class="form-control" id="edit-hireAmount" value="${r.hire_amount||0}" ${canEdit?'':'readonly'}></div>
       <div class="col-md-3"><label class="lbl">Halting Charges</label><input class="form-control" id="edit-haltingCharges" value="${r.halting_charges||0}" ${canEdit?'':'readonly'}></div>
       <div class="col-md-3"><label class="lbl">Exception Amount</label><input class="form-control" id="edit-exceptionAmount" value="${r.exception_amount||0}" ${canEdit?'':'readonly'}></div>
       <div class="col-md-3"><label class="lbl">Payable Amount${canEditPayable?' <span class="approver-only">Approver</span>':''}</label><input class="form-control" id="edit-payable" value="${r.payable_amount||0}" ${canEditPayable?'':'readonly'}></div>
@@ -1270,9 +1278,20 @@ function openReqModal(id){
         <div class="f-err" id="fe-editExcScreenshot"></div><div class="fp" id="fp-editExcScreenshot"></div>`:''}
       </div>`:''}
       <div class="col-md-6"><label class="lbl">Remarks</label><input class="form-control" id="edit-remarks" value="${esc(r.remarks||'')}" ${canEdit?'':'readonly'}></div>
+      ${r.request_type==='Advance'?`
+      <div class="col-12"><small class="text-muted" style="font-size:11px"><i class="bi bi-arrow-repeat me-1"></i>This Advance request doubles as the POD request — fill these in once the POD copy arrives.</small></div>
+      <div class="col-md-4"><label class="lbl">Payment UTR — Advance${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
+        <input class="form-control" id="edit-utrAdvance" value="${esc(r.payment_utr_advance||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'UTR for advance payment':'Not entered yet'}">
+      </div>
+      <div class="col-md-4"><label class="lbl">POD Amount (₹)${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
+        <input class="form-control" id="edit-podAmount" value="${r.pod_amount||0}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'Amount paid at POD stage':'Not entered yet'}">
+      </div>
+      <div class="col-md-4"><label class="lbl">Payment UTR — POD${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
+        <input class="form-control" id="edit-utrPod" value="${esc(r.payment_utr_pod||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'UTR once POD copy received':'Not entered yet'}">
+      </div>`:`
       <div class="col-md-4"><label class="lbl">Payment UTR Details${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
         <input class="form-control" id="edit-utr" value="${esc(r.payment_utr||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'Enter UTR / transaction ref':'Not entered yet'}">
-      </div>
+      </div>`}
       <div class="col-md-4"><label class="lbl">Status${canEditStatus?' <span class="finance-only">Finance</span>':''}</label>
         ${canEditStatus?`<select class="form-select" id="edit-status"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Approved'?'selected':''}>Approved</option><option ${r.status==='Paid'?'selected':''}>Paid</option><option ${r.status==='Rejected'?'selected':''}>Rejected</option></select>`
         :`<input class="form-control" value="${esc(r.status||'')}" readonly>`}
@@ -1310,7 +1329,20 @@ async function saveReqEdit(){
     patch.payable_amount=payable;
     patch.balance_amount=payable-parseFloat(r.paid_amount||0);
   }
-  if(canEditUTR&&el('edit-utr'))patch.payment_utr=gv('edit-utr');
+  if(canEditUTR){
+    if(r.request_type==='Advance'){
+      if(el('edit-utrAdvance'))patch.payment_utr_advance=gv('edit-utrAdvance');
+      if(el('edit-utrPod'))patch.payment_utr_pod=gv('edit-utrPod');
+      if(el('edit-podAmount')){
+        const podAmt=parseFloat(gv('edit-podAmount'))||0;
+        const hire=parseFloat(r.hire_amount||0),halt=parseFloat(r.halting_charges||0),exc=parseFloat(r.exception_amount||0);
+        const payable=hire+halt+exc+podAmt;
+        Object.assign(patch,{pod_amount:podAmt,payable_amount:payable,balance_amount:payable-parseFloat(r.paid_amount||0)});
+      }
+    }else if(el('edit-utr')){
+      patch.payment_utr=gv('edit-utr');
+    }
+  }
   if(canEditStatus&&el('edit-status'))patch.status=gv('edit-status');
   if(!Object.keys(patch).length)return toast('Nothing to update','warn');
   if(IS_DEMO){Object.assign(r,patch);toast('Request updated (demo)','success');bootstrap.Modal.getInstance(el('reqModal')).hide();loadRequests();loadDashboard();return;}
