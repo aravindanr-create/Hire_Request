@@ -1,4 +1,43 @@
 <!DOCTYPE html>
+<!--
+  ============================================================================
+  HIRE REQUEST MANAGEMENT — Uddhava Logistics
+  ============================================================================
+  Single-file app: HTML + vanilla JS + Bootstrap 5, backed by Supabase
+  (Postgres + REST). No build step — deploy by hosting this file as-is.
+  The client only holds the Supabase anon key; access control below is
+  enforced in the UI by role and is NOT a substitute for Supabase Row
+  Level Security — RLS on hire_requests / hire_vendors / routes /
+  app_users is the real security boundary.
+
+  ROLES
+    User     — submits requests; can edit/delete their own for a 2-hour
+               window after submission (see EDIT_WINDOW_MS); can trigger
+               the POD request once they hold the POD copy.
+    Approver — full edit/delete on any request, sets LR Status, can
+               override Payable Amount directly, approves/rejects
+               Exception Amounts, and can also trigger POD (e.g. when
+               they created the request on a user's behalf).
+    Finance  — enters Payment UTR(s) and moves Status through
+               Pending -> Approved -> Paid (or Rejected).
+
+  MONEY FLOW — see calcPay() / submitReq() / saveReqEdit()
+    Full request:
+      payable_amount = hire_amount + halting_charges + exception_amount
+
+    Advance request (this single row doubles as the later POD request —
+    both legs settle on one row rather than creating a second record):
+      The user enters the FULL trip hire amount. A fixed ₹1,000
+      (POD_HOLD_AMOUNT) is deducted automatically and the remainder is
+      what's stored as hire_amount (labelled "Advance Amount" in every
+      view). The Payable Amount always reflects the full pre-deduction
+      trip value, never just the advance leg:
+        payable_amount = hire_amount + halting_charges + exception_amount + pod_amount
+      balance_amount = payable_amount - paid_amount, and must be
+      recomputed any time payable_amount changes — that recompute was
+      previously missing on the User-edit path in saveReqEdit().
+  ============================================================================
+-->
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -323,7 +362,7 @@ code{font-family:'DM Mono',monospace;}
               <div class="col-md-3 col-6"><label class="lbl">Hire Amount (₹) <span class="req-star">*</span></label><input type="number" step="0.01" class="form-control" id="f-hireAmount" required oninput="calcPay()" placeholder="0.00"/></div>
               <div class="col-md-3 col-6"><label class="lbl">Halting Charges (₹)</label><input type="number" step="0.01" class="form-control" id="f-haltingCharges" value="0" oninput="calcPay()"/></div>
               <div class="col-md-3 col-6"><label class="lbl">Exception Amount (₹) <small class="text-muted fw-normal">(extra, if any)</small></label><input type="number" step="0.01" class="form-control" id="f-exceptionAmount" value="0" oninput="calcPay();toggleExceptionReason()"/></div>
-              <div class="col-md-3 col-6" id="payable-wrap" style="display:none"><label class="lbl">Payable Amount (₹)<span class="approver-only ms-1">Admin</span></label><input type="number" class="form-control" id="f-payable" readonly placeholder="Auto-calculated"/></div>
+              <div class="col-md-3 col-6" id="payable-wrap"><label class="lbl">Payable Amount (₹) <small class="text-muted fw-normal">(auto-calculated — full trip value)</small></label><input type="number" class="form-control" id="f-payable" readonly placeholder="Auto-calculated"/></div>
               <div class="col-12" id="advance-split-hint" style="display:none"></div>
               <div class="col-md-6 col-12" id="exception-reason-wrap" style="display:none"><label class="lbl">Exception Reason <small class="text-muted fw-normal">(why the extra amount)</small></label><input type="text" class="form-control" id="f-exceptionReason" placeholder="e.g. extra 1 tonne loaded"/></div>
               <div class="col-md-6 col-12" id="exception-screenshot-wrap" style="display:none"><label class="lbl">Boss Approval Screenshot <small class="text-muted fw-normal">(mail approval, JPG/PNG/PDF, max 5MB)</small></label>
@@ -735,7 +774,7 @@ function rebuildVendorTS(){
     render:{
       option(d){
         return `<div style="padding:6px 10px;display:flex;align-items:center;gap:8px">
-          ${d.data_code?`<span style="font-size:10px;font-weight:800;background:#eff3ff;color:var(--blue);padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace;flex-shrink:0">${d.data_code}</span>`:''}
+          ${d.data_code?`<span style="font-size:10px;font-weight:800;background:var(--blue-xs);color:var(--blue);padding:2px 7px;border-radius:4px;font-family:'DM Mono',monospace;flex-shrink:0">${d.data_code}</span>`:''}
           <span style="font-size:12.5px;font-weight:600">${d.text}</span>
         </div>`;
       },
@@ -867,7 +906,6 @@ function toggleExceptionReason(){
 
 function setupNewReqForm(){
   const isApprover=CU.role==='Approver';
-  el('payable-wrap').style.display=isApprover?'block':'none';
   _refreshSubmittedAt();
   if(isApprover){el('requester-dropdown-wrap').style.display='block';el('requester-static-wrap').style.display='none';el('req-auto-notice').style.display='none';rebuildRequesterTS();}
   else{el('requester-dropdown-wrap').style.display='none';el('requester-static-wrap').style.display='block';el('req-auto-notice').style.display='flex';el('req-auto-name').textContent=CU.name;el('f-requester-static').value=CU.name;gset('f-requester-id-hidden',String(CU.id));}
@@ -888,7 +926,7 @@ function updateAdvanceSplitHint(){
   hintEl.style.display='block';
   hintEl.innerHTML=`<div class="info-alert" style="margin-bottom:0"><i class="bi bi-info-circle-fill"></i><span>₹${fmtN(advanceNow)} will be saved as the Advance Amount, with a fixed ₹${fmtN(POD_HOLD_AMOUNT)} held back as the POD Amount.</span></div>`;
 }
-function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance now — a fixed ₹1,000 is held back as the POD amount'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';updateAdvanceSplitHint();}
+function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance now — a fixed ₹1,000 is held back as the POD amount.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';updateAdvanceSplitHint();}
 
 /* ==============================================
    LR CHECK
@@ -948,8 +986,6 @@ async function submitReq(evt){
   if(intraDups.length)return toast(`Duplicate LR(s): ${intraDups.join(', ')}`,'error');
   const reqType=gv('f-requestType');const checks=await verifyLRList(lrList,reqType);const blocked=checks.filter(r=>!r.ok);
   if(blocked.length){toast('LR Check Failed: '+blocked.map(r=>r.lr).join(', '),'error');el('lr-chk').innerHTML=`<span style="color:var(--red)"><i class="bi bi-x-circle-fill me-1"></i>${blocked.map(r=>`${r.lr}: ${r.msg}`).join(' | ')}</span>`;return;}
-  // Guard against a stale/deleted route being submitted (was previously only caught after a failed insert)
-  if(!(await validateSelectedRoute()))return;
   const[docFile,wwlFile,wwoFile,excFile]=await Promise.all([readBase64('f-document'),readBase64('f-weighmentWithLoad'),readBase64('f-weighmentWithoutLoad'),readBase64('f-exceptionScreenshot')]);
   const enteredHire=parseFloat(gv('f-hireAmount'))||0,halt=parseFloat(gv('f-haltingCharges'))||0,exc=parseFloat(gv('f-exceptionAmount'))||0;
   const podAmt=reqType==='Advance'?POD_HOLD_AMOUNT:0;
@@ -977,36 +1013,28 @@ async function submitReq(evt){
   setBtnLoad('req-submit-btn',true,'Submitting…');
   if(IS_DEMO){row.id='HR-'+String(Date.now()).slice(-5);REQ_DATA.unshift(row);toast(`Request submitted! ID: ${row.id}`+(exc!==0?' — sent for Exception Approval':''),'success');setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');resetForm();loadDashboard();return;}
   try{const{data,error}=await sb.from('hire_requests').insert(row).select().single();if(error)throw error;toast(`Request submitted! ID: ${data.id}`+(exc!==0?' — sent for Exception Approval':''),'success');resetForm();loadDashboard();}catch(e){
-    const isRouteFk = e.code==='23503' || (e.message&&/route/i.test(e.message)&&/foreign key|fkey|violat/i.test(e.message));
+    // Code 23503 = foreign_key_violation, but that code alone doesn't say WHICH foreign
+    // key (route_id, requester_id, ...) — inspect the message Postgres actually returned
+    // rather than assuming it's always the route.
+    const msg=e.message||'';
+    const isRouteFk = e.code==='23503' && /route_id/i.test(msg);
+    const isRequesterFk = e.code==='23503' && /requester_id/i.test(msg);
     if(isRouteFk){
       console.error('FK violation on route_id — selected route no longer exists in routes table. Attempted route_id:',row.route_id,'Full error:',e);
-      toast('Selected route is no longer valid — please reselect the route and resubmit','error');
+      toast(`Selected route (id ${row.route_id}) is no longer valid — please reselect the route and resubmit.`+(e.details?' Detail: '+e.details:''),'error');
       if(tsRoute){tsRoute.clear();tsRoute.setValue('');}
       selectedRoute=null;el('route-desc-box').style.display='none';
       await loadRoutes();rebuildRouteTS();
+    }else if(isRequesterFk){
+      console.error('FK violation on requester_id — selected requester no longer exists in app_users. Attempted requester_id:',row.requester_id,'Full error:',e);
+      toast(`Selected requester (id ${row.requester_id}) is no longer valid — please reselect the requester and resubmit.`+(e.details?' Detail: '+e.details:''),'error');
+      await loadUserData();
+      if(CU.role==='Approver')rebuildRequesterTS();
     }else{
-      toast('Submit error: '+e.message,'error');
+      toast('Submit error: '+msg+(e.details?' — '+e.details:''),'error');
     }
   }
   setBtnLoad('req-submit-btn',false,'<i class="bi bi-send me-2"></i>Submit Request');
-}
-
-/* Verify the currently selected route still exists (and is active) right before submit,
-   so the user gets a clear warning immediately instead of a failed insert. */
-async function validateSelectedRoute(){
-  if(!selectedRoute||IS_DEMO)return true;
-  try{
-    const{data,error}=await sb.from('routes').select('id').eq('id',selectedRoute.id).eq('is_active',true).maybeSingle();
-    if(error)throw error;
-    if(!data){
-      toast('Selected route is no longer valid — please reselect the route and resubmit','error');
-      if(tsRoute){tsRoute.clear();tsRoute.setValue('');}
-      selectedRoute=null;el('route-desc-box').style.display='none';
-      await loadRoutes();rebuildRouteTS();
-      return false;
-    }
-    return true;
-  }catch(e){return true;} // don't block submission if the check itself fails — let the insert attempt proceed
 }
 
 function resetForm(){
@@ -1262,16 +1290,18 @@ function podSectionHtml(r,canEditUTR,canTriggerPod){
     return `${podAmountField}
     <div class="col-md-4"><label class="lbl">Payment UTR — POD${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
       <input class="form-control" id="edit-utrPod" value="${esc(r.payment_utr_pod||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'UTR once POD copy received':'Not entered yet'}">
+      <small class="text-muted" style="font-size:10.5px">Triggered ${fmtDate(r.pod_triggered_at)}${r.pod_triggered_by?' by '+esc(r.pod_triggered_by):''}</small>
     </div>`;
   }
   if(canTriggerPod){
     return `${podAmountField}
-    <div class="col-md-4"><label class="lbl">POD Request</label>
-      <button type="button" class="btn btn-outline-primary btn-sm" onclick="triggerPod('${r.id}')"><i class="bi bi-unlock-fill me-1"></i>Trigger POD Request</button>
+    <div class="col-md-4"><label class="lbl">POD Request</label><br/>
+      <button type="button" class="btn btn-primary btn-sm" onclick="triggerPod('${r.id}')"><i class="bi bi-unlock-fill me-1"></i>Trigger POD Request</button>
+      <div class="text-muted" style="font-size:10.5px;margin-top:4px">Click once the POD copy is in hand, to open the POD UTR field for Finance.</div>
     </div>`;
   }
   return `${podAmountField}
-  <div class="col-md-4"><label class="lbl">POD Request</label><div class="text-muted small" style="padding-top:8px">Not triggered yet.</div></div>`;
+  <div class="col-md-4"><label class="lbl">POD Request</label><div class="text-muted small" style="padding-top:8px"><i class="bi bi-hourglass-split me-1"></i>Not triggered yet — the requester or an approver can trigger this once the POD copy is available.</div></div>`;
 }
 function openReqModal(id){
   const r=REQ_DATA.find(x=>String(x.id)===String(id));if(!r)return;
@@ -1282,7 +1312,8 @@ function openReqModal(id){
   const canEditPayable=CU.role==='Approver';
   const canEditUTR=CU.role==='Finance';
   const canEditStatus=CU.role==='Finance';
-  const canTriggerPod=CU.role==='User'&&(String(r.requester_id)===String(CU.id)||r.submitted_by===CU.email);
+  const isOwner=String(r.requester_id)===String(CU.id)||r.submitted_by===CU.email;
+  const canTriggerPod=CU.role==='Approver'||(CU.role==='User'&&isOwner);
   const canSaveAnything=canEdit||canEditLR||canEditPayable||canEditUTR||canEditStatus;
   el('reqModal-timer-wrap').innerHTML = (CU.role==='User'&&r.status==='Pending')
     ? `<span class="edit-timer ${withinEditWindow(r)?'':'expired'}"><i class="bi bi-clock-history"></i> ${fmtTimeRemaining(editWindowRemaining(r))}</span>` : '';
@@ -1313,7 +1344,7 @@ function openReqModal(id){
       </div>`:''}
       <div class="col-md-6"><label class="lbl">Remarks</label><input class="form-control" id="edit-remarks" value="${esc(r.remarks||'')}" ${canEdit?'':'readonly'}></div>
       ${r.request_type==='Advance'?`
-      <div class="col-12"><small class="text-muted" style="font-size:11px"><i class="bi bi-arrow-repeat me-1"></i>This Advance request doubles as the POD request — ₹${fmtN(r.pod_amount||0)} held back as the fixed POD amount${r.pod_triggered_at?`, POD triggered ${fmtDate(r.pod_triggered_at)}`:''}.</small></div>
+      <div class="col-12"><div class="info-alert" style="margin-bottom:0"><i class="bi bi-arrow-repeat"></i><span>Advance request — ₹${fmtN(r.pod_amount||0)} was automatically held back from the entered Hire Amount as the fixed POD Amount. The <strong>Payable Amount</strong> below (₹${fmtN(r.payable_amount||0)}) is the full trip value: Advance + Halting + Exception + POD Amount.</span></div></div>
       <div class="col-md-4"><label class="lbl">Payment UTR — Advance${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
         <input class="form-control" id="edit-utrAdvance" value="${esc(r.payment_utr_advance||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'UTR for advance payment':'Not entered yet'}">
       </div>
@@ -1362,7 +1393,14 @@ async function saveReqEdit(){
     const hire=parseFloat(gv('edit-hireAmount'))||0,halt=parseFloat(gv('edit-haltingCharges'))||0,exc=parseFloat(gv('edit-exceptionAmount'))||0;
     const prevExc=parseFloat(r.exception_amount||0);
     Object.assign(patch,{hire_amount:hire,halting_charges:halt,exception_amount:exc,exception_reason:gv('edit-exceptionReason'),remarks:gv('edit-remarks')});
-    if(!canEditPayable)patch.payable_amount=hire+halt+exc+parseFloat(r.pod_amount||0); // auto-recompute unless the Approver is overriding it directly below; includes the fixed POD amount for Advance rows
+    if(!canEditPayable){
+      // Auto-recompute unless the Approver overrides Payable directly below; includes the
+      // fixed POD amount for Advance rows. balance_amount has to move with payable_amount
+      // here too, or it drifts stale against paid_amount after a User edits these fields.
+      const recomputedPayable=hire+halt+exc+parseFloat(r.pod_amount||0);
+      patch.payable_amount=recomputedPayable;
+      patch.balance_amount=recomputedPayable-parseFloat(r.paid_amount||0);
+    }
     if(exc!==0 && prevExc===0){patch.exception_status='Pending';}
     if(exc===0){patch.exception_status='None';}
     if(el('edit-exceptionScreenshot')&&el('edit-exceptionScreenshot').files[0]){
@@ -1597,7 +1635,7 @@ function dzOver(e,zoneId){e.preventDefault();el(zoneId).classList.add('drag');}
 function dzLeave(zoneId){el(zoneId).classList.remove('drag');}
 function dzDrop(e,zoneId,inputId){e.preventDefault();el(zoneId).classList.remove('drag');const f=e.dataTransfer.files[0];if(!f)return;const input=el(inputId);const dt=new DataTransfer();dt.items.add(f);input.files=dt.files;input.dispatchEvent(new Event('change'));}
 function handleFile(inputId,zoneId,previewId){
-  const input=el(inputId),file=input.files[0],errEl=el('fe-'+inputId.replace('f-',''))||el('fe-'+zoneId.replace('fz-',''));
+  const input=el(inputId),file=input.files[0];
   const errId='fe-'+inputId.slice(2);const errBox=el(errId);
   if(errBox)errBox.style.display='none';
   if(!file)return;
@@ -1632,7 +1670,7 @@ function setBtnLoad(id,loading,html){const b=el(id);if(!b)return;b.disabled=load
 function toast(msg,type='info'){
   const icons={success:'bi-check-circle-fill',error:'bi-x-circle-fill',warn:'bi-exclamation-triangle-fill',info:'bi-info-circle-fill'};
   const t=document.createElement('div');t.className=`toast-msg ${type}`;t.innerHTML=`<i class="bi ${icons[type]||icons.info}"></i><span>${esc(msg)}</span>`;
-  el('toast-wrap').appendChild(t);setTimeout(()=>t.remove(),4200);
+  el('toast-wrap').appendChild(t);setTimeout(()=>t.remove(),type==='error'?9000:4200);
 }
 
 </script>
