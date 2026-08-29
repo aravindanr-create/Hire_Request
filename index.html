@@ -888,7 +888,7 @@ function updateAdvanceSplitHint(){
   hintEl.style.display='block';
   hintEl.innerHTML=`<div class="info-alert" style="margin-bottom:0"><i class="bi bi-info-circle-fill"></i><span>₹${fmtN(advanceNow)} will be saved as the Advance Amount, with a fixed ₹${fmtN(POD_HOLD_AMOUNT)} held back as the POD Amount.</span></div>`;
 }
-function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance now — a fixed ₹1,000 is held back as the POD amount. Once you have the POD copy, reopen this same request to log the POD UTR. No separate POD request needed.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';updateAdvanceSplitHint();}
+function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance now — a fixed ₹1,000 is held back as the POD amount'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';updateAdvanceSplitHint();}
 
 /* ==============================================
    LR CHECK
