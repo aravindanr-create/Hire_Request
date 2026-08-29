@@ -11,15 +11,24 @@
   app_users is the real security boundary.
 
   ROLES
-    User     — submits requests; can edit/delete their own for a 2-hour
-               window after submission (see EDIT_WINDOW_MS); can trigger
-               the POD request once they hold the POD copy.
-    Approver — full edit/delete on any request, sets LR Status, can
-               override Payable Amount directly, approves/rejects
-               Exception Amounts, and can also trigger POD (e.g. when
-               they created the request on a user's behalf).
-    Finance  — enters Payment UTR(s) and moves Status through
-               Pending -> Approved -> Paid (or Rejected).
+    User         — submits requests; can edit/delete their own for a
+                   2-hour window after submission (see EDIT_WINDOW_MS);
+                   can trigger the POD request once they hold the POD copy.
+    Approver     — full edit/delete on any request, sets LR Status, can
+                   override Payable Amount directly, approves/rejects
+                   Exception Amounts, approves/rejects Advance-type
+                   requests in Request Approvals, and can also trigger
+                   POD (e.g. when they created the request on a user's
+                   behalf).
+    Billing Team — approves/rejects Full-type requests in Request
+                   Approvals; this includes ex-Advance requests once POD
+                   has been triggered (see APPROVAL FLOW below).
+    Finance      — enters Payment UTR(s), can override Status directly
+                   via the request view/edit modal, and moves things on
+                   to Paid once settled. Deliberately separate from
+                   Billing Team's approval gate above, so approving a
+                   request and recording that it's been paid can be two
+                   different people's job.
 
   MONEY FLOW — see calcPay() / submitReq() / saveReqEdit()
     Full request:
@@ -36,6 +45,21 @@
       balance_amount = payable_amount - paid_amount, and must be
       recomputed any time payable_amount changes — that recompute was
       previously missing on the User-edit path in saveReqEdit().
+
+  APPROVAL FLOW — see canApproveRequest() / decideRequestApproval() / triggerPod()
+    Every request starts status='Pending' and needs one approval before
+    Finance can mark it Paid:
+      Advance request -> approved by an Approver  (Request Approvals page)
+      Full request     -> approved by Billing Team (Request Approvals page)
+    Triggering POD on an Advance request (triggerPod()) sets
+    request_type='Full' and resets status back to 'Pending', so the
+    request re-enters the queue — now under Finance's approval instead
+    of the Approver's, since it reads as a Full request from then on.
+    Because request_type can change after the fact like this, it is NOT
+    a reliable signal for "does this row have the Advance/POD amount
+    split" — use hasPod(r) (pod_amount > 0, set once at creation and
+    never changed) for that instead. request_type is only for routing
+    who approves next and for LR-reuse rules.
   ============================================================================
 -->
 <html lang="en">
@@ -185,7 +209,7 @@ label.lbl{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display
 .modal-footer{border-top:1px solid var(--border);padding:14px 22px;background:var(--light);}
 /* ROLE PILLS */
 .role-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.3px;}
-.rp-user{background:#e0e7ff;color:#3730a3;}.rp-finance{background:#fef9c3;color:#854d0e;}.rp-approver{background:#dcfce7;color:#166534;}
+.rp-user{background:#e0e7ff;color:#3730a3;}.rp-finance{background:#fef9c3;color:#854d0e;}.rp-approver{background:#dcfce7;color:#166534;}.rp-billing-team{background:#cffafe;color:#155e75;}
 .info-alert{display:flex;align-items:flex-start;gap:10px;background:var(--blue-xs);border:1px solid #c7d2fe;border-radius:var(--r);padding:10px 14px;font-size:12px;color:#1e40af;margin-bottom:14px;}
 .info-alert i{font-size:15px;flex-shrink:0;margin-top:1px;}
 .warn-alert{display:flex;align-items:flex-start;gap:10px;background:#fef9c3;border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:14px;}
@@ -264,6 +288,7 @@ code{font-family:'DM Mono',monospace;}
     <div class="nav-item" data-page="newreq" onclick="goto('newreq',this)"><i class="bi bi-plus-circle"></i>New Request</div>
     <div class="nav-item" data-page="requests" onclick="goto('requests',this)"><i class="bi bi-table"></i>All Requests</div>
     <div class="nav-item" data-page="exceptions" id="nav-exceptions" style="display:none" onclick="goto('exceptions',this)"><i class="bi bi-exclamation-diamond"></i>Exception Approvals<span id="exc-nav-badge" style="display:none;margin-left:auto;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:10px"></span></div>
+    <div class="nav-item" data-page="reqapprovals" id="nav-reqapprovals" style="display:none" onclick="goto('reqapprovals',this)"><i class="bi bi-patch-check"></i>Request Approvals<span id="ra-nav-badge" style="display:none;margin-left:auto;background:var(--red);color:#fff;font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:10px"></span></div>
     <div class="nav-section">Setup</div>
     <div class="nav-item" data-page="vendors" onclick="goto('vendors',this)"><i class="bi bi-people"></i>Vendors</div>
     <div class="nav-item" data-page="routes" onclick="goto('routes',this)"><i class="bi bi-signpost-split"></i>Routes</div>
@@ -419,6 +444,19 @@ code{font-family:'DM Mono',monospace;}
       </table></div></div>
     </div>
 
+    <!-- REQUEST APPROVALS -->
+    <div id="page-reqapprovals" class="page">
+      <div class="info-alert"><i class="bi bi-info-circle-fill"></i><span>Every new request needs one approval before Finance can mark it Paid. <strong>Advance</strong> requests are approved by an Approver; <strong>Full</strong> requests — including Advance requests once their POD has been triggered — are approved by the Billing Team.</span></div>
+      <div class="fbar">
+        <select class="form-select" id="ra-flt-status" style="width:170px" onchange="loadRequestApprovals()"><option value="Pending">Pending Approval</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option><option value="All">All</option></select>
+        <button class="btn btn-outline-primary btn-sm" onclick="loadRequestApprovals()"><i class="bi bi-arrow-clockwise"></i></button>
+      </div>
+      <div class="panel"><div class="tbl-wrap"><table class="dt">
+        <thead><tr><th>Ref ID</th><th>Trip Date</th><th>Requester</th><th>Route</th><th>Type</th><th>Hire ₹</th><th>Payable ₹</th><th>POD Status</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="ra-tbody"></tbody>
+      </table></div></div>
+    </div>
+
     <!-- VENDORS -->
     <div id="page-vendors" class="page">
       <!-- VENDOR LIST -->
@@ -552,10 +590,10 @@ code{font-family:'DM Mono',monospace;}
 </div></div></div>
 
 <!-- User Modal -->
-<div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="userModal-title">Add User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="lbl">Full Name <span class="req-star">*</span></label><input type="text" class="form-control" id="u-name"/></div><div class="col-md-6"><label class="lbl">Email <span class="req-star">*</span></label><input type="email" class="form-control" id="u-email"/></div><div class="col-md-6"><label class="lbl">Department</label><input type="text" class="form-control" id="u-dept" placeholder="e.g. Logistics"/></div><div class="col-md-6"><label class="lbl">Mobile</label><input type="tel" class="form-control" id="u-mobile"/></div><div class="col-md-6"><label class="lbl">Role <span class="req-star">*</span></label><select class="form-select" id="u-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Approver">Approver</option></select></div><div class="col-md-6"><label class="lbl">Status <span class="req-star">*</span></label><select class="form-select" id="u-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div><div class="col-12"><label class="lbl">Password <span class="req-star">*</span></label><input type="password" class="form-control" id="u-pass" placeholder="Set login password"/></div><input type="hidden" id="u-id"/></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveUser()"><i class="bi bi-floppy me-1"></i>Save</button></div></div></div></div>
+<div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="userModal-title">Add User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="lbl">Full Name <span class="req-star">*</span></label><input type="text" class="form-control" id="u-name"/></div><div class="col-md-6"><label class="lbl">Email <span class="req-star">*</span></label><input type="email" class="form-control" id="u-email"/></div><div class="col-md-6"><label class="lbl">Department</label><input type="text" class="form-control" id="u-dept" placeholder="e.g. Logistics"/></div><div class="col-md-6"><label class="lbl">Mobile</label><input type="tel" class="form-control" id="u-mobile"/></div><div class="col-md-6"><label class="lbl">Role <span class="req-star">*</span></label><select class="form-select" id="u-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Billing Team">Billing Team</option><option value="Approver">Approver</option></select></div><div class="col-md-6"><label class="lbl">Status <span class="req-star">*</span></label><select class="form-select" id="u-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div><div class="col-12"><label class="lbl">Password <span class="req-star">*</span></label><input type="password" class="form-control" id="u-pass" placeholder="Set login password"/></div><input type="hidden" id="u-id"/></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveUser()"><i class="bi bi-floppy me-1"></i>Save</button></div></div></div></div>
 
 <!-- Role Modal -->
-<div class="modal fade" id="roleModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Change Role</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;margin-bottom:12px">User: <strong id="rm-email-show">—</strong></p><label class="lbl">Role</label><select class="form-select" id="rm-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Approver">Approver</option></select><input type="hidden" id="rm-id"/></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveRole()">Save</button></div></div></div></div>
+<div class="modal fade" id="roleModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Change Role</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p style="font-size:13px;margin-bottom:12px">User: <strong id="rm-email-show">—</strong></p><label class="lbl">Role</label><select class="form-select" id="rm-role"><option value="User">User</option><option value="Finance">Finance</option><option value="Billing Team">Billing Team</option><option value="Approver">Approver</option></select><input type="hidden" id="rm-id"/></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="saveRole()">Save</button></div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -696,6 +734,7 @@ async function bootApp(){
   hide('loader');document.getElementById('app').style.display='flex';
   el('user-name').textContent=CU.name;el('user-role').textContent=CU.role;el('role-badge').textContent=CU.role.toUpperCase();el('user-av').textContent=CU.name.charAt(0).toUpperCase();
   if(CU.role==='Approver'){el('nav-users').style.display='flex';el('nav-roles').style.display='flex';el('nav-exceptions').style.display='flex';}
+  if(CU.role==='Approver'||CU.role==='Finance'||CU.role==='Billing Team'){el('nav-reqapprovals').style.display='flex';}
   const cb=el('conn-badge');
   if(IS_DEMO){cb.style.background='#fef3c7';cb.style.color='#92400e';cb.innerHTML='<i class="bi bi-lightning-fill"></i> Demo Mode';}
   else{cb.style.background='#d1fae5';cb.style.color='#065f46';cb.innerHTML='<i class="bi bi-circle-fill" style="font-size:8px"></i> Live Database';}
@@ -711,9 +750,9 @@ function goto(page,nav){
   if(nav)nav.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   el('page-'+page).classList.add('active');
-  const titles={dashboard:'Dashboard',newreq:'New Hire Request',requests:'All Requests',exceptions:'Exception Approvals',vendors:'Vendors',routes:'Routes',users:'Users',userroles:'User Roles'};
+  const titles={dashboard:'Dashboard',newreq:'New Hire Request',requests:'All Requests',exceptions:'Exception Approvals',reqapprovals:'Request Approvals',vendors:'Vendors',routes:'Routes',users:'Users',userroles:'User Roles'};
   el('page-title').textContent=titles[page]||page;closeSidebar();
-  if(page==='requests')loadRequests();if(page==='exceptions')loadExceptions();if(page==='vendors')loadVendors();if(page==='routes')loadRoutesPage();if(page==='users')loadUsersPage();
+  if(page==='requests')loadRequests();if(page==='exceptions')loadExceptions();if(page==='reqapprovals')loadRequestApprovals();if(page==='vendors')loadVendors();if(page==='routes')loadRoutesPage();if(page==='users')loadUsersPage();
   if(page==='userroles')loadRolesPage();if(page==='dashboard')loadDashboard();if(page==='newreq'){_refreshSubmittedAt();refreshRoutesEverywhere();}
 }
 function openSidebar(){el('sidebar').classList.add('open');el('mob-ov').classList.add('show');}
@@ -926,7 +965,7 @@ function updateAdvanceSplitHint(){
   hintEl.style.display='block';
   hintEl.innerHTML=`<div class="info-alert" style="margin-bottom:0"><i class="bi bi-info-circle-fill"></i><span>₹${fmtN(advanceNow)} will be saved as the Advance Amount, with a fixed ₹${fmtN(POD_HOLD_AMOUNT)} held back as the POD Amount.</span></div>`;
 }
-function showTypeHint(){const hints={Full:'Full payment — LR blocked permanently.',Advance:'Advance now — a fixed ₹1,000 is held back as the POD amount.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';updateAdvanceSplitHint();}
+function showTypeHint(){const hints={Full:'Full payment — needs Billing Team approval before it can be paid. LR blocked permanently.',Advance:'Advance now — needs Approver sign-off first. A fixed ₹1,000 is held back as the POD amount. Once you have the POD copy, reopen this same request to trigger it — that converts it to Full type and sends it to the Billing Team for final approval.'};el('req-type-hint').textContent=hints[gv('f-requestType')]||'';updateAdvanceSplitHint();}
 
 /* ==============================================
    LR CHECK
@@ -1098,6 +1137,14 @@ function renderDashboard(data){
     else{badge.style.display='none';}
   }
 
+  // update sidebar badge for requests awaiting THIS role's approval
+  const raBadge=el('ra-nav-badge');
+  if(raBadge){
+    const myPending=data.filter(canApproveRequest).length;
+    if((CU.role==='Approver'||CU.role==='Finance'||CU.role==='Billing Team') && myPending>0){raBadge.style.display='inline-block';raBadge.textContent=myPending;}
+    else{raBadge.style.display='none';}
+  }
+
   const recent=data.slice(0,8);
   el('dash-tbody').innerHTML=recent.length?recent.map(r=>`
     <tr style="cursor:pointer" onclick="openReqModal('${r.id}')">
@@ -1115,13 +1162,19 @@ function renderDashboard(data){
 }
 
 function statusBadge(s){const m={Pending:'bs-pending',Approved:'bs-approved',Paid:'bs-paid',Rejected:'bs-rejected'};return `<span class="bs ${m[s]||'bs-pending'}">${esc(s||'')}</span>`;}
+// True for any request built with a POD hold-back, regardless of its CURRENT request_type.
+// request_type flips Advance -> Full once POD is triggered (see triggerPod()) so it can
+// no longer be used to tell "does this row have the Advance/POD split" apart from "who
+// approves it next" — pod_amount is set once at creation and never changes, so it's the
+// stable signal for the former.
+function hasPod(r){return parseFloat(r&&r.pod_amount||0)>0;}
 function excStatusBadge(r){
   const st=r.exception_status||(parseFloat(r.exception_amount||0)!==0?'Pending':'None');
   const m={Pending:'bs-exc-pending',Approved:'bs-exc-approved',Rejected:'bs-exc-rejected',None:'bs-exc-none'};
   return `<span class="bs ${m[st]||'bs-exc-pending'}" style="font-size:9.5px;padding:2px 7px">${esc(st)}</span>`;
 }
 function utrDisplay(r){
-  if(r.request_type==='Advance'){
+  if(hasPod(r)){
     const adv=r.payment_utr_advance,pod=r.payment_utr_pod;
     if(!adv&&!pod)return '—';
     return `Adv: ${esc(adv||'—')}${pod?` / POD: ${esc(pod)}`:''}`;
@@ -1283,6 +1336,67 @@ async function decideException(id,decision){
   }catch(e){toast('Update error: '+e.message,'error');}
 }
 
+/* ==============================================
+   REQUEST APPROVALS  (whole-request approval gate,
+   separate from the Exception Amount queue above)
+   — Advance requests are approved by an Approver
+   — Full requests (incl. ex-Advance rows once POD is
+     triggered — see triggerPod()) are approved by the Billing Team
+   Reuses the existing `status` field: Pending == needs
+   this approval, Approved == cleared for Finance to pay.
+   ============================================== */
+function canApproveRequest(r){
+  if(!r||r.status!=='Pending')return false;
+  if(r.request_type==='Advance')return CU.role==='Approver';
+  if(r.request_type==='Full')return CU.role==='Billing Team';
+  return false;
+}
+async function loadRequestApprovals(){
+  let data=REQ_DATA;
+  if(!IS_DEMO){
+    try{
+      const{data:d,error}=await sb.from('hire_requests').select('*').order('created_at',{ascending:false});
+      if(error)throw error;data=d||[];REQ_DATA=data;
+    }catch(e){toast('Load approvals error: '+e.message,'error');return;}
+  }
+  const fStatus=gv('ra-flt-status')||'Pending';
+  const filtered=data.filter(r=>fStatus==='All'?true:(r.status||'Pending')===fStatus);
+  el('ra-tbody').innerHTML=filtered.length?filtered.map(r=>{
+    const canAct=canApproveRequest(r);
+    const podCol=hasPod(r)?(r.pod_triggered_at?'<span class="bs bs-approved">Triggered</span>':'<span class="bs bs-pending">Not triggered</span>'):'—';
+    return `<tr>
+      <td><code>${r.id}</code></td>
+      <td>${fmtDate(r.trip_date)}</td>
+      <td>${esc(r.requester_name||'')}</td>
+      <td style="max-width:180px;white-space:normal">${esc(r.from_loc||'')} → ${esc(r.to_loc||'')}</td>
+      <td><span class="bt bt-${(r.request_type||'').toLowerCase()}">${esc(r.request_type||'')}</span></td>
+      <td>₹${Number(r.hire_amount||0).toLocaleString('en-IN')}</td>
+      <td><strong>₹${Number(r.payable_amount||0).toLocaleString('en-IN')}</strong></td>
+      <td>${podCol}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>
+        ${canAct?`<button class="bsi" style="color:var(--green);border-color:#a7f3d0" onclick="decideRequestApproval('${r.id}','Approved')" title="Approve"><i class="bi bi-check-lg"></i></button>
+        <button class="bsi del" onclick="decideRequestApproval('${r.id}','Rejected')" title="Reject"><i class="bi bi-x-lg"></i></button>`
+        :`<button class="bsi" onclick="openReqModal('${r.id}')" title="View"><i class="bi bi-eye"></i></button>`}
+      </td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="10"><div class="empty-st"><i class="bi bi-patch-check"></i><p>No requests in this filter</p></div></td></tr>`;
+}
+async function decideRequestApproval(id,decision){
+  const r=REQ_DATA.find(x=>String(x.id)===String(id));
+  if(!canApproveRequest(r))return toast('You are not the approver for this request','error');
+  if(!confirm(`${decision==='Approved'?'Approve':'Reject'} this request?`))return;
+  const patch={status:decision};
+  if(IS_DEMO){
+    if(r)Object.assign(r,patch);
+    toast(`Request ${decision.toLowerCase()} (demo)`,'success');loadRequestApprovals();loadDashboard();return;
+  }
+  try{
+    const{error}=await sb.from('hire_requests').update(patch).eq('id',id);if(error)throw error;
+    toast(`Request ${decision.toLowerCase()}`,'success');await loadRequestApprovals();loadDashboard();
+  }catch(e){toast('Update error: '+e.message,'error');}
+}
+
 /* ---- Request view / edit modal ---- */
 function podSectionHtml(r,canEditUTR,canTriggerPod){
   const podAmountField=`<div class="col-md-4"><label class="lbl">POD Amount (₹) <small class="text-muted fw-normal">(fixed)</small></label><input class="form-control" value="${r.pod_amount||0}" readonly></div>`;
@@ -1313,7 +1427,7 @@ function openReqModal(id){
   const canEditUTR=CU.role==='Finance';
   const canEditStatus=CU.role==='Finance';
   const isOwner=String(r.requester_id)===String(CU.id)||r.submitted_by===CU.email;
-  const canTriggerPod=CU.role==='Approver'||(CU.role==='User'&&isOwner);
+  const canTriggerPod=r.status!=='Rejected'&&(CU.role==='Approver'||(CU.role==='User'&&isOwner));
   const canSaveAnything=canEdit||canEditLR||canEditPayable||canEditUTR||canEditStatus;
   el('reqModal-timer-wrap').innerHTML = (CU.role==='User'&&r.status==='Pending')
     ? `<span class="edit-timer ${withinEditWindow(r)?'':'expired'}"><i class="bi bi-clock-history"></i> ${fmtTimeRemaining(editWindowRemaining(r))}</span>` : '';
@@ -1331,7 +1445,7 @@ function openReqModal(id){
         ${canEditLR?`<select class="form-select" id="edit-lrStatus"><option value="" ${!r.lr_status?'selected':''}>— Not set —</option>${lrOptionsHtml}</select>`
         :`<div style="padding-top:6px">${lrStatusBadge(r)}</div>`}
       </div>
-      <div class="col-md-3"><label class="lbl">${r.request_type==='Advance'?'Advance Amount (₹)':'Hire Amount'}</label><input class="form-control" id="edit-hireAmount" value="${r.hire_amount||0}" ${canEdit?'':'readonly'}></div>
+      <div class="col-md-3"><label class="lbl">${hasPod(r)?'Advance Amount (₹)':'Hire Amount'}</label><input class="form-control" id="edit-hireAmount" value="${r.hire_amount||0}" ${canEdit?'':'readonly'}></div>
       <div class="col-md-3"><label class="lbl">Halting Charges</label><input class="form-control" id="edit-haltingCharges" value="${r.halting_charges||0}" ${canEdit?'':'readonly'}></div>
       <div class="col-md-3"><label class="lbl">Exception Amount</label><input class="form-control" id="edit-exceptionAmount" value="${r.exception_amount||0}" ${canEdit?'':'readonly'}></div>
       <div class="col-md-3"><label class="lbl">Payable Amount${canEditPayable?' <span class="approver-only">Approver</span>':''}</label><input class="form-control" id="edit-payable" value="${r.payable_amount||0}" ${canEditPayable?'':'readonly'}></div>
@@ -1343,8 +1457,8 @@ function openReqModal(id){
         <div class="f-err" id="fe-editExcScreenshot"></div><div class="fp" id="fp-editExcScreenshot"></div>`:''}
       </div>`:''}
       <div class="col-md-6"><label class="lbl">Remarks</label><input class="form-control" id="edit-remarks" value="${esc(r.remarks||'')}" ${canEdit?'':'readonly'}></div>
-      ${r.request_type==='Advance'?`
-      <div class="col-12"><div class="info-alert" style="margin-bottom:0"><i class="bi bi-arrow-repeat"></i><span>Advance request — ₹${fmtN(r.pod_amount||0)} was automatically held back from the entered Hire Amount as the fixed POD Amount. The <strong>Payable Amount</strong> below (₹${fmtN(r.payable_amount||0)}) is the full trip value: Advance + Halting + Exception + POD Amount.</span></div></div>
+      ${hasPod(r)?`
+      <div class="col-12"><div class="info-alert" style="margin-bottom:0"><i class="bi bi-arrow-repeat"></i><span>₹${fmtN(r.pod_amount||0)} was automatically held back from the entered Hire Amount as the fixed POD Amount. The <strong>Payable Amount</strong> below (₹${fmtN(r.payable_amount||0)}) is the full trip value: Advance + Halting + Exception + POD Amount.${r.pod_triggered_at?' The POD has been triggered, and this request now needs Billing Team approval.':' Triggering the POD below converts this request to Full type and sends it to the Billing Team for final approval.'}</span></div></div>
       <div class="col-md-4"><label class="lbl">Payment UTR — Advance${canEditUTR?' <span class="finance-only">Finance</span>':''}</label>
         <input class="form-control" id="edit-utrAdvance" value="${esc(r.payment_utr_advance||'')}" ${canEditUTR?'':'readonly'} placeholder="${canEditUTR?'UTR for advance payment':'Not entered yet'}">
       </div>
@@ -1357,6 +1471,7 @@ function openReqModal(id){
         :`<input class="form-control" value="${esc(r.status||'')}" readonly>`}
       </div>
     </div>
+    ${r.status==='Pending'?`<div class="warn-alert mt-3"><i class="bi bi-exclamation-triangle-fill"></i><span>This request is awaiting approval from ${r.request_type==='Advance'?'an Approver':'the Billing Team'}. See <strong>Request Approvals</strong>.</span></div>`:''}
     ${hasExc&&(r.exception_status||'Pending')==='Pending'?`<div class="warn-alert mt-3"><i class="bi bi-exclamation-triangle-fill"></i><span>This request has a pending Exception Amount. Go to <strong>Exception Approvals</strong> to approve or reject it before marking this request Paid.</span></div>`:''}`;
   el('reqModal-save').style.display=canSaveAnything?'inline-block':'none';
   el('reqModal-delete').style.display=canDel?'inline-block':'none';
@@ -1364,19 +1479,19 @@ function openReqModal(id){
 }
 
 async function triggerPod(id){
-  if(!confirm('Trigger the POD request for this Advance request? This enables the POD Amount and POD UTR fields.'))return;
-  const patch={pod_triggered_at:new Date().toISOString(),pod_triggered_by:CU.email};
+  if(!confirm('Trigger the POD request for this Advance request? This converts it to Full type and sends it back for Billing Team approval.'))return;
+  const patch={pod_triggered_at:new Date().toISOString(),pod_triggered_by:CU.email,request_type:'Full',status:'Pending'};
   if(IS_DEMO){
     const r=REQ_DATA.find(x=>String(x.id)===String(id));
     if(r)Object.assign(r,patch);
-    toast('POD request triggered (demo)','success');
+    toast('POD request triggered (demo) — converted to Full, sent to the Billing Team for approval','success');
     openReqModal(id);loadRequests();loadDashboard();
     return;
   }
   try{
     const{error}=await sb.from('hire_requests').update(patch).eq('id',id);if(error)throw error;
     const r=REQ_DATA.find(x=>String(x.id)===String(id));if(r)Object.assign(r,patch);
-    toast('POD request triggered','success');
+    toast('POD request triggered — converted to Full, sent to the Billing Team for approval','success');
     openReqModal(id);loadRequests();loadDashboard();
   }catch(e){toast('Trigger error: '+e.message,'error');}
 }
@@ -1415,7 +1530,7 @@ async function saveReqEdit(){
     patch.balance_amount=payable-parseFloat(r.paid_amount||0);
   }
   if(canEditUTR){
-    if(r.request_type==='Advance'){
+    if(hasPod(r)){
       if(el('edit-utrAdvance'))patch.payment_utr_advance=gv('edit-utrAdvance');
       if(el('edit-utrPod'))patch.payment_utr_pod=gv('edit-utrPod');
     }else if(el('edit-utr')){
@@ -1577,7 +1692,7 @@ async function loadUsersPage(){await loadUserData();renderUsersTable();}
 function renderUsersTable(){
   el('user-tbody').innerHTML=USER_DATA.length?USER_DATA.map(u=>`
     <tr><td>${esc(u.name||'')}</td><td>${esc(u.email||'')}</td><td>${esc(u.department||'')}</td><td>${esc(u.mobile||'')}</td>
-      <td><span class="role-pill rp-${(u.role||'user').toLowerCase()}">${esc(u.role||'')}</span></td>
+      <td><span class="role-pill rp-${(u.role||'user').toLowerCase().replace(/\s+/g,'-')}">${esc(u.role||'')}</span></td>
       <td><span class="bs ${u.status==='Active'?'bs-approved':'bs-rejected'}">${esc(u.status||'')}</span></td>
       <td><button class="bsi" onclick="openUserModal('${u.id}')" title="Edit"><i class="bi bi-pencil"></i></button></td>
     </tr>`).join(''):`<tr><td colspan="7"><div class="empty-st"><i class="bi bi-person"></i><p>No users yet</p></div></td></tr>`;
@@ -1613,7 +1728,7 @@ async function loadRolesPage(){await loadUserData();renderRolesTable();}
 function renderRolesTable(){
   el('role-tbody').innerHTML=USER_DATA.length?USER_DATA.map(u=>`
     <tr><td>${esc(u.email||'')}</td><td>${esc(u.name||'')}</td>
-      <td><span class="role-pill rp-${(u.role||'user').toLowerCase()}">${esc(u.role||'')}</span></td>
+      <td><span class="role-pill rp-${(u.role||'user').toLowerCase().replace(/\s+/g,'-')}">${esc(u.role||'')}</span></td>
       <td><button class="bsi" onclick="openRoleModal('${u.id}')" title="Change Role"><i class="bi bi-shield-lock"></i></button></td>
     </tr>`).join(''):`<tr><td colspan="4"><div class="empty-st"><i class="bi bi-shield-person"></i><p>No users yet</p></div></td></tr>`;
 }
